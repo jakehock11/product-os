@@ -71,48 +71,48 @@ export default function TimelinePage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
-        <Skeleton className="mb-4 h-10 w-48" />
+      <div className="page-container">
+        <Skeleton className="mb-4 h-8 w-48" />
         <Skeleton className="mb-4 h-10 w-full" />
         <div className="space-y-2">
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-16 w-full rounded-lg" />
+          <Skeleton className="h-16 w-full rounded-lg" />
+          <Skeleton className="h-16 w-full rounded-lg" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-full flex-col p-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Timeline</h1>
-        <p className="text-muted-foreground">
+    <div className="page-container flex h-full flex-col">
+      <div className="page-header">
+        <h1 className="text-lg font-semibold text-foreground">Timeline</h1>
+        <p className="text-sm text-muted-foreground">
           Chronological view of all your product thinking
         </p>
       </div>
 
-      <div className="mb-4 flex flex-col gap-4">
+      <div className="mb-6 flex flex-col gap-3 content-max-width">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search timeline..."
-            className="pl-9"
+            className="h-9 pl-9 text-sm"
           />
         </div>
         <ToggleGroup
           type="multiple"
           value={typeFilters}
           onValueChange={(value) => setTypeFilters(value as EntityType[])}
-          className="flex-wrap justify-start"
+          className="flex-wrap justify-start gap-1.5"
         >
           {Object.entries(TYPE_CONFIG).map(([type, config]) => (
             <ToggleGroupItem
               key={type}
               value={type}
-              className="gap-2 text-xs"
+              className="h-7 gap-1.5 px-2.5 text-xs"
               aria-label={`Filter ${config.label}`}
             >
               <config.icon className={`h-3 w-3 ${config.color}`} />
@@ -123,15 +123,15 @@ export default function TimelinePage() {
       </div>
 
       {timelineItems.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center text-center">
-          <p className="text-muted-foreground">
+        <div className="flex flex-1 flex-col items-center justify-center py-16 text-center">
+          <p className="text-sm text-muted-foreground">
             {search || typeFilters.length > 0
               ? "No items match your filters."
               : "No activity yet. Start capturing your product thinking."}
           </p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="content-max-width space-y-1.5 scrollbar-thin">
           {timelineItems.map((item) => {
             const config = TYPE_CONFIG[item.type];
             const Icon = config.icon;
@@ -141,25 +141,25 @@ export default function TimelinePage() {
               <Link
                 key={item.id}
                 to={getEntityLink(item)}
-                className="flex items-center gap-4 rounded-lg border border-border bg-card p-4 transition-colors hover:bg-muted"
+                className="flex items-center gap-3 rounded-lg border border-border/50 bg-card p-3 shadow-xs transition-all hover:border-border hover:bg-muted/50 hover:shadow-sm"
               >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg bg-muted`}>
-                  <Icon className={`h-5 w-5 ${config.color}`} />
+                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md bg-muted">
+                  <Icon className={`h-4 w-4 ${config.color}`} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-medium">
                       {config.label}
                     </Badge>
                     {status && (
-                      <Badge variant="secondary" className="text-xs capitalize">
+                      <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-medium capitalize">
                         {status}
                       </Badge>
                     )}
                   </div>
-                  <h3 className="mt-1 truncate font-medium">{item.title}</h3>
+                  <h3 className="mt-1 truncate text-sm font-medium">{item.title}</h3>
                 </div>
-                <span className="text-sm text-muted-foreground">
+                <span className="flex-shrink-0 text-xs text-muted-foreground">
                   {formatDistanceToNow(new Date(item.updatedAt), { addSuffix: true })}
                 </span>
               </Link>

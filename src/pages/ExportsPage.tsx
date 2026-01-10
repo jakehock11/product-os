@@ -149,48 +149,48 @@ export default function ExportsPage() {
 
   if (!product) {
     return (
-      <div className="p-8">
-        <Skeleton className="mb-8 h-10 w-48" />
-        <Skeleton className="h-64 w-full" />
+      <div className="page-container">
+        <Skeleton className="mb-6 h-8 w-48" />
+        <Skeleton className="h-64 w-full rounded-lg" />
       </div>
     );
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">Exports</h1>
-        <p className="text-muted-foreground">
+    <div className="page-container scrollbar-thin">
+      <div className="page-header">
+        <h1 className="text-lg font-semibold text-foreground">Exports</h1>
+        <p className="text-sm text-muted-foreground">
           Export your product thinking as markdown files
         </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         {/* Export Options */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Download className="h-5 w-5" />
+        <Card className="border-border/50 shadow-xs">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
+              <Download className="h-4 w-4" />
               New Export
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-xs">
               Configure and download an export bundle
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-5">
             {/* Mode Selection */}
-            <div className="space-y-3">
-              <Label>Export Mode</Label>
+            <div className="space-y-2.5">
+              <Label className="text-sm">Export Mode</Label>
               <RadioGroup value={mode} onValueChange={(v) => setMode(v as "full" | "incremental")}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="full" id="full" />
-                  <Label htmlFor="full" className="font-normal">
+                  <Label htmlFor="full" className="text-sm font-normal">
                     Full export (all items)
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="incremental" id="incremental" />
-                  <Label htmlFor="incremental" className="font-normal">
+                  <Label htmlFor="incremental" className="text-sm font-normal">
                     Incremental (new/updated since date)
                   </Label>
                 </div>
@@ -201,18 +201,19 @@ export default function ExportsPage() {
               <>
                 {/* Date Selection */}
                 <div className="space-y-2">
-                  <Label>Since Date</Label>
+                  <Label className="text-sm">Since Date</Label>
                   <div className="flex gap-2">
                     <Input
                       type="date"
                       value={sinceDate}
                       onChange={(e) => setSinceDate(e.target.value)}
-                      className="flex-1"
+                      className="h-9 flex-1 text-sm"
                     />
                     {lastExportDate && (
                       <Button
                         variant="outline"
                         size="sm"
+                        className="h-9 text-xs"
                         onClick={() => setSinceDate(lastExportDate.split("T")[0])}
                       >
                         Since last export
@@ -227,9 +228,9 @@ export default function ExportsPage() {
                 </div>
 
                 {/* Include Parents */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-3">
                   <div className="space-y-0.5">
-                    <Label>Include parent context</Label>
+                    <Label className="text-sm">Include parent context</Label>
                     <p className="text-xs text-muted-foreground">
                       Include linked problems/hypotheses for coherence
                     </p>
@@ -239,12 +240,12 @@ export default function ExportsPage() {
               </>
             )}
 
-            <Separator />
+            <Separator className="bg-border/50" />
 
             {/* Preview */}
             <div className="space-y-2">
-              <Label>Preview</Label>
-              <div className="rounded-lg border border-border bg-muted/30 p-3 text-sm">
+              <Label className="text-sm">Preview</Label>
+              <div className="rounded-md border border-border/50 bg-muted/30 p-3 text-sm text-muted-foreground">
                 {mode === "full" ? (
                   <p>{entities?.length || 0} items will be exported</p>
                 ) : (
@@ -260,49 +261,52 @@ export default function ExportsPage() {
               </div>
             </div>
 
-            <Button onClick={handleExport} disabled={isExporting} className="w-full">
+            <Button onClick={handleExport} disabled={isExporting} size="sm" className="w-full">
               {isExporting ? "Exporting..." : "Download Export"}
             </Button>
           </CardContent>
         </Card>
 
         {/* Export History */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
+        <Card className="border-border/50 shadow-xs">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
+              <Clock className="h-4 w-4" />
               Export History
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-xs">
               Previous exports from this product
             </CardDescription>
           </CardHeader>
           <CardContent>
             {historyLoading ? (
               <div className="space-y-2">
-                <Skeleton className="h-16 w-full" />
-                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-14 w-full rounded-md" />
+                <Skeleton className="h-14 w-full rounded-md" />
               </div>
             ) : !exportHistory || exportHistory.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">
+              <p className="py-10 text-center text-xs text-muted-foreground">
                 No exports yet
               </p>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {[...exportHistory]
                   .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
                   .slice(0, 10)
                   .map((record) => (
                     <div
                       key={record.id}
-                      className="flex items-center justify-between rounded-lg border border-border p-3"
+                      className="flex items-center justify-between rounded-md border border-border/50 p-3"
                     >
                       <div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={record.mode === "full" ? "default" : "secondary"}>
+                        <div className="flex items-center gap-1.5">
+                          <Badge 
+                            variant={record.mode === "full" ? "default" : "secondary"} 
+                            className="h-5 px-1.5 text-[10px] font-medium"
+                          >
                             {record.mode}
                           </Badge>
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-xs text-muted-foreground">
                             {formatDistanceToNow(new Date(record.timestamp), { addSuffix: true })}
                           </span>
                         </div>

@@ -114,24 +114,28 @@ export default function QuickCaptureDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
+      <div className="page-container">
         <Skeleton className="mb-4 h-8 w-24" />
-        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-64 w-full rounded-lg" />
       </div>
     );
   }
 
   if (!entity || entity.type !== "quick_capture") {
-    return <div className="p-8">Capture not found</div>;
+    return (
+      <div className="page-container flex items-center justify-center py-16">
+        <p className="text-sm text-muted-foreground">Capture not found</p>
+      </div>
+    );
   }
 
   const capture = entity as QuickCapture;
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between border-b border-border px-8 py-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate(`/product/${productId}/home`)}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
+      <div className="flex items-center justify-between border-b border-border/50 px-6 py-3">
+        <Button variant="ghost" size="sm" className="h-8 gap-1.5 text-xs" onClick={() => navigate(`/product/${productId}/home`)}>
+          <ArrowLeft className="h-3.5 w-3.5" />
           Home
         </Button>
         <div className="flex items-center gap-2">
@@ -142,25 +146,25 @@ export default function QuickCaptureDetailPage() {
           {!capture.promotedToId && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <ArrowUpRight className="mr-2 h-4 w-4" />
+                <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
+                  <ArrowUpRight className="h-3.5 w-3.5" />
                   Promote to...
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => handlePromoteTo("problem")}>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handlePromoteTo("problem")} className="text-sm">
                   Problem
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handlePromoteTo("hypothesis")}>
+                <DropdownMenuItem onClick={() => handlePromoteTo("hypothesis")} className="text-sm">
                   Hypothesis
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handlePromoteTo("experiment")}>
+                <DropdownMenuItem onClick={() => handlePromoteTo("experiment")} className="text-sm">
                   Experiment
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handlePromoteTo("decision")}>
+                <DropdownMenuItem onClick={() => handlePromoteTo("decision")} className="text-sm">
                   Decision
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handlePromoteTo("artifact")}>
+                <DropdownMenuItem onClick={() => handlePromoteTo("artifact")} className="text-sm">
                   Artifact
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -169,28 +173,28 @@ export default function QuickCaptureDetailPage() {
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="h-8 w-8">
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete capture?</AlertDialogTitle>
-                <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                <AlertDialogTitle className="text-base">Delete capture?</AlertDialogTitle>
+                <AlertDialogDescription className="text-sm">This action cannot be undone.</AlertDialogDescription>
               </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+              <AlertDialogFooter className="gap-2 sm:gap-0">
+                <AlertDialogCancel className="h-9 text-sm">Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete} className="h-9 text-sm">Delete</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-8">
+      <div className="flex-1 overflow-y-auto p-6 scrollbar-thin">
         <div className="mx-auto max-w-3xl">
           {capture.promotedToId && (
-            <div className="mb-4 rounded-lg border border-border bg-muted/50 p-3 text-sm text-muted-foreground">
+            <div className="mb-4 rounded-md border border-border/50 bg-muted/30 p-3 text-sm text-muted-foreground">
               This capture has been promoted to another entity.
             </div>
           )}
@@ -199,7 +203,7 @@ export default function QuickCaptureDetailPage() {
             value={body}
             onChange={(e) => setBody(e.target.value)}
             placeholder="Your captured thought..."
-            className="min-h-[300px] resize-none border-none bg-transparent text-base shadow-none focus-visible:ring-0"
+            className="min-h-[300px] resize-none border-none bg-transparent text-sm shadow-none focus-visible:ring-0"
           />
         </div>
       </div>

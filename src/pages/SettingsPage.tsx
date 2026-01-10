@@ -74,52 +74,59 @@ export default function SettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
-        <Skeleton className="mb-8 h-10 w-48" />
-        <div className="space-y-6">
-          <Skeleton className="h-48 w-full" />
-          <Skeleton className="h-48 w-full" />
+      <div className="page-container">
+        <Skeleton className="mb-6 h-8 w-48" />
+        <div className="mx-auto max-w-2xl space-y-4">
+          <Skeleton className="h-40 w-full rounded-lg" />
+          <Skeleton className="h-40 w-full rounded-lg" />
         </div>
       </div>
     );
   }
 
   if (!product) {
-    return <div className="p-8">Product not found</div>;
+    return (
+      <div className="page-container flex items-center justify-center py-16">
+        <p className="text-sm text-muted-foreground">Product not found</p>
+      </div>
+    );
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">
+    <div className="page-container scrollbar-thin">
+      <div className="page-header">
+        <h1 className="text-lg font-semibold text-foreground">Settings</h1>
+        <p className="text-sm text-muted-foreground">
           Configure your product and preferences
         </p>
       </div>
 
-      <div className="mx-auto max-w-2xl space-y-6">
+      <div className="mx-auto max-w-2xl space-y-4">
         {/* Product Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
+        <Card className="border-border/50 shadow-xs">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
+              <Settings className="h-4 w-4" />
               Product Settings
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-xs">
               Manage your product configuration
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3">
             <div className="space-y-2">
-              <Label htmlFor="productName">Product Name</Label>
+              <Label htmlFor="productName" className="text-sm">Product Name</Label>
               <div className="flex gap-2">
                 <Input
                   id="productName"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Product name"
+                  className="h-9 text-sm"
                 />
                 <Button
+                  size="sm"
+                  className="h-9"
                   onClick={handleSaveName}
                   disabled={isSaving || name === product.name}
                 >
@@ -131,44 +138,44 @@ export default function SettingsPage() {
         </Card>
 
         {/* Appearance */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border-border/50 shadow-xs">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
               {theme === "dark" ? (
-                <Moon className="h-5 w-5" />
+                <Moon className="h-4 w-4" />
               ) : theme === "light" ? (
-                <Sun className="h-5 w-5" />
+                <Sun className="h-4 w-4" />
               ) : (
-                <Monitor className="h-5 w-5" />
+                <Monitor className="h-4 w-4" />
               )}
               Appearance
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-xs">
               Customize how Product OS looks
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <Label>Theme</Label>
+            <div className="space-y-2.5">
+              <Label className="text-sm">Theme</Label>
               <RadioGroup value={theme} onValueChange={(v) => setTheme(v as any)}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="light" id="light" />
-                  <Label htmlFor="light" className="flex items-center gap-2 font-normal">
-                    <Sun className="h-4 w-4" />
+                  <Label htmlFor="light" className="flex items-center gap-2 text-sm font-normal">
+                    <Sun className="h-3.5 w-3.5" />
                     Light
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="dark" id="dark" />
-                  <Label htmlFor="dark" className="flex items-center gap-2 font-normal">
-                    <Moon className="h-4 w-4" />
+                  <Label htmlFor="dark" className="flex items-center gap-2 text-sm font-normal">
+                    <Moon className="h-3.5 w-3.5" />
                     Dark
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="system" id="system" />
-                  <Label htmlFor="system" className="flex items-center gap-2 font-normal">
-                    <Monitor className="h-4 w-4" />
+                  <Label htmlFor="system" className="flex items-center gap-2 text-sm font-normal">
+                    <Monitor className="h-3.5 w-3.5" />
                     System
                   </Label>
                 </div>
@@ -178,20 +185,20 @@ export default function SettingsPage() {
         </Card>
 
         {/* Export Defaults */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Download className="h-5 w-5" />
+        <Card className="border-border/50 shadow-xs">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
+              <Download className="h-4 w-4" />
               Export Defaults
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-xs">
               Default settings for exports
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
+          <CardContent className="space-y-3">
+            <div className="flex items-center justify-between gap-3">
               <div className="space-y-0.5">
-                <Label>Include parent context by default</Label>
+                <Label className="text-sm">Include parent context by default</Label>
                 <p className="text-xs text-muted-foreground">
                   Include linked problems/hypotheses in incremental exports
                 </p>
@@ -202,43 +209,43 @@ export default function SettingsPage() {
         </Card>
 
         {/* Danger Zone */}
-        <Card className="border-destructive/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-destructive">
-              <Trash2 className="h-5 w-5" />
+        <Card className="border-destructive/30 shadow-xs">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium text-destructive">
+              <Trash2 className="h-4 w-4" />
               Danger Zone
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-xs">
               Irreversible actions
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
+          <CardContent className="space-y-3">
+            <div className="flex items-center justify-between gap-3">
               <div className="space-y-0.5">
-                <Label>Delete this product</Label>
+                <Label className="text-sm">Delete this product</Label>
                 <p className="text-xs text-muted-foreground">
                   Permanently delete all data for "{product.name}"
                 </p>
               </div>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" size="sm">
+                  <Button variant="destructive" size="sm" className="h-8 text-xs">
                     Delete Product
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete "{product.name}"?</AlertDialogTitle>
-                    <AlertDialogDescription>
+                    <AlertDialogTitle className="text-base">Delete "{product.name}"?</AlertDialogTitle>
+                    <AlertDialogDescription className="text-sm">
                       This will permanently delete all problems, hypotheses, experiments,
                       decisions, artifacts, and captures. This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogFooter className="gap-2 sm:gap-0">
+                    <AlertDialogCancel className="h-9 text-sm">Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleDeleteProduct}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      className="h-9 bg-destructive text-sm text-destructive-foreground hover:bg-destructive/90"
                     >
                       Delete Forever
                     </AlertDialogAction>

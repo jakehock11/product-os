@@ -54,32 +54,33 @@ export function CreateProductModal({ open, onOpenChange }: CreateProductModalPro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-            <Layers className="h-6 w-6 text-primary" />
+          <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+            <Layers className="h-5 w-5 text-primary" />
           </div>
-          <DialogTitle>Create a new product</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-base font-semibold">Create a new product</DialogTitle>
+          <DialogDescription className="text-sm">
             A product is a workspace for capturing and connecting your product thinking.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Product name</Label>
+            <Label htmlFor="name" className="text-sm">Product name</Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., SidelineHD, MLBU"
+              className="h-9"
               autoFocus
             />
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={!name.trim() || createProduct.isPending}>
+            <Button type="submit" size="sm" disabled={!name.trim() || createProduct.isPending}>
               {createProduct.isPending ? "Creating..." : "Create"}
             </Button>
           </div>

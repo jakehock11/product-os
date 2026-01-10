@@ -61,8 +61,8 @@ export function QuickCaptureModal({ open, onOpenChange }: QuickCaptureModalProps
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-primary" />
+          <DialogTitle className="flex items-center gap-2 text-base font-semibold">
+            <Zap className="h-4 w-4 text-primary" />
             Quick Capture
           </DialogTitle>
         </DialogHeader>
@@ -73,7 +73,7 @@ export function QuickCaptureModal({ open, onOpenChange }: QuickCaptureModalProps
             onChange={(e) => setContent(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Capture a thought, observation, or idea..."
-            className="min-h-[150px] resize-none"
+            className="min-h-[150px] resize-none text-sm"
             autoFocus
           />
 
@@ -82,10 +82,11 @@ export function QuickCaptureModal({ open, onOpenChange }: QuickCaptureModalProps
               Press ⌘+Enter to save
             </p>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
+              <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
               <Button
+                size="sm"
                 onClick={handleSubmit}
                 disabled={!content.trim() || createEntity.isPending}
               >

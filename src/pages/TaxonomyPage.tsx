@@ -160,32 +160,36 @@ export default function TaxonomyPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
-        <Skeleton className="mb-8 h-10 w-48" />
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Skeleton className="h-48" />
-          <Skeleton className="h-48" />
+      <div className="page-container">
+        <Skeleton className="mb-6 h-8 w-48" />
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Skeleton className="h-48 rounded-lg" />
+          <Skeleton className="h-48 rounded-lg" />
         </div>
       </div>
     );
   }
 
   if (!product) {
-    return <div className="p-8">Product not found</div>;
+    return (
+      <div className="page-container flex items-center justify-center py-16">
+        <p className="text-sm text-muted-foreground">Product not found</p>
+      </div>
+    );
   }
 
   const { taxonomy } = product;
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">Manage Context</h1>
-        <p className="text-muted-foreground">
+    <div className="page-container scrollbar-thin">
+      <div className="page-header">
+        <h1 className="text-lg font-semibold text-foreground">Manage Context</h1>
+        <p className="text-sm text-muted-foreground">
           Define personas, feature areas, and custom dimensions for tagging
         </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         {/* Personas */}
         <TaxonomyCard
           title="Personas"
@@ -245,47 +249,49 @@ export default function TaxonomyPage() {
         ))}
 
         {/* Add Dimension */}
-        <Card className="flex cursor-pointer items-center justify-center border-dashed hover:border-primary/50 hover:bg-muted/50"
+        <Card 
+          className="flex cursor-pointer items-center justify-center border-dashed border-border/50 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30 hover:shadow-sm"
           onClick={() => {
             setEditingItem({ type: "dimension", isNew: true });
             setItemName("");
           }}
         >
-          <CardContent className="flex flex-col items-center py-8 text-muted-foreground">
-            <Plus className="mb-2 h-8 w-8" />
-            <p className="font-medium">Add Custom Dimension</p>
-            <p className="text-sm">e.g., Sport, Platform, Market</p>
+          <CardContent className="flex flex-col items-center py-10 text-muted-foreground">
+            <Plus className="mb-2 h-6 w-6" />
+            <p className="text-sm font-medium">Add Custom Dimension</p>
+            <p className="text-xs">e.g., Sport, Platform, Market</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Edit Modal */}
       <Dialog open={!!editingItem} onOpenChange={(open) => !open && setEditingItem(null)}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-base font-semibold">
               {editingItem?.isNew ? "Add" : "Edit"}{" "}
               {editingItem?.type === "dimensionValue" ? "Value" : 
                editingItem?.type === "featureArea" ? "Feature Area" :
                editingItem?.type?.charAt(0).toUpperCase() + editingItem?.type?.slice(1)}
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label>Name</Label>
+              <Label className="text-sm">Name</Label>
               <Input
                 value={itemName}
                 onChange={(e) => setItemName(e.target.value)}
                 placeholder="Enter name..."
+                className="h-9"
                 autoFocus
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditingItem(null)}>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" size="sm" onClick={() => setEditingItem(null)}>
               Cancel
             </Button>
-            <Button onClick={handleSaveItem} disabled={!itemName.trim()}>
+            <Button size="sm" onClick={handleSaveItem} disabled={!itemName.trim()}>
               Save
             </Button>
           </DialogFooter>
@@ -310,22 +316,22 @@ function TaxonomyCard({ title, description, items, onAdd, onEdit, onArchive, onR
   const archivedItems = items.filter((i) => i.isArchived);
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+    <Card className="border-border/50 shadow-xs">
+      <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
-          <CardTitle className="text-base">{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          <CardDescription className="text-xs">{description}</CardDescription>
         </div>
-        <Button size="sm" variant="outline" onClick={onAdd}>
-          <Plus className="mr-1 h-4 w-4" />
+        <Button size="sm" variant="outline" className="h-7 gap-1 px-2 text-xs" onClick={onAdd}>
+          <Plus className="h-3.5 w-3.5" />
           Add
         </Button>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-0">
         {activeItems.length === 0 && archivedItems.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No items yet.</p>
+          <p className="py-4 text-center text-xs text-muted-foreground">No items yet.</p>
         ) : (
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {activeItems.map((item) => (
               <TaxonomyItemRow
                 key={item.id}
@@ -335,8 +341,8 @@ function TaxonomyCard({ title, description, items, onAdd, onEdit, onArchive, onR
               />
             ))}
             {archivedItems.length > 0 && (
-              <div className="mt-4 border-t pt-4">
-                <p className="mb-2 text-xs font-medium text-muted-foreground">Archived</p>
+              <div className="mt-3 border-t border-border/50 pt-3">
+                <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Archived</p>
                 {archivedItems.map((item) => (
                   <TaxonomyItemRow
                     key={item.id}
@@ -381,14 +387,14 @@ function DimensionCard({
 
   if (dimension.isArchived) {
     return (
-      <Card className="opacity-60">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <Card className="border-border/50 opacity-60 shadow-xs">
+        <CardHeader className="flex flex-row items-center justify-between pb-3">
           <div>
-            <CardTitle className="text-base">{dimension.name}</CardTitle>
-            <Badge variant="secondary" className="mt-1">Archived</Badge>
+            <CardTitle className="text-sm font-medium">{dimension.name}</CardTitle>
+            <Badge variant="secondary" className="mt-1.5 h-5 text-[10px]">Archived</Badge>
           </div>
-          <Button size="sm" variant="ghost" onClick={onRestoreDimension}>
-            <RotateCcw className="h-4 w-4" />
+          <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onRestoreDimension}>
+            <RotateCcw className="h-3.5 w-3.5" />
           </Button>
         </CardHeader>
       </Card>
@@ -396,29 +402,29 @@ function DimensionCard({
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-base">{dimension.name}</CardTitle>
+    <Card className="border-border/50 shadow-xs">
+      <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <div className="flex items-center gap-1.5">
+          <CardTitle className="text-sm font-medium">{dimension.name}</CardTitle>
           <Button size="icon" variant="ghost" className="h-6 w-6" onClick={onEditDimension}>
             <Pencil className="h-3 w-3" />
           </Button>
         </div>
         <div className="flex items-center gap-1">
-          <Button size="sm" variant="outline" onClick={onAddValue}>
-            <Plus className="mr-1 h-4 w-4" />
+          <Button size="sm" variant="outline" className="h-7 gap-1 px-2 text-xs" onClick={onAddValue}>
+            <Plus className="h-3.5 w-3.5" />
             Add Value
           </Button>
-          <Button size="icon" variant="ghost" onClick={onArchiveDimension}>
-            <Archive className="h-4 w-4" />
+          <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onArchiveDimension}>
+            <Archive className="h-3.5 w-3.5" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-0">
         {activeValues.length === 0 && archivedValues.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No values yet.</p>
+          <p className="py-4 text-center text-xs text-muted-foreground">No values yet.</p>
         ) : (
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {activeValues.map((item) => (
               <TaxonomyItemRow
                 key={item.id}
@@ -428,8 +434,8 @@ function DimensionCard({
               />
             ))}
             {archivedValues.length > 0 && (
-              <div className="mt-4 border-t pt-4">
-                <p className="mb-2 text-xs font-medium text-muted-foreground">Archived</p>
+              <div className="mt-3 border-t border-border/50 pt-3">
+                <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Archived</p>
                 {archivedValues.map((item) => (
                   <TaxonomyItemRow
                     key={item.id}
@@ -458,18 +464,18 @@ interface TaxonomyItemRowProps {
 
 function TaxonomyItemRow({ item, isArchived, onEdit, onArchive, onRestore }: TaxonomyItemRowProps) {
   return (
-    <div className="group flex items-center justify-between rounded-md px-2 py-1.5 hover:bg-muted">
-      <span className={isArchived ? "text-muted-foreground" : ""}>{item.name}</span>
-      <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-        <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onEdit}>
+    <div className="group flex items-center justify-between rounded-md px-2 py-1.5 transition-colors hover:bg-muted/50">
+      <span className={`text-sm ${isArchived ? "text-muted-foreground" : ""}`}>{item.name}</span>
+      <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={onEdit}>
           <Pencil className="h-3 w-3" />
         </Button>
         {isArchived ? (
-          <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onRestore}>
+          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={onRestore}>
             <RotateCcw className="h-3 w-3" />
           </Button>
         ) : (
-          <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onArchive}>
+          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={onArchive}>
             <Archive className="h-3 w-3" />
           </Button>
         )}

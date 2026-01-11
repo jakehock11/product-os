@@ -1,7 +1,10 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import electron from "vite-plugin-electron";
+import renderer from "vite-plugin-electron-renderer";
 import { componentTagger } from "lovable-tagger";
+import copy from "rollup-plugin-copy";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -9,10 +12,55 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [
+    react(),
+    mode === "development" && componentTagger(),
+    electron([
+      {
+        // Main process entry
+        entry: "electron/main.ts",
+        vite: {
+          build: {
+            outDir: "dist-electron",
+            rollupOptions: {
+              external: ["better-sqlite3"],
+              plugins: [
+                copy({
+                  targets: [
+                    { src: "electron/database/schema.sql", dest: "dist-electron" },
+                  ],
+                  hook: "writeBundle",
+                }),
+              ],
+            },
+          },
+        },
+      },
+      {
+        // Preload script entry
+        entry: "electron/preload.ts",
+        onstart(args) {
+          // Notify the renderer process when preload scripts have been rebuilt
+          args.reload();
+        },
+        vite: {
+          build: {
+            outDir: "dist-electron",
+            rollupOptions: {
+              external: ["better-sqlite3"],
+            },
+          },
+        },
+      },
+    ]),
+    renderer(),
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  build: {
+    outDir: "dist",
   },
 }));

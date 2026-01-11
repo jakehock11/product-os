@@ -4,6 +4,7 @@ import { registerTaxonomyHandlers } from './taxonomy';
 import { registerEntityHandlers } from './entities';
 import { registerRelationshipHandlers } from './relationships';
 import { registerExportHandlers } from './exports';
+import { registerSettingsHandlers } from './settings';
 
 // Register all IPC handlers
 export function registerAllHandlers(): void {
@@ -13,7 +14,5 @@ export function registerAllHandlers(): void {
   registerEntityHandlers();
   registerRelationshipHandlers();
   registerExportHandlers();
-
-  // Future handlers will be registered here:
-  // registerSettingsHandlers();
+  registerSettingsHandlers();
 }

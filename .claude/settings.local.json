@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run electron:dev:*)",
+      "Bash(npx electron-rebuild:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nPhase 0: Electron + SQLite scaffold\n\nAdd Electron to the Vite + React project with SQLite database support\nand workspace folder selection.\n\n- Add Electron, electron-builder, better-sqlite3, vite-plugin-electron\n- Create electron/main.ts with BrowserWindow and app lifecycle\n- Create electron/preload.ts with IPC bridge \\(contextBridge\\)\n- Create electron/database/db.ts for SQLite initialization\n- Create electron/workspace/manager.ts for workspace folder selection\n- Create electron/ipc/ handlers for workspace operations\n- Configure vite.config.ts for Electron builds\n- Add postinstall script for native module rebuilding\n- Database uses dual-location: userData default or user-selected workspace\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(npx tsc:*)",
+      "Bash(timeout /t 15)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nPhase 1: Core Data Layer\n\n- Products CRUD \\(electron/database/queries/products.ts\\)\n- Taxonomy CRUD: personas, features, dimensions, dimension values\n- Entities CRUD with junction tables for context tags\n- Relationships CRUD with bidirectional queries\n- Markdown file generation with YAML frontmatter\n- IPC handlers and preload API for all operations\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nPhase 2: Wire up React UI to IPC backend\n\nConnect all React pages and components to the Electron IPC layer:\n- Add IPC client wrapper and shared TypeScript types\n- Create hooks for entities, products, taxonomy, and relationships\n- Update all entity list pages to use real data fetching\n- Update all entity detail pages with CRUD operations\n- Add Quick Capture with global Cmd/Ctrl+N shortcut\n- Add capture promotion to other entity types\n- Create dedicated Captures list page\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout:*)"
+    ]
+  }
+}

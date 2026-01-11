@@ -19,6 +19,8 @@ import type {
   ExportPreview,
   ExportResult,
   ExportRecord,
+  Settings,
+  UpdateSettingsData,
   IPCResult,
   WorkspaceSelectResult,
   WorkspacePathResult,
@@ -304,6 +306,39 @@ export const api = {
       return unwrap(result);
     },
   },
+
+  // Settings operations
+  settings: {
+    get: async (): Promise<Settings> => {
+      const result = await window.api.settings.get() as IPCResult<Settings>;
+      return unwrap(result);
+    },
+
+    update: async (data: UpdateSettingsData): Promise<Settings> => {
+      const result = await window.api.settings.update(data) as IPCResult<Settings>;
+      return unwrap(result);
+    },
+
+    changeWorkspace: async (): Promise<Settings | null> => {
+      const result = await window.api.settings.changeWorkspace() as IPCResult<Settings | null>;
+      return unwrap(result);
+    },
+
+    openWorkspaceFolder: async (): Promise<void> => {
+      const result = await window.api.settings.openWorkspaceFolder() as IPCResult;
+      unwrapVoid(result);
+    },
+
+    clearExportHistory: async (): Promise<void> => {
+      const result = await window.api.settings.clearExportHistory() as IPCResult;
+      unwrapVoid(result);
+    },
+
+    clearAllData: async (): Promise<void> => {
+      const result = await window.api.settings.clearAllData() as IPCResult;
+      unwrapVoid(result);
+    },
+  },
 };
 
 // ============================================
@@ -372,6 +407,14 @@ declare global {
         clearHistory: (productId?: string) => Promise<IPCResult>;
         openFolder: (folderPath: string) => Promise<IPCResult>;
         copySnapshot: (productId: string) => Promise<IPCResult<string>>;
+      };
+      settings: {
+        get: () => Promise<IPCResult<Settings>>;
+        update: (data: UpdateSettingsData) => Promise<IPCResult<Settings>>;
+        changeWorkspace: () => Promise<IPCResult<Settings | null>>;
+        openWorkspaceFolder: () => Promise<IPCResult>;
+        clearExportHistory: () => Promise<IPCResult>;
+        clearAllData: () => Promise<IPCResult>;
       };
     };
   }

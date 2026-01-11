@@ -7,6 +7,8 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { QuickCaptureProvider } from "@/contexts/QuickCaptureContext";
 import { AppShell } from "@/components/layout";
+import { CommandPalette } from "@/components/CommandPalette";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 import ProductsHome from "./pages/ProductsHome";
 import ProductHome from "./pages/ProductHome";
@@ -39,8 +41,10 @@ const App = () => (
         <BrowserRouter>
           <ProductProvider>
             <QuickCaptureProvider>
-              <Routes>
-              <Route element={<AppShell />}>
+              <CommandPalette />
+              <ErrorBoundary>
+                <Routes>
+                <Route element={<AppShell />}>
                 <Route path="/" element={<Navigate to="/products" replace />} />
                 <Route path="/products" element={<ProductsHome />} />
                 <Route path="/product/:productId/home" element={<ProductHome />} />
@@ -62,7 +66,8 @@ const App = () => (
                 <Route path="/product/:productId/captures" element={<CapturesPage />} />
               </Route>
               <Route path="*" element={<NotFound />} />
-              </Routes>
+                </Routes>
+              </ErrorBoundary>
             </QuickCaptureProvider>
           </ProductProvider>
         </BrowserRouter>

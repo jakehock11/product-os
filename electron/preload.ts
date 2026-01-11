@@ -220,6 +220,28 @@ interface CreateRelationshipData {
   productId: string;
 }
 
+// Settings types
+interface Settings {
+  id: number;
+  workspacePath: string | null;
+  lastProductId: string | null;
+  restoreLastContext: boolean;
+  defaultExportMode: 'full' | 'incremental';
+  defaultIncrementalRange: 'since_last_export' | 'last_7_days' | 'last_30_days' | 'custom';
+  includeLinkedContext: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface UpdateSettingsData {
+  workspacePath?: string | null;
+  lastProductId?: string | null;
+  restoreLastContext?: boolean;
+  defaultExportMode?: 'full' | 'incremental';
+  defaultIncrementalRange?: string;
+  includeLinkedContext?: boolean;
+}
+
 // Expose protected methods to the renderer process
 const api = {
   // Test method to verify IPC is working
@@ -346,8 +368,21 @@ const api = {
       ipcRenderer.invoke('exports:copySnapshot', productId) as Promise<IPCResult<string>>,
   },
 
-  // Placeholders for future namespaces (will be implemented in later phases)
-  // settings: { ... },
+  // Settings namespace
+  settings: {
+    get: () =>
+      ipcRenderer.invoke('settings:get') as Promise<IPCResult<Settings>>,
+    update: (data: UpdateSettingsData) =>
+      ipcRenderer.invoke('settings:update', data) as Promise<IPCResult<Settings>>,
+    changeWorkspace: () =>
+      ipcRenderer.invoke('settings:changeWorkspace') as Promise<IPCResult<Settings | null>>,
+    openWorkspaceFolder: () =>
+      ipcRenderer.invoke('settings:openWorkspaceFolder') as Promise<IPCResult>,
+    clearExportHistory: () =>
+      ipcRenderer.invoke('settings:clearExportHistory') as Promise<IPCResult>,
+    clearAllData: () =>
+      ipcRenderer.invoke('settings:clearAllData') as Promise<IPCResult>,
+  },
 };
 
 // Expose the API to the renderer process

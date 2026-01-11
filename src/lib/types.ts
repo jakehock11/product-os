@@ -153,6 +153,16 @@ export interface EntityFilters {
 // Relationships
 // ============================================
 
+export type RelationshipType = 'supports' | 'tests' | 'informs' | 'evidence' | 'relates_to';
+
+export const RELATIONSHIP_TYPES: { value: RelationshipType; label: string }[] = [
+  { value: 'relates_to', label: 'Relates to' },
+  { value: 'supports', label: 'Supports' },
+  { value: 'tests', label: 'Tests' },
+  { value: 'informs', label: 'Informs' },
+  { value: 'evidence', label: 'Evidence for' },
+];
+
 export interface Relationship {
   id: string;
   productId: string;

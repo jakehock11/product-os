@@ -15,8 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { formatDistanceToNow } from "date-fns";
-import type { Entity, EntityType } from "@/lib/db";
+import { formatDistanceToNow, isToday, isYesterday, isThisWeek, isThisMonth, format } from "date-fns";
+import type { Entity, EntityType } from "@/lib/types";
 
 const TYPE_CONFIG: Record<EntityType, { icon: React.ElementType; label: string; color: string }> = {
   problem: { icon: AlertCircle, label: "Problem", color: "text-red-500" },
@@ -24,8 +24,17 @@ const TYPE_CONFIG: Record<EntityType, { icon: React.ElementType; label: string; 
   experiment: { icon: FlaskConical, label: "Experiment", color: "text-blue-500" },
   decision: { icon: CheckCircle, label: "Decision", color: "text-green-500" },
   artifact: { icon: Paperclip, label: "Artifact", color: "text-purple-500" },
-  quick_capture: { icon: Zap, label: "Capture", color: "text-orange-500" },
+  capture: { icon: Zap, label: "Capture", color: "text-orange-500" },
 };
+
+// Helper to group items by date category
+function getDateGroup(date: Date): string {
+  if (isToday(date)) return "Today";
+  if (isYesterday(date)) return "Yesterday";
+  if (isThisWeek(date)) return "This Week";
+  if (isThisMonth(date)) return "This Month";
+  return format(date, "MMMM yyyy");
+}
 
 export default function TimelinePage() {
   const { productId } = useParams<{ productId: string }>();
@@ -58,16 +67,28 @@ export default function TimelinePage() {
       experiment: "experiments",
       decision: "decisions",
       artifact: "artifacts",
-      quick_capture: "quick-captures",
+      capture: "captures",
     };
     return `/product/${productId}/${typeToPath[entity.type]}/${entity.id}`;
   };
 
-  const getEntityStatus = (entity: Entity): string | undefined => {
-    if (entity.type === "problem") return (entity as any).status;
-    if (entity.type === "experiment") return (entity as any).status;
-    return undefined;
-  };
+  // Group timeline items by date
+  const groupedItems = useMemo(() => {
+    const groups: { label: string; items: Entity[] }[] = [];
+    let currentGroup: string | null = null;
+
+    for (const item of timelineItems) {
+      const group = getDateGroup(new Date(item.updatedAt));
+      if (group !== currentGroup) {
+        groups.push({ label: group, items: [item] });
+        currentGroup = group;
+      } else {
+        groups[groups.length - 1].items.push(item);
+      }
+    }
+
+    return groups;
+  }, [timelineItems]);
 
   if (isLoading) {
     return (
@@ -131,40 +152,46 @@ export default function TimelinePage() {
           </p>
         </div>
       ) : (
-        <div className="content-max-width space-y-1.5 scrollbar-thin">
-          {timelineItems.map((item) => {
-            const config = TYPE_CONFIG[item.type];
-            const Icon = config.icon;
-            const status = getEntityStatus(item);
+        <div className="content-max-width space-y-6 scrollbar-thin">
+          {groupedItems.map((group) => (
+            <div key={group.label} className="space-y-1.5">
+              <h2 className="sticky top-0 bg-background py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {group.label}
+              </h2>
+              {group.items.map((item) => {
+                const config = TYPE_CONFIG[item.type];
+                const Icon = config.icon;
 
-            return (
-              <Link
-                key={item.id}
-                to={getEntityLink(item)}
-                className="flex items-center gap-3 rounded-lg border border-border/50 bg-card p-3 shadow-xs transition-all hover:border-border hover:bg-muted/50 hover:shadow-sm"
-              >
-                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md bg-muted">
-                  <Icon className={`h-4 w-4 ${config.color}`} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5">
-                    <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-medium">
-                      {config.label}
-                    </Badge>
-                    {status && (
-                      <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-medium capitalize">
-                        {status}
-                      </Badge>
-                    )}
-                  </div>
-                  <h3 className="mt-1 truncate text-sm font-medium">{item.title}</h3>
-                </div>
-                <span className="flex-shrink-0 text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(item.updatedAt), { addSuffix: true })}
-                </span>
-              </Link>
-            );
-          })}
+                return (
+                  <Link
+                    key={item.id}
+                    to={getEntityLink(item)}
+                    className="flex items-center gap-3 rounded-lg border border-border/50 bg-card p-3 shadow-xs transition-all hover:border-border hover:bg-muted/50 hover:shadow-sm"
+                  >
+                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md bg-muted">
+                      <Icon className={`h-4 w-4 ${config.color}`} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-medium">
+                          {config.label}
+                        </Badge>
+                        {item.status && (
+                          <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-medium capitalize">
+                            {item.status}
+                          </Badge>
+                        )}
+                      </div>
+                      <h3 className="mt-1 truncate text-sm font-medium">{item.title}</h3>
+                    </div>
+                    <span className="flex-shrink-0 text-xs text-muted-foreground">
+                      {formatDistanceToNow(new Date(item.updatedAt), { addSuffix: true })}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </div>
       )}
     </div>

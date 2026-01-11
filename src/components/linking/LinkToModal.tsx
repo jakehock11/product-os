@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Search, AlertCircle, Lightbulb, FlaskConical, CheckCircle, Paperclip, Zap } from "lucide-react";
+import { Search, AlertCircle, Lightbulb, FlaskConical, CheckCircle, Paperclip, Zap, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,10 +10,18 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useEntities } from "@/hooks/useEntities";
-import { useRelationships, useCreateRelationship } from "@/hooks/useRelationships";
+import { useRelationships, useRelationshipsGrouped, useCreateRelationship, useDeleteRelationship } from "@/hooks/useRelationships";
 import { formatDistanceToNow } from "date-fns";
-import type { Entity, EntityType, RelationshipWithEntity } from "@/lib/types";
+import type { Entity, EntityType, RelationshipType } from "@/lib/types";
+import { RELATIONSHIP_TYPES } from "@/lib/types";
 
 const TYPE_CONFIG: Record<EntityType, { icon: React.ElementType; label: string }> = {
   problem: { icon: AlertCircle, label: "Problem" },
@@ -24,7 +32,7 @@ const TYPE_CONFIG: Record<EntityType, { icon: React.ElementType; label: string }
   capture: { icon: Zap, label: "Capture" },
 };
 
-interface LinkToModalProps {
+export interface LinkToModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   productId: string;
@@ -41,6 +49,7 @@ export function LinkToModal({
 }: LinkToModalProps) {
   const [search, setSearch] = useState("");
   const [typeFilters, setTypeFilters] = useState<EntityType[]>([]);
+  const [relationshipType, setRelationshipType] = useState<RelationshipType>("relates_to");
   const { data: entities } = useEntities(productId);
   const { data: relationships } = useRelationships(currentEntityId);
   const createRelationship = useCreateRelationship();
@@ -87,9 +96,11 @@ export function LinkToModal({
       await createRelationship.mutateAsync({
         sourceId: currentEntityId,
         targetId: entity.id,
+        relationshipType,
         productId,
       });
       setSearch("");
+      setRelationshipType("relates_to");
       onLinked?.();
       onOpenChange(false);
     } catch {
@@ -115,6 +126,23 @@ export function LinkToModal({
               className="pl-9"
               autoFocus
             />
+          </div>
+
+          {/* Relationship Type Selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground whitespace-nowrap">Link as:</span>
+            <Select value={relationshipType} onValueChange={(v) => setRelationshipType(v as RelationshipType)}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {RELATIONSHIP_TYPES.map((rt) => (
+                  <SelectItem key={rt.value} value={rt.value}>
+                    {rt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Type Filters */}
@@ -164,7 +192,14 @@ export function LinkToModal({
                         <Icon className="h-4 w-4 text-muted-foreground" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{entity.title}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-sm font-medium">{entity.title}</p>
+                          {entity.status && (
+                            <Badge variant="secondary" className="text-xs capitalize flex-shrink-0">
+                              {entity.status}
+                            </Badge>
+                          )}
+                        </div>
                         <p className="text-xs text-muted-foreground">
                           {config.label} · {formatDistanceToNow(new Date(entity.updatedAt), { addSuffix: true })}
                         </p>
@@ -188,44 +223,102 @@ interface LinkedItemsProps {
 }
 
 export function LinkedItems({ entityId, onOpenLink }: LinkedItemsProps) {
-  const { data: relationships, isLoading } = useRelationships(entityId);
+  const { data: grouped, isLoading } = useRelationshipsGrouped(entityId);
+  const deleteRelationship = useDeleteRelationship();
+
+  const handleUnlink = async (
+    e: React.MouseEvent,
+    relationshipId: string,
+    sourceId: string,
+    targetId: string
+  ) => {
+    e.stopPropagation();
+    try {
+      await deleteRelationship.mutateAsync({
+        id: relationshipId,
+        sourceEntityId: sourceId,
+        targetEntityId: targetId,
+      });
+    } catch {
+      // Error handled by mutation
+    }
+  };
 
   if (isLoading) {
     return <p className="text-sm text-muted-foreground">Loading...</p>;
   }
 
-  if (!relationships || relationships.length === 0) {
+  if (!grouped || (grouped.outgoing.length === 0 && grouped.incoming.length === 0)) {
     return (
       <p className="text-sm text-muted-foreground">No linked items yet.</p>
     );
   }
 
-  return (
-    <div className="flex flex-wrap gap-2">
-      {relationships.map((rel) => {
-        const entity = rel.linkedEntity;
-        const config = TYPE_CONFIG[entity.type];
-        const Icon = config.icon;
+  const renderRelationship = (rel: typeof grouped.outgoing[0]) => {
+    const entity = rel.linkedEntity;
+    const config = TYPE_CONFIG[entity.type];
+    const Icon = config.icon;
 
-        return (
-          <button
-            key={rel.id}
-            onClick={() => onOpenLink(entity.id, entity.type)}
-            className="group flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm transition-colors hover:bg-muted"
-          >
-            <Icon className="h-4 w-4 text-muted-foreground" />
-            <span className="max-w-[150px] truncate">{entity.title}</span>
-            {entity.status && (
-              <Badge variant="secondary" className="text-xs capitalize">
-                {entity.status}
-              </Badge>
-            )}
-            <Badge variant="outline" className="text-xs">
-              {rel.direction === 'incoming' ? '←' : '→'}
+    const relTypeLabel = rel.relationshipType
+      ? RELATIONSHIP_TYPES.find(rt => rt.value === rel.relationshipType)?.label || rel.relationshipType
+      : null;
+
+    return (
+      <div
+        key={rel.id}
+        className="group flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm transition-colors hover:bg-muted"
+      >
+        <button
+          onClick={() => onOpenLink(entity.id, entity.type)}
+          className="flex items-center gap-2 min-w-0 flex-1"
+        >
+          <Icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          <span className="truncate">{entity.title}</span>
+          {entity.status && (
+            <Badge variant="secondary" className="text-xs capitalize flex-shrink-0">
+              {entity.status}
             </Badge>
-          </button>
-        );
-      })}
+          )}
+          {relTypeLabel && (
+            <Badge variant="outline" className="text-xs flex-shrink-0">
+              {relTypeLabel}
+            </Badge>
+          )}
+        </button>
+        <button
+          onClick={(e) => handleUnlink(e, rel.id, rel.sourceId, rel.targetId)}
+          disabled={deleteRelationship.isPending}
+          className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-destructive/10 hover:text-destructive transition-all disabled:opacity-50"
+          title="Unlink"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    );
+  };
+
+  return (
+    <div className="space-y-4">
+      {grouped.outgoing.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Links to ({grouped.outgoing.length})
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {grouped.outgoing.map(renderRelationship)}
+          </div>
+        </div>
+      )}
+      {grouped.incoming.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Linked from ({grouped.incoming.length})
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {grouped.incoming.map(renderRelationship)}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

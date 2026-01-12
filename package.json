@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "electron:dev": "vite",
-    "electron:build": "vite build && electron-builder",
+    "electron:build": "vite build && electron-builder && node scripts/post-build.mjs",
     "electron:preview": "vite build && cross-env NODE_ENV=production electron .",
     "postinstall": "electron-rebuild -f -w better-sqlite3",
     "rebuild": "electron-rebuild -f -w better-sqlite3"
@@ -92,7 +92,9 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
     "lovable-tagger": "^1.1.13",
+    "png-to-ico": "^3.0.1",
     "postcss": "^8.5.6",
+    "rcedit": "^5.0.2",
     "rollup-plugin-copy": "^3.5.0",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
@@ -109,20 +111,28 @@
     },
     "files": [
       "dist/**/*",
-      "dist-electron/**/*",
-      "build/**/*"
+      "dist-electron/**/*"
     ],
     "mac": {
       "target": "dmg"
     },
     "win": {
       "target": "nsis",
-      "signAndEditExecutable": false,
-      "icon": "build/icon.ico"
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": false
     },
     "linux": {
       "target": "AppImage"
     },
-    "icon": "build/icon"
+    "icon": "build/icon",
+    "extraResources": [
+      {
+        "from": "build",
+        "to": "build",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
   }
 }

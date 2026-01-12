@@ -24,6 +24,19 @@ ipcMain.handle('db:test', () => {
   }
 });
 
+function getIconPath(): string {
+  // Use ICO for Windows, PNG for other platforms
+  const iconFile = process.platform === 'win32' ? 'icon.ico' : 'icon.png';
+
+  if (app.isPackaged) {
+    // In packaged app, icons are in resources/build/
+    return path.join(process.resourcesPath, 'build', iconFile);
+  } else {
+    // In development, icons are in build/
+    return path.join(__dirname, '..', 'build', iconFile);
+  }
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1400,
@@ -36,14 +49,14 @@ function createWindow() {
       nodeIntegration: false,
     },
     title: 'Product OS',
-    icon: path.join(__dirname, '../build/icon.png'),
+    icon: getIconPath(),
     titleBarStyle: 'hiddenInset',
     show: false, // Don't show until ready
   });
 
   // Determine environment at runtime (not module load time)
   const isDev = !app.isPackaged && process.env.NODE_ENV !== 'production';
-  
+
   console.log('Environment:', {
     isPackaged: app.isPackaged,
     NODE_ENV: process.env.NODE_ENV,
@@ -77,6 +90,11 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+}
+
+// Set Windows app user model ID for taskbar icon
+if (process.platform === 'win32') {
+  app.setAppUserModelId('com.productos.app');
 }
 
 // App lifecycle handlers

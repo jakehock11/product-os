@@ -109,17 +109,20 @@
     },
     "files": [
       "dist/**/*",
-      "dist-electron/**/*"
+      "dist-electron/**/*",
+      "build/**/*"
     ],
     "mac": {
       "target": "dmg"
     },
     "win": {
       "target": "nsis",
-      "signAndEditExecutable": false
+      "signAndEditExecutable": false,
+      "icon": "build/icon.ico"
     },
     "linux": {
       "target": "AppImage"
-    }
+    },
+    "icon": "build/icon"
   }
 }

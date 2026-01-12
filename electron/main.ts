@@ -35,6 +35,8 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
     },
+    title: 'Product OS',
+    icon: path.join(__dirname, '../build/icon.png'),
     titleBarStyle: 'hiddenInset',
     show: false, // Don't show until ready
   });

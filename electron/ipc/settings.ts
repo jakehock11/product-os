@@ -5,8 +5,9 @@ import {
   clearAllData,
   UpdateSettingsData,
 } from '../database/queries/settings';
-import { getWorkspacePath, selectWorkspaceFolder, initializeWorkspace } from '../workspace/manager';
+import { getWorkspacePath, selectWorkspaceFolder, initializeWorkspace, migrateWorkspace } from '../workspace/manager';
 import { clearExportHistory } from '../database/queries/exports';
+import { syncWorkspaceFiles } from '../workspace/sync';
 
 export function registerSettingsHandlers(): void {
   // Get current settings
@@ -74,6 +75,41 @@ export function registerSettingsHandlers(): void {
     try {
       clearAllData();
       return { success: true };
+    } catch (error) {
+      return { success: false, error: String(error) };
+    }
+  });
+
+  // Migrate workspace to a new location (copies data, keeps old as backup)
+  ipcMain.handle('settings:migrateWorkspace', async () => {
+    try {
+      // Open folder picker
+      const folderPath = await selectWorkspaceFolder();
+      if (!folderPath) {
+        return { success: true, data: null }; // User cancelled
+      }
+
+      // Perform migration
+      const result = await migrateWorkspace(folderPath);
+
+      if (!result.success) {
+        return { success: false, error: result.error };
+      }
+
+      // Sync workspace files to regenerate any missing markdown
+      syncWorkspaceFiles();
+
+      // Get updated settings
+      const settings = getSettings();
+
+      return {
+        success: true,
+        data: {
+          settings,
+          backupPath: result.backupPath,
+          newPath: result.newPath,
+        },
+      };
     } catch (error) {
       return { success: false, error: String(error) };
     }

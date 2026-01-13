@@ -8,6 +8,7 @@ import {
   useSettings,
   useUpdateSettings,
   useChangeWorkspace,
+  useMigrateWorkspace,
   useOpenWorkspaceFolder,
   useClearExportHistory,
   useClearAllData,
@@ -53,12 +54,14 @@ export default function SettingsPage() {
   const { data: settings, isLoading: settingsLoading } = useSettings();
   const updateSettings = useUpdateSettings();
   const changeWorkspace = useChangeWorkspace();
+  const migrateWorkspace = useMigrateWorkspace();
   const openWorkspaceFolder = useOpenWorkspaceFolder();
   const clearExportHistory = useClearExportHistory();
   const clearAllData = useClearAllData();
 
   const [name, setName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [backupPath, setBackupPath] = useState<string | null>(null);
 
   useEffect(() => {
     if (productId) setCurrentProduct(productId);
@@ -94,14 +97,18 @@ export default function SettingsPage() {
     }
   };
 
-  const handleChangeWorkspace = async () => {
+  const handleMigrateWorkspace = async () => {
     try {
-      const result = await changeWorkspace.mutateAsync();
+      const result = await migrateWorkspace.mutateAsync();
       if (result) {
-        toast({ title: "Workspace Changed", description: "Your workspace folder has been updated." });
+        setBackupPath(result.backupPath);
+        toast({
+          title: "Workspace Migrated",
+          description: `Data copied to new location. Old data preserved at: ${result.backupPath}`,
+        });
       }
     } catch {
-      toast({ title: "Error", description: "Failed to change workspace.", variant: "destructive" });
+      toast({ title: "Error", description: "Failed to migrate workspace.", variant: "destructive" });
     }
   };
 
@@ -239,13 +246,25 @@ export default function SettingsPage() {
                   variant="outline"
                   size="sm"
                   className="h-9 shrink-0"
-                  onClick={handleChangeWorkspace}
-                  disabled={changeWorkspace.isPending}
+                  onClick={handleMigrateWorkspace}
+                  disabled={migrateWorkspace.isPending}
                 >
-                  {changeWorkspace.isPending ? "..." : "Change"}
+                  {migrateWorkspace.isPending ? "Migrating..." : "Change Location"}
                 </Button>
               </div>
+              <p className="text-xs text-muted-foreground">
+                Changing location will copy all data to the new folder. Your old data is preserved as a backup.
+              </p>
             </div>
+
+            {backupPath && (
+              <div className="rounded-md border border-border/50 bg-muted/30 p-3 space-y-1">
+                <Label className="text-xs text-muted-foreground">Previous workspace (backup)</Label>
+                <code className="block text-xs font-mono truncate text-muted-foreground">
+                  {backupPath}
+                </code>
+              </div>
+            )}
 
             <div className="flex items-center justify-between gap-3">
               <div className="space-y-0.5">

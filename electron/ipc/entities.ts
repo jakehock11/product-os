@@ -1,4 +1,5 @@
-import { ipcMain } from 'electron';
+import { ipcMain, shell } from 'electron';
+import path from 'path';
 import {
   getEntities,
   getEntityById,
@@ -11,7 +12,7 @@ import {
   UpdateEntityData,
   EntityType,
 } from '../database/queries/entities';
-import { writeEntityMarkdown, deleteEntityMarkdown } from '../markdown/writer';
+import { writeEntityMarkdown, deleteEntityMarkdown, getMarkdownPath } from '../markdown/writer';
 import { getWorkspacePath } from '../workspace/manager';
 
 export function registerEntityHandlers(): void {
@@ -109,6 +110,57 @@ export function registerEntityHandlers(): void {
       }
 
       return { success: true, data: entity };
+    } catch (error) {
+      return { success: false, error: String(error) };
+    }
+  });
+
+  // Open entity's folder in file explorer
+  ipcMain.handle('entities:openFolder', (_, entityId: string) => {
+    try {
+      const entity = getEntityById(entityId);
+      if (!entity) {
+        return { success: false, error: 'Entity not found' };
+      }
+
+      const workspacePath = getWorkspacePath();
+      if (!workspacePath) {
+        return { success: false, error: 'No workspace configured' };
+      }
+
+      const markdownPath = getMarkdownPath(entity, workspacePath);
+      const folderPath = path.dirname(markdownPath);
+
+      shell.openPath(folderPath);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: String(error) };
+    }
+  });
+
+  // Get entity's file path (for display)
+  ipcMain.handle('entities:getFilePath', (_, entityId: string) => {
+    try {
+      const entity = getEntityById(entityId);
+      if (!entity) {
+        return { success: true, data: null };
+      }
+
+      const workspacePath = getWorkspacePath();
+      if (!workspacePath) {
+        return { success: true, data: null };
+      }
+
+      const markdownPath = getMarkdownPath(entity, workspacePath);
+      const relativePath = path.relative(workspacePath, markdownPath);
+
+      return {
+        success: true,
+        data: {
+          absolutePath: markdownPath,
+          relativePath: relativePath,
+        },
+      };
     } catch (error) {
       return { success: false, error: String(error) };
     }

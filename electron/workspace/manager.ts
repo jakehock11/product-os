@@ -113,7 +113,20 @@ export function isWorkspaceConfigured(): boolean {
 export function getWorkspaceDbPath(): string | null {
   const workspacePath = getWorkspacePath();
   if (!workspacePath) return null;
-  return path.join(workspacePath, WORKSPACE_STRUCTURE.data, DB_FILENAME);
+
+  // Check if this is a proper workspace (has data/ subdirectory)
+  // or if it's the default userData path (DB directly in folder)
+  const workspaceDbPath = path.join(workspacePath, WORKSPACE_STRUCTURE.data, DB_FILENAME);
+  const directDbPath = path.join(workspacePath, DB_FILENAME);
+
+  if (fs.existsSync(workspaceDbPath)) {
+    return workspaceDbPath;
+  } else if (fs.existsSync(directDbPath)) {
+    return directDbPath;
+  }
+
+  // Default to workspace structure path
+  return workspaceDbPath;
 }
 
 // Save workspace path to settings table
@@ -172,9 +185,24 @@ export function initializeWithWorkspace(): boolean {
   const savedPath = loadWorkspacePathFromFile();
 
   if (savedPath && fs.existsSync(savedPath)) {
-    const dbPath = path.join(savedPath, WORKSPACE_STRUCTURE.data, DB_FILENAME);
+    // Check if this is a proper workspace (has data/ subdirectory with DB)
+    // or if it's the default userData path (DB directly in the folder)
+    const workspaceDbPath = path.join(savedPath, WORKSPACE_STRUCTURE.data, DB_FILENAME);
+    const directDbPath = path.join(savedPath, DB_FILENAME);
 
-    // Initialize database at workspace location
+    let dbPath: string;
+    if (fs.existsSync(workspaceDbPath)) {
+      // Proper workspace with data/ subdirectory
+      dbPath = workspaceDbPath;
+    } else if (fs.existsSync(directDbPath)) {
+      // Default userData location (DB directly in folder)
+      dbPath = directDbPath;
+    } else {
+      // Saved path exists but no database found - use workspace structure
+      dbPath = workspaceDbPath;
+    }
+
+    // Initialize database at the determined location
     initializeDatabase(dbPath);
 
     // Ensure workspace path is saved in DB settings too
@@ -186,6 +214,12 @@ export function initializeWithWorkspace(): boolean {
   // No workspace configured - initialize with default userData path
   // This allows the app to work before workspace selection
   initializeDatabase();
+
+  // Save the default userData path so Settings page can show where data lives
+  const userDataPath = app.getPath('userData');
+  saveWorkspacePath(userDataPath);
+  saveWorkspacePathToFile(userDataPath);
+
   return false;
 }
 
@@ -195,5 +229,145 @@ export function openWorkspaceFolder(): void {
   if (workspacePath && fs.existsSync(workspacePath)) {
     const { shell } = require('electron');
     shell.openPath(workspacePath);
+  }
+}
+
+// Recursively copy directory contents
+function copyDirectorySync(src: string, dest: string): void {
+  // Create destination directory
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
+
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+
+    if (entry.isDirectory()) {
+      copyDirectorySync(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
+// Migrate workspace to a new location
+// Copies all data to new location, keeps old as backup
+export interface MigrationResult {
+  success: boolean;
+  newPath: string;
+  backupPath: string;
+  error?: string;
+}
+
+export async function migrateWorkspace(newFolderPath: string): Promise<MigrationResult> {
+  const currentPath = getWorkspacePath();
+
+  if (!currentPath) {
+    return {
+      success: false,
+      newPath: newFolderPath,
+      backupPath: '',
+      error: 'No current workspace configured',
+    };
+  }
+
+  // Don't migrate to the same location
+  if (path.resolve(currentPath) === path.resolve(newFolderPath)) {
+    return {
+      success: false,
+      newPath: newFolderPath,
+      backupPath: currentPath,
+      error: 'New location is the same as current location',
+    };
+  }
+
+  try {
+    // Close the database before copying
+    if (isDatabaseInitialized()) {
+      closeDatabase();
+    }
+
+    // Create the new workspace directory
+    if (!fs.existsSync(newFolderPath)) {
+      fs.mkdirSync(newFolderPath, { recursive: true });
+    }
+
+    // Check if current path is userData (default) vs a proper workspace
+    const isUserData = currentPath === app.getPath('userData');
+    const hasDataDir = fs.existsSync(path.join(currentPath, 'data'));
+
+    if (isUserData || !hasDataDir) {
+      // Migrating from userData - just copy the database and create structure
+      const dbFile = path.join(currentPath, DB_FILENAME);
+      if (fs.existsSync(dbFile)) {
+        const newDataDir = path.join(newFolderPath, WORKSPACE_STRUCTURE.data);
+        fs.mkdirSync(newDataDir, { recursive: true });
+        fs.copyFileSync(dbFile, path.join(newDataDir, DB_FILENAME));
+      }
+    } else {
+      // Migrating from a proper workspace - copy everything
+      const itemsToCopy = ['data', 'products', 'exports', 'logs'];
+
+      for (const item of itemsToCopy) {
+        const srcPath = path.join(currentPath, item);
+        const destPath = path.join(newFolderPath, item);
+
+        if (fs.existsSync(srcPath)) {
+          copyDirectorySync(srcPath, destPath);
+        }
+      }
+    }
+
+    // Create any missing subdirectories
+    const productsDir = path.join(newFolderPath, WORKSPACE_STRUCTURE.products);
+    const exportsDir = path.join(newFolderPath, WORKSPACE_STRUCTURE.exports);
+    const runsDir = path.join(newFolderPath, WORKSPACE_STRUCTURE.exportsRuns);
+    const dataDir = path.join(newFolderPath, WORKSPACE_STRUCTURE.data);
+
+    for (const dir of [dataDir, productsDir, exportsDir, runsDir]) {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+    }
+
+    // Initialize database at new location
+    const newDbPath = path.join(newFolderPath, WORKSPACE_STRUCTURE.data, DB_FILENAME);
+    initializeDatabase(newDbPath);
+
+    // Update settings
+    saveWorkspacePath(newFolderPath);
+    saveWorkspacePathToFile(newFolderPath);
+
+    return {
+      success: true,
+      newPath: newFolderPath,
+      backupPath: currentPath,
+    };
+  } catch (error) {
+    // Try to recover by re-opening the old database
+    try {
+      const oldDbPath = path.join(currentPath, 'data', DB_FILENAME);
+      const directDbPath = path.join(currentPath, DB_FILENAME);
+
+      if (fs.existsSync(oldDbPath)) {
+        initializeDatabase(oldDbPath);
+      } else if (fs.existsSync(directDbPath)) {
+        initializeDatabase(directDbPath);
+      } else {
+        initializeDatabase();
+      }
+    } catch {
+      // Ignore recovery errors
+    }
+
+    return {
+      success: false,
+      newPath: newFolderPath,
+      backupPath: currentPath,
+      error: String(error),
+    };
   }
 }

@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { closeDatabase, getTables } from './database/db';
 import { initializeWithWorkspace } from './workspace/manager';
+import { syncWorkspaceFiles } from './workspace/sync';
 import { registerAllHandlers } from './ipc/handlers';
 
 // ESM-compatible __dirname
@@ -111,6 +112,9 @@ app.on('ready', () => {
     } else {
       console.log('Database initialized (no workspace configured yet)');
     }
+
+    // Sync workspace files (backfill missing folders/markdown)
+    syncWorkspaceFiles();
   } catch (error) {
     console.error('Failed to initialize database:', error);
   }

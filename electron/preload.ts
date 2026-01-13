@@ -274,6 +274,10 @@ const api = {
       ipcRenderer.invoke('products:update', id, data) as Promise<IPCResult<Product>>,
     delete: (id: string) =>
       ipcRenderer.invoke('products:delete', id) as Promise<IPCResult>,
+    openFolder: (productId: string) =>
+      ipcRenderer.invoke('products:openFolder', productId) as Promise<IPCResult>,
+    getFolderPath: (productId: string) =>
+      ipcRenderer.invoke('products:getFolderPath', productId) as Promise<IPCResult<string | null>>,
   },
 
   // Taxonomy namespace
@@ -336,6 +340,10 @@ const api = {
       ipcRenderer.invoke('entities:delete', id) as Promise<IPCResult>,
     promote: (captureId: string, targetType: EntityType) =>
       ipcRenderer.invoke('entities:promote', captureId, targetType) as Promise<IPCResult<Entity>>,
+    openFolder: (entityId: string) =>
+      ipcRenderer.invoke('entities:openFolder', entityId) as Promise<IPCResult>,
+    getFilePath: (entityId: string) =>
+      ipcRenderer.invoke('entities:getFilePath', entityId) as Promise<IPCResult<{ absolutePath: string; relativePath: string } | null>>,
   },
 
   // Relationships namespace
@@ -376,6 +384,8 @@ const api = {
       ipcRenderer.invoke('settings:update', data) as Promise<IPCResult<Settings>>,
     changeWorkspace: () =>
       ipcRenderer.invoke('settings:changeWorkspace') as Promise<IPCResult<Settings | null>>,
+    migrateWorkspace: () =>
+      ipcRenderer.invoke('settings:migrateWorkspace') as Promise<IPCResult<{ settings: Settings; backupPath: string; newPath: string } | null>>,
     openWorkspaceFolder: () =>
       ipcRenderer.invoke('settings:openWorkspaceFolder') as Promise<IPCResult>,
     clearExportHistory: () =>

@@ -35,6 +35,7 @@ import {
 import { RichTextEditor } from "@/components/editor";
 import { ContextTagsPicker } from "@/components/taxonomy";
 import { LinkToModal, LinkedItems } from "@/components/linking";
+import { FilePath } from "@/components/entity/FilePath";
 import { useToast } from "@/hooks/use-toast";
 import type { HypothesisStatus, EntityType } from "@/lib/types";
 
@@ -210,12 +211,15 @@ export default function HypothesisDetailPage() {
       <div className="flex-1 overflow-y-auto scrollbar-thin p-6">
         <div className="content-max-width space-y-5">
           {/* Title */}
-          <Input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Hypothesis title..."
-            className="border-none bg-transparent text-xl font-semibold tracking-tight shadow-none focus-visible:ring-0 px-0 h-auto py-1"
-          />
+          <div>
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Hypothesis title..."
+              className="border-none bg-transparent text-xl font-semibold tracking-tight shadow-none focus-visible:ring-0 px-0 h-auto py-1"
+            />
+            {id && <FilePath entityId={id} />}
+          </div>
 
           {/* Status & Confidence */}
           <div className="flex flex-wrap items-end gap-4">

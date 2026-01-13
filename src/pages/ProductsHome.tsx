@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Plus, Layers, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
-import { useProducts, useDeleteProduct, useUpdateProduct } from '@/hooks/useProducts';
+import { Plus, Layers, MoreHorizontal, Pencil, Trash2, FolderOpen } from 'lucide-react';
+import { useProducts, useDeleteProduct, useUpdateProduct, useOpenProductFolder } from '@/hooks/useProducts';
 import { useProductContext } from '@/contexts/ProductContext';
 import { Button } from '@/components/ui/button';
 import {
@@ -51,6 +51,7 @@ export default function ProductsHome() {
   const { enterProduct } = useProductContext();
   const deleteProduct = useDeleteProduct();
   const updateProduct = useUpdateProduct();
+  const openProductFolder = useOpenProductFolder();
   const { toast } = useToast();
 
   const [createOpen, setCreateOpen] = useState(false);
@@ -78,6 +79,19 @@ export default function ProductsHome() {
   const handleDeleteClick = (e: React.MouseEvent, productId: string) => {
     e.stopPropagation();
     setDeleteProductId(productId);
+  };
+
+  const handleOpenFolder = async (e: React.MouseEvent, productId: string) => {
+    e.stopPropagation();
+    try {
+      await openProductFolder.mutateAsync(productId);
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to open folder.',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleEditSubmit = async (e: React.FormEvent) => {
@@ -210,6 +224,10 @@ export default function ProductsHome() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={(e) => handleOpenFolder(e, product.id)}>
+                          <FolderOpen className="mr-2 h-4 w-4" />
+                          Open Folder
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={(e) => handleEditClick(e, product)}>
                           <Pencil className="mr-2 h-4 w-4" />
                           Edit

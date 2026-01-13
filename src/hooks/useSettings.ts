@@ -39,6 +39,23 @@ export function useChangeWorkspace() {
   });
 }
 
+// Migrate workspace to new location (copies data, keeps old as backup)
+export function useMigrateWorkspace() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => api.settings.migrateWorkspace(),
+    onSuccess: (result) => {
+      if (result?.settings) {
+        queryClient.setQueryData<Settings>(SETTINGS_KEY, result.settings);
+        // Invalidate all queries to refresh data from new location
+        queryClient.invalidateQueries({ queryKey: ['products'] });
+        queryClient.invalidateQueries({ queryKey: ['entities'] });
+      }
+    },
+  });
+}
+
 // Open workspace folder
 export function useOpenWorkspaceFolder() {
   return useMutation({

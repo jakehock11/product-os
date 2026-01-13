@@ -119,6 +119,16 @@ export const api = {
       const result = await window.api.products.delete(id) as IPCResult;
       unwrapVoid(result);
     },
+
+    openFolder: async (productId: string): Promise<void> => {
+      const result = await window.api.products.openFolder(productId) as IPCResult;
+      unwrapVoid(result);
+    },
+
+    getFolderPath: async (productId: string): Promise<string | null> => {
+      const result = await window.api.products.getFolderPath(productId) as IPCResult<string | null>;
+      return unwrap(result);
+    },
   },
 
   // Taxonomy operations
@@ -244,6 +254,16 @@ export const api = {
       const result = await window.api.entities.promote(captureId, targetType) as IPCResult<Entity>;
       return unwrap(result);
     },
+
+    openFolder: async (entityId: string): Promise<void> => {
+      const result = await window.api.entities.openFolder(entityId) as IPCResult;
+      unwrapVoid(result);
+    },
+
+    getFilePath: async (entityId: string): Promise<{ absolutePath: string; relativePath: string } | null> => {
+      const result = await window.api.entities.getFilePath(entityId) as IPCResult<{ absolutePath: string; relativePath: string } | null>;
+      return unwrap(result);
+    },
   },
 
   // Relationship operations
@@ -324,6 +344,11 @@ export const api = {
       return unwrap(result);
     },
 
+    migrateWorkspace: async (): Promise<{ settings: Settings; backupPath: string; newPath: string } | null> => {
+      const result = await window.api.settings.migrateWorkspace() as IPCResult<{ settings: Settings; backupPath: string; newPath: string } | null>;
+      return unwrap(result);
+    },
+
     openWorkspaceFolder: async (): Promise<void> => {
       const result = await window.api.settings.openWorkspaceFolder() as IPCResult;
       unwrapVoid(result);
@@ -365,6 +390,8 @@ declare global {
         create: (data: CreateProductData) => Promise<IPCResult<Product>>;
         update: (id: string, data: UpdateProductData) => Promise<IPCResult<Product>>;
         delete: (id: string) => Promise<IPCResult>;
+        openFolder: (productId: string) => Promise<IPCResult>;
+        getFolderPath: (productId: string) => Promise<IPCResult<string | null>>;
       };
       taxonomy: {
         getAll: (productId: string) => Promise<IPCResult<Taxonomy>>;
@@ -392,6 +419,8 @@ declare global {
         update: (id: string, data: UpdateEntityData) => Promise<IPCResult<Entity>>;
         delete: (id: string) => Promise<IPCResult>;
         promote: (captureId: string, targetType: EntityType) => Promise<IPCResult<Entity>>;
+        openFolder: (entityId: string) => Promise<IPCResult>;
+        getFilePath: (entityId: string) => Promise<IPCResult<{ absolutePath: string; relativePath: string } | null>>;
       };
       relationships: {
         getForEntity: (entityId: string) => Promise<IPCResult<RelationshipWithEntity[]>>;
@@ -412,6 +441,7 @@ declare global {
         get: () => Promise<IPCResult<Settings>>;
         update: (data: UpdateSettingsData) => Promise<IPCResult<Settings>>;
         changeWorkspace: () => Promise<IPCResult<Settings | null>>;
+        migrateWorkspace: () => Promise<IPCResult<{ settings: Settings; backupPath: string; newPath: string } | null>>;
         openWorkspaceFolder: () => Promise<IPCResult>;
         clearExportHistory: () => Promise<IPCResult>;
         clearAllData: () => Promise<IPCResult>;

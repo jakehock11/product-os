@@ -147,5 +147,21 @@ export function useEntitiesGroupedByType(productId: string | undefined) {
   return { data: grouped, entities, ...rest };
 }
 
+// Open entity's folder in file explorer
+export function useOpenEntityFolder() {
+  return useMutation({
+    mutationFn: (entityId: string) => api.entities.openFolder(entityId),
+  });
+}
+
+// Get entity file path (for display and copy)
+export function useEntityFilePath(entityId: string | undefined) {
+  return useQuery({
+    queryKey: ['entities', 'filePath', entityId],
+    queryFn: () => api.entities.getFilePath(entityId!),
+    enabled: !!entityId,
+  });
+}
+
 // Re-export types for convenience
 export type { Entity, EntityType, CreateEntityData, UpdateEntityData, EntityFilters };

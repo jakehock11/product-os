@@ -30,6 +30,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ContextTagsPicker } from "@/components/taxonomy";
+import { FilePath } from "@/components/entity/FilePath";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import type { EntityType } from "@/lib/types";
@@ -242,6 +243,8 @@ export default function QuickCaptureDetailPage() {
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-xs font-medium">Capture</Badge>
           </div>
+
+          {id && <FilePath entityId={id} />}
 
           <Textarea
             value={body}

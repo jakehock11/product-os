@@ -54,5 +54,21 @@ export function useDeleteProduct() {
   });
 }
 
+// Open product folder in file explorer
+export function useOpenProductFolder() {
+  return useMutation({
+    mutationFn: (productId: string) => api.products.openFolder(productId),
+  });
+}
+
+// Get product folder path
+export function useProductFolderPath(productId: string | undefined) {
+  return useQuery({
+    queryKey: ['products', 'folderPath', productId],
+    queryFn: () => api.products.getFolderPath(productId!),
+    enabled: !!productId,
+  });
+}
+
 // Re-export Product type for convenience
 export type { Product, CreateProductData, UpdateProductData };

@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import type { Entity, EntityType } from '../database/queries/entities';
 import { generateMarkdown } from './templates';
+import { findProductFolder } from '../workspace/folders';
 
 // ============================================
 // Path Helpers
@@ -28,13 +29,20 @@ function getTypeFolderName(type: EntityType): string {
 }
 
 // Get the markdown file path for an entity
-// workspace/products/<productId>/entities/<type>s/<id>.md
+// workspace/products/<ProductName>/entities/<type>s/<id>.md
 export function getMarkdownPath(entity: Entity, workspacePath: string): string {
   const typeFolder = getTypeFolderName(entity.type);
+
+  // Find product folder by ID (returns folder name like "SidelineHD")
+  const productFolder = findProductFolder(entity.productId, workspacePath);
+
+  // Fall back to product ID if folder not found (for new products)
+  const folderName = productFolder || entity.productId;
+
   return path.join(
     workspacePath,
     'products',
-    entity.productId,
+    folderName,
     'entities',
     typeFolder,
     `${entity.id}.md`

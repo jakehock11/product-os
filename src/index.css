@@ -280,6 +280,43 @@
   }
 }
 
+@layer components {
+  /* ─────────────────────────────────────────
+     TIPTAP / PROSEMIRROR EDITOR STYLES
+     ───────────────────────────────────────── */
+
+  /* Ensure lists display with proper bullets/numbers */
+  .ProseMirror ul {
+    @apply list-disc pl-6;
+  }
+
+  .ProseMirror ol {
+    @apply list-decimal pl-6;
+  }
+
+  .ProseMirror li {
+    @apply my-1;
+  }
+
+  .ProseMirror li > p {
+    @apply my-0;
+  }
+
+  .ProseMirror blockquote {
+    @apply border-l-4 border-primary pl-4 italic text-muted-foreground;
+  }
+
+  .ProseMirror a {
+    @apply text-primary underline underline-offset-4 cursor-pointer;
+  }
+
+  /* Placeholder styling */
+  .ProseMirror p.is-editor-empty:first-child::before {
+    @apply text-muted-foreground pointer-events-none float-left h-0;
+    content: attr(data-placeholder);
+  }
+}
+
 @layer utilities {
   /* Smooth scrollbar for webkit */
   .scrollbar-thin {

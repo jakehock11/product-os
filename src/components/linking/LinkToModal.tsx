@@ -110,26 +110,26 @@ export function LinkToModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
+      <DialogContent className="max-w-lg max-h-[80vh] flex flex-col overflow-hidden">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle>Link to...</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4 min-h-0 flex-1">
           {/* Search */}
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by title or content..."
-              className="pl-9"
+              className="pl-9 w-full"
               autoFocus
             />
           </div>
 
           {/* Relationship Type Selector */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <span className="text-sm text-muted-foreground whitespace-nowrap">Link as:</span>
             <Select value={relationshipType} onValueChange={(v) => setRelationshipType(v as RelationshipType)}>
               <SelectTrigger className="w-[160px]">
@@ -150,7 +150,7 @@ export function LinkToModal({
             type="multiple"
             value={typeFilters}
             onValueChange={(value) => setTypeFilters(value as EntityType[])}
-            className="flex-wrap justify-start"
+            className="flex-wrap justify-start flex-shrink-0"
           >
             {Object.entries(TYPE_CONFIG).map(([type, config]) => (
               <ToggleGroupItem
@@ -166,17 +166,17 @@ export function LinkToModal({
           </ToggleGroup>
 
           {/* Results */}
-          <ScrollArea className="h-[300px]">
+          <div className="min-h-0 max-h-[300px] overflow-y-auto border rounded-lg">
             {displayItems.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+              <div className="flex h-20 items-center justify-center text-sm text-muted-foreground">
                 {search || typeFilters.length > 0
                   ? "No items match your search."
                   : "No items available to link."}
               </div>
             ) : (
-              <div className="space-y-1">
+              <div className="p-1">
                 {!search && typeFilters.length === 0 && (
-                  <p className="mb-2 text-xs font-medium text-muted-foreground">Recent</p>
+                  <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Recent</p>
                 )}
                 {displayItems.map((entity) => {
                   const config = TYPE_CONFIG[entity.type];
@@ -186,7 +186,7 @@ export function LinkToModal({
                       key={entity.id}
                       onClick={() => handleLink(entity)}
                       disabled={createRelationship.isPending}
-                      className="flex w-full items-center gap-3 rounded-lg p-3 text-left transition-colors hover:bg-muted disabled:opacity-50"
+                      className="flex w-full items-center gap-3 rounded-md p-2.5 text-left transition-colors hover:bg-muted disabled:opacity-50"
                     >
                       <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded bg-muted">
                         <Icon className="h-4 w-4 text-muted-foreground" />
@@ -209,7 +209,7 @@ export function LinkToModal({
                 })}
               </div>
             )}
-          </ScrollArea>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

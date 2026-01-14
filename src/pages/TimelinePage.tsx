@@ -7,7 +7,10 @@ import {
   FlaskConical, 
   CheckCircle, 
   Paperclip, 
-  Zap 
+  Zap,
+  MessageSquare,
+  Sparkles,
+  Package 
 } from "lucide-react";
 import { useProductContext } from "@/contexts/ProductContext";
 import { useEntities } from "@/hooks/useEntities";
@@ -25,6 +28,9 @@ const TYPE_CONFIG: Record<EntityType, { icon: React.ElementType; label: string; 
   decision: { icon: CheckCircle, label: "Decision", color: "text-green-500" },
   artifact: { icon: Paperclip, label: "Artifact", color: "text-purple-500" },
   capture: { icon: Zap, label: "Capture", color: "text-orange-500" },
+  feedback: { icon: MessageSquare, label: "Feedback", color: "text-blue-400" },
+  feature_request: { icon: Sparkles, label: "Request", color: "text-purple-400" },
+  feature: { icon: Package, label: "Feature", color: "text-indigo-500" },
 };
 
 // Helper to group items by date category
@@ -68,6 +74,9 @@ export default function TimelinePage() {
       decision: "decisions",
       artifact: "artifacts",
       capture: "captures",
+      feedback: "feedback",
+      feature_request: "feature-requests",
+      feature: "features",
     };
     return `/product/${productId}/${typeToPath[entity.type]}/${entity.id}`;
   };

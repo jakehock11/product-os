@@ -138,6 +138,9 @@ export default function ProblemDetailPage() {
       decision: "decisions",
       artifact: "artifacts",
       capture: "captures",
+      feedback: "feedback",
+      feature_request: "feature-requests",
+      feature: "features",
     };
     navigate(`/product/${productId}/${pathMap[entityType]}/${entityId}`);
   };

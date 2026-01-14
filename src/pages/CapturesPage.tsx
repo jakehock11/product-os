@@ -70,6 +70,9 @@ export default function CapturesPage() {
         decision: "decisions",
         artifact: "artifacts",
         capture: "captures",
+        feedback: "feedback",
+        feature_request: "feature-requests",
+        feature: "features",
       };
       navigate(`/product/${productId}/${pathMap[targetType]}/${newEntity.id}`);
     } catch {

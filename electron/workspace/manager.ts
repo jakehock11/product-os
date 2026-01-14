@@ -227,6 +227,7 @@ export function initializeWithWorkspace(): boolean {
 export function openWorkspaceFolder(): void {
   const workspacePath = getWorkspacePath();
   if (workspacePath && fs.existsSync(workspacePath)) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { shell } = require('electron');
     shell.openPath(workspacePath);
   }

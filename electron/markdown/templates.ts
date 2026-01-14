@@ -115,7 +115,7 @@ export function resolveLinks(entityId: string): ResolvedLink[] {
 
 function escapeYamlString(str: string): string {
   // If string contains special characters or newlines, quote it
-  if (/[:\{\}\[\],&\*#\?|\-<>=!%@\\"\n]/.test(str) || str.trim() !== str) {
+  if (/[:{}[\],&*#?|\-<>=!%@\\"\n]/.test(str) || str.trim() !== str) {
     return `"${str.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`;
   }
   return str;

@@ -36,7 +36,7 @@ import {
 // ============================================
 
 let products = [...MOCK_PRODUCTS];
-let taxonomy = { ...MOCK_TAXONOMY };
+const taxonomy = { ...MOCK_TAXONOMY };
 let entities = [...MOCK_ALL_ENTITIES];
 let relationships = [...MOCK_RELATIONSHIPS];
 let settings = { ...MOCK_SETTINGS };

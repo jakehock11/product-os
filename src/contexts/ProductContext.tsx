@@ -27,7 +27,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const enterProduct = useCallback(
     (id: string) => {
       setCurrentProductId(id);
-      navigate(`/product/${id}/home`);
+      navigate(`/product/${id}/inbox`);
     },
     [navigate]
   );

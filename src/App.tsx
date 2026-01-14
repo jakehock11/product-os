@@ -11,7 +11,6 @@ import { CommandPalette } from "@/components/CommandPalette";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 import ProductsHome from "./pages/ProductsHome";
-import ProductHome from "./pages/ProductHome";
 import ProblemsPage from "./pages/ProblemsPage";
 import ProblemDetailPage from "./pages/ProblemDetailPage";
 import HypothesesPage from "./pages/HypothesesPage";
@@ -56,7 +55,8 @@ const App = () => (
                 <Route element={<AppShell />}>
                 <Route path="/" element={<Navigate to="/products" replace />} />
                 <Route path="/products" element={<ProductsHome />} />
-                <Route path="/product/:productId/home" element={<ProductHome />} />
+                {/* Redirect old /home to /inbox */}
+                <Route path="/product/:productId/home" element={<Navigate to="../inbox" replace />} />
                 <Route path="/product/:productId/problems" element={<ProblemsPage />} />
                 <Route path="/product/:productId/problems/:id" element={<ProblemDetailPage />} />
                 <Route path="/product/:productId/hypotheses" element={<HypothesesPage />} />

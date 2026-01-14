@@ -122,7 +122,7 @@ export default function QuickCaptureDetailPage() {
     try {
       await deleteEntity.mutateAsync(id);
       toast({ title: "Deleted" });
-      navigate(`/product/${productId}/home`);
+      navigate(`/product/${productId}/inbox`);
     } catch {
       toast({ title: "Error", variant: "destructive" });
     }
@@ -171,9 +171,9 @@ export default function QuickCaptureDetailPage() {
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between border-b border-border px-6 py-3">
-        <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground" onClick={() => navigate(`/product/${productId}/home`)}>
+        <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground" onClick={() => navigate(`/product/${productId}/inbox`)}>
           <ArrowLeft className="h-4 w-4" />
-          <span className="text-sm">Home</span>
+          <span className="text-sm">Inbox</span>
         </Button>
         <div className="flex items-center gap-2">
           {saveStatus === "saving" && (

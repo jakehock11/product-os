@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
 import {
-  Home,
   Inbox,
   Brain,
   FlaskConical,
@@ -59,12 +58,8 @@ export function ProductSidebar() {
 
       {/* Navigation */}
       <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto scrollbar-thin p-2">
-        {/* Quick Capture CTA */}
+        {/* Capture CTA */}
         <QuickCaptureButton />
-
-        <Separator className="my-3 bg-sidebar-border" />
-
-        <NavItem to={`${basePath}/home`} icon={Home} label="Home" />
 
         <Separator className="my-3 bg-sidebar-border" />
 

@@ -12,10 +12,7 @@ export function QuickCaptureButton() {
       variant="default"
     >
       <Zap className="h-3.5 w-3.5" />
-      Quick Capture
-      <kbd className="ml-auto hidden rounded bg-primary-foreground/20 px-1.5 py-0.5 text-[10px] font-medium sm:inline-block">
-        {navigator.platform.includes("Mac") ? "⌘" : "Ctrl"}+N
-      </kbd>
+      Capture
     </Button>
   );
 }

@@ -112,7 +112,7 @@ export function CommandPalette() {
 
   const handleSelectProduct = useCallback((product: Product) => {
     setOpen(false);
-    navigate(`/product/${product.id}/home`);
+    navigate(`/product/${product.id}/inbox`);
   }, [navigate]);
 
   const handleSelectEntity = useCallback((entity: Entity) => {

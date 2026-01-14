@@ -6,7 +6,7 @@ import { touchProduct } from './products';
 // Type Definitions
 // ============================================
 
-export type EntityType = 'capture' | 'problem' | 'hypothesis' | 'experiment' | 'decision' | 'artifact';
+export type EntityType = 'capture' | 'problem' | 'hypothesis' | 'experiment' | 'decision' | 'artifact' | 'feedback' | 'feature_request' | 'feature';
 
 export interface Entity {
   id: string;
@@ -81,6 +81,9 @@ const ID_PREFIXES: Record<EntityType, string> = {
   experiment: 'exp_',
   decision: 'dec_',
   artifact: 'art_',
+  feedback: 'fdbk_',
+  feature_request: 'freq_',
+  feature: 'feat_',
 };
 
 function generateEntityId(type: EntityType): string {
@@ -238,6 +241,15 @@ export function createEntity(data: CreateEntityData): Entity {
       break;
     case 'artifact':
       defaultStatus = 'draft';
+      break;
+    case 'feedback':
+      defaultStatus = 'new';
+      break;
+    case 'feature_request':
+      defaultStatus = 'new';
+      break;
+    case 'feature':
+      defaultStatus = 'building';
       break;
     // capture and decision have no status
   }

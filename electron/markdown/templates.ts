@@ -180,6 +180,33 @@ export function generateFrontmatter(entity: Entity): string {
       if (meta.artifactType) lines.push(`artifact_type: ${meta.artifactType}`);
       if (meta.source) lines.push(`source: ${escapeYamlString(meta.source as string)}`);
     }
+
+    if (entity.type === 'feedback') {
+      if (meta.feedbackType) lines.push(`feedback_type: ${meta.feedbackType}`);
+      if (meta.source) lines.push(`source: ${escapeYamlString(meta.source as string)}`);
+      if (meta.sourceUrl) lines.push(`source_url: ${escapeYamlString(meta.sourceUrl as string)}`);
+    }
+
+    if (entity.type === 'feature_request') {
+      if (meta.priority) lines.push(`priority: ${meta.priority}`);
+      if (meta.source) lines.push(`source: ${escapeYamlString(meta.source as string)}`);
+      if (meta.sourceUrl) lines.push(`source_url: ${escapeYamlString(meta.sourceUrl as string)}`);
+      if (meta.declinedReason) lines.push(`declined_reason: ${escapeYamlString(meta.declinedReason as string)}`);
+    }
+
+    if (entity.type === 'feature') {
+      if (meta.health) lines.push(`health: ${meta.health}`);
+      if (meta.shippedAt) lines.push(`shipped_at: "${meta.shippedAt}"`);
+      if (meta.checkIns && Array.isArray(meta.checkIns) && meta.checkIns.length > 0) {
+        lines.push('check_ins:');
+        for (const checkIn of meta.checkIns) {
+          lines.push(`  - id: ${checkIn.id}`);
+          lines.push(`    date: "${checkIn.date}"`);
+          lines.push(`    health: ${checkIn.health}`);
+          lines.push(`    notes: ${escapeYamlString(checkIn.notes)}`);
+        }
+      }
+    }
   }
 
   // Context section

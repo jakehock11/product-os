@@ -12,7 +12,7 @@ import {
 } from './folders';
 
 // Entity type folders
-const ENTITY_FOLDERS = ['captures', 'problems', 'hypotheses', 'experiments', 'decisions', 'artifacts'];
+const ENTITY_FOLDERS = ['captures', 'problems', 'hypotheses', 'experiments', 'decisions', 'artifacts', 'feedback', 'feature_requests', 'features'];
 
 // ============================================
 // Logging

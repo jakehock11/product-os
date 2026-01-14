@@ -1,11 +1,9 @@
 import { NavLink } from "react-router-dom";
 import {
-  Zap,
   Home,
-  AlertCircle,
-  Lightbulb,
+  Inbox,
+  Brain,
   FlaskConical,
-  CheckCircle,
   Paperclip,
   Clock,
   Download,
@@ -14,7 +12,6 @@ import {
 } from "lucide-react";
 import { useProductContext } from "@/contexts/ProductContext";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { QuickCaptureButton } from "@/components/quick-capture/QuickCaptureButton";
 
@@ -71,12 +68,12 @@ export function ProductSidebar() {
 
         <Separator className="my-3 bg-sidebar-border" />
 
+        {/* Bucket Navigation */}
         <div className="space-y-0.5">
-          <NavItem to={`${basePath}/problems`} icon={AlertCircle} label="Problems" />
-          <NavItem to={`${basePath}/hypotheses`} icon={Lightbulb} label="Hypotheses" />
-          <NavItem to={`${basePath}/experiments`} icon={FlaskConical} label="Experiments" />
-          <NavItem to={`${basePath}/decisions`} icon={CheckCircle} label="Decisions" />
-          <NavItem to={`${basePath}/artifacts`} icon={Paperclip} label="Artifacts" />
+          <NavItem to={`${basePath}/inbox`} icon={Inbox} label="Inbox" />
+          <NavItem to={`${basePath}/thinking`} icon={Brain} label="Thinking" />
+          <NavItem to={`${basePath}/work`} icon={FlaskConical} label="Work" />
+          <NavItem to={`${basePath}/evidence`} icon={Paperclip} label="Evidence" />
         </div>
 
         <Separator className="my-3 bg-sidebar-border" />

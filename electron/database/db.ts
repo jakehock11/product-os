@@ -41,6 +41,7 @@ export function initializeDatabase(dbPath?: string): Database.Database {
     runSchema(db);
   } else {
     // Run migrations for existing databases
+    migrateEntitiesTable(db);
     migrateSettingsTable(db);
   }
 
@@ -60,6 +61,69 @@ function runSchema(database: Database.Database): void {
 
   // Execute the schema (better-sqlite3 handles multi-statement SQL)
   database.exec(schema);
+}
+
+// Migrate entities table to support new entity types (feedback, feature_request, feature)
+function migrateEntitiesTable(database: Database.Database): void {
+  // Check if migration already ran by seeing if we can identify new types in CHECK constraint
+  // We do this by trying to insert a test value and seeing if it's rejected
+  try {
+    // Try to get table info and look at the CHECK constraint in sqlite_master
+    const tableInfo = database.prepare(
+      "SELECT sql FROM sqlite_master WHERE type='table' AND name='entities'"
+    ).get() as { sql: string } | undefined;
+
+    if (tableInfo && tableInfo.sql.includes("'feedback'")) {
+      // Migration already ran - the CHECK constraint includes 'feedback'
+      return;
+    }
+  } catch {
+    // If we can't check, proceed with migration
+  }
+
+  console.log('[DB] Running migration: adding new entity type support...');
+
+  // SQLite doesn't support ALTER CHECK constraint, but we CAN add new columns
+  // The CHECK constraint only validates on INSERT - new types work if we update it
+  // For now, we recreate the table with updated constraint
+
+  try {
+    database.exec(`
+      -- Create new entities table with updated type constraint
+      CREATE TABLE IF NOT EXISTS entities_new (
+        id TEXT PRIMARY KEY,
+        product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+        type TEXT NOT NULL CHECK (type IN ('capture', 'problem', 'hypothesis', 'experiment', 'decision', 'artifact', 'feedback', 'feature_request', 'feature')),
+        title TEXT NOT NULL DEFAULT '',
+        body TEXT NOT NULL DEFAULT '',
+        status TEXT,
+        metadata TEXT,
+        promoted_to_id TEXT REFERENCES entities_new(id) ON DELETE SET NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      -- Copy data from old table
+      INSERT INTO entities_new SELECT * FROM entities;
+
+      -- Drop old table
+      DROP TABLE entities;
+
+      -- Rename new table
+      ALTER TABLE entities_new RENAME TO entities;
+
+      -- Recreate indexes
+      CREATE INDEX IF NOT EXISTS idx_entities_product_id ON entities(product_id);
+      CREATE INDEX IF NOT EXISTS idx_entities_type ON entities(type);
+      CREATE INDEX IF NOT EXISTS idx_entities_status ON entities(status);
+      CREATE INDEX IF NOT EXISTS idx_entities_updated_at ON entities(updated_at);
+      CREATE INDEX IF NOT EXISTS idx_entities_product_type ON entities(product_id, type);
+    `);
+
+    console.log('[DB] Migration complete: new entity types supported');
+  } catch (e) {
+    console.error('[DB] Migration failed:', e);
+  }
 }
 
 // Migrate settings table for existing databases (Phase 6 migration)

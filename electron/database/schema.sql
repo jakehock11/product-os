@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS dimension_values (
 CREATE TABLE IF NOT EXISTS entities (
   id TEXT PRIMARY KEY,
   product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-  type TEXT NOT NULL CHECK (type IN ('capture', 'problem', 'hypothesis', 'experiment', 'decision', 'artifact')),
+  type TEXT NOT NULL CHECK (type IN ('capture', 'problem', 'hypothesis', 'experiment', 'decision', 'artifact', 'feedback', 'feature_request', 'feature')),
   title TEXT NOT NULL DEFAULT '',
   body TEXT NOT NULL DEFAULT '',
   status TEXT,

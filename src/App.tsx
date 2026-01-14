@@ -29,6 +29,15 @@ import SettingsPage from "./pages/SettingsPage";
 import QuickCaptureDetailPage from "./pages/QuickCaptureDetailPage";
 import CapturesPage from "./pages/CapturesPage";
 import NotFound from "./pages/NotFound";
+// Bucket pages
+import InboxPage from "./pages/InboxPage";
+import ThinkingPage from "./pages/ThinkingPage";
+import WorkPage from "./pages/WorkPage";
+import EvidencePage from "./pages/EvidencePage";
+// New entity detail pages
+import FeedbackDetailPage from "./pages/FeedbackDetailPage";
+import FeatureRequestDetailPage from "./pages/FeatureRequestDetailPage";
+import FeatureDetailPage from "./pages/FeatureDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +73,15 @@ const App = () => (
                 <Route path="/product/:productId/settings" element={<SettingsPage />} />
                 <Route path="/product/:productId/captures/:id" element={<QuickCaptureDetailPage />} />
                 <Route path="/product/:productId/captures" element={<CapturesPage />} />
+                {/* Bucket pages */}
+                <Route path="/product/:productId/inbox" element={<InboxPage />} />
+                <Route path="/product/:productId/thinking" element={<ThinkingPage />} />
+                <Route path="/product/:productId/work" element={<WorkPage />} />
+                <Route path="/product/:productId/evidence" element={<EvidencePage />} />
+                {/* New entity detail pages */}
+                <Route path="/product/:productId/feedback/:id" element={<FeedbackDetailPage />} />
+                <Route path="/product/:productId/feature-requests/:id" element={<FeatureRequestDetailPage />} />
+                <Route path="/product/:productId/features/:id" element={<FeatureDetailPage />} />
               </Route>
               <Route path="*" element={<NotFound />} />
                 </Routes>

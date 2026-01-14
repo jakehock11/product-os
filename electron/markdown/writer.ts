@@ -23,6 +23,12 @@ function getTypeFolderName(type: EntityType): string {
       return 'decisions';
     case 'artifact':
       return 'artifacts';
+    case 'feedback':
+      return 'feedback';
+    case 'feature_request':
+      return 'feature_requests';
+    case 'feature':
+      return 'features';
     default:
       return `${type}s`;
   }

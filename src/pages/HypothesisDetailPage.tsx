@@ -1,21 +1,21 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Trash2, Link as LinkIcon, Save, Check, Loader2 } from "lucide-react";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useEntity, useUpdateEntity, useDeleteEntity } from "@/hooks/useEntities";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Trash2, Link as LinkIcon, Save, Check, Loader2 } from 'lucide-react';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useEntity, useUpdateEntity, useDeleteEntity } from '@/hooks/useEntities';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,24 +26,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { RichTextEditor } from "@/components/editor";
-import { ContextTagsPicker } from "@/components/taxonomy";
-import { LinkToModal, LinkedItems } from "@/components/linking";
-import { FilePath } from "@/components/entity/FilePath";
-import { useToast } from "@/hooks/use-toast";
-import type { HypothesisStatus, EntityType } from "@/lib/types";
+} from '@/components/ui/alert-dialog';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { RichTextEditor } from '@/components/editor';
+import { ContextTagsPicker } from '@/components/taxonomy';
+import { LinkToModal, LinkedItems } from '@/components/linking';
+import { FilePath } from '@/components/entity/FilePath';
+import { useToast } from '@/hooks/use-toast';
+import type { HypothesisStatus, EntityType } from '@/lib/types';
 
 const STATUS_OPTIONS: { value: HypothesisStatus; label: string }[] = [
-  { value: "draft", label: "Draft" },
-  { value: "active", label: "Active" },
-  { value: "invalidated", label: "Invalidated" },
-  { value: "archived", label: "Archived" },
+  { value: 'draft', label: 'Draft' },
+  { value: 'active', label: 'Active' },
+  { value: 'invalidated', label: 'Invalidated' },
+  { value: 'archived', label: 'Archived' },
 ];
 
 export default function HypothesisDetailPage() {
@@ -55,16 +51,16 @@ export default function HypothesisDetailPage() {
   const deleteEntity = useDeleteEntity();
   const { toast } = useToast();
 
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [status, setStatus] = useState<HypothesisStatus>("draft");
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [status, setStatus] = useState<HypothesisStatus>('draft');
   const [confidence, setConfidence] = useState<number>(50);
   const [personaIds, setPersonaIds] = useState<string[]>([]);
   const [featureIds, setFeatureIds] = useState<string[]>([]);
   const [dimensionValueIds, setDimensionValueIds] = useState<string[]>([]);
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [tagsOpen, setTagsOpen] = useState(true);
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const savedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -73,10 +69,10 @@ export default function HypothesisDetailPage() {
   }, [productId, setCurrentProduct]);
 
   useEffect(() => {
-    if (entity && entity.type === "hypothesis") {
+    if (entity && entity.type === 'hypothesis') {
       setTitle(entity.title);
       setBody(entity.body);
-      setStatus((entity.status as HypothesisStatus) || "draft");
+      setStatus((entity.status as HypothesisStatus) || 'draft');
       setConfidence(entity.metadata?.confidence ?? 50);
       setPersonaIds(entity.personaIds || []);
       setFeatureIds(entity.featureIds || []);
@@ -84,37 +80,54 @@ export default function HypothesisDetailPage() {
     }
   }, [entity]);
 
-  const handleSave = useCallback(async (navigateAfter = false) => {
-    if (!entity || entity.type !== "hypothesis" || !id) return;
-    setSaveStatus("saving");
-    try {
-      await updateEntity.mutateAsync({
-        id,
-        data: {
-          title,
-          body,
-          status,
-          personaIds,
-          featureIds,
-          dimensionValueIds,
-          metadata: {
-            ...entity.metadata,
-            confidence,
+  const handleSave = useCallback(
+    async (navigateAfter = false) => {
+      if (!entity || entity.type !== 'hypothesis' || !id) return;
+      setSaveStatus('saving');
+      try {
+        await updateEntity.mutateAsync({
+          id,
+          data: {
+            title,
+            body,
+            status,
+            personaIds,
+            featureIds,
+            dimensionValueIds,
+            metadata: {
+              ...entity.metadata,
+              confidence,
+            },
           },
-        },
-      });
-      setSaveStatus("saved");
-      if (navigateAfter) {
-        navigate(`/product/${productId}/hypotheses`);
-      } else {
-        if (savedTimeoutRef.current) clearTimeout(savedTimeoutRef.current);
-        savedTimeoutRef.current = setTimeout(() => setSaveStatus("idle"), 2000);
+        });
+        setSaveStatus('saved');
+        if (navigateAfter) {
+          navigate(`/product/${productId}/hypotheses`);
+        } else {
+          if (savedTimeoutRef.current) clearTimeout(savedTimeoutRef.current);
+          savedTimeoutRef.current = setTimeout(() => setSaveStatus('idle'), 2000);
+        }
+      } catch {
+        setSaveStatus('idle');
+        toast({ title: 'Error', description: 'Failed to save.', variant: 'destructive' });
       }
-    } catch {
-      setSaveStatus("idle");
-      toast({ title: "Error", description: "Failed to save.", variant: "destructive" });
-    }
-  }, [entity, id, title, body, status, confidence, personaIds, featureIds, dimensionValueIds, updateEntity, toast, navigate, productId]);
+    },
+    [
+      entity,
+      id,
+      title,
+      body,
+      status,
+      confidence,
+      personaIds,
+      featureIds,
+      dimensionValueIds,
+      updateEntity,
+      toast,
+      navigate,
+      productId,
+    ]
+  );
 
   useEffect(() => {
     if (!entity) return;
@@ -129,24 +142,24 @@ export default function HypothesisDetailPage() {
     if (!id) return;
     try {
       await deleteEntity.mutateAsync(id);
-      toast({ title: "Deleted" });
+      toast({ title: 'Deleted' });
       navigate(`/product/${productId}/hypotheses`);
     } catch {
-      toast({ title: "Error", variant: "destructive" });
+      toast({ title: 'Error', variant: 'destructive' });
     }
   };
 
   const handleOpenLink = (entityId: string, entityType: EntityType) => {
     const pathMap: Record<EntityType, string> = {
-      problem: "problems",
-      hypothesis: "hypotheses",
-      experiment: "experiments",
-      decision: "decisions",
-      artifact: "artifacts",
-      capture: "captures",
-      feedback: "feedback",
-      feature_request: "feature-requests",
-      feature: "features",
+      problem: 'problems',
+      hypothesis: 'hypotheses',
+      experiment: 'experiments',
+      decision: 'decisions',
+      artifact: 'artifacts',
+      capture: 'captures',
+      feedback: 'feedback',
+      feature_request: 'feature-requests',
+      feature: 'features',
     };
     navigate(`/product/${productId}/${pathMap[entityType]}/${entityId}`);
   };
@@ -161,7 +174,7 @@ export default function HypothesisDetailPage() {
     );
   }
 
-  if (!entity || entity.type !== "hypothesis") {
+  if (!entity || entity.type !== 'hypothesis') {
     return <div className="page-container text-sm text-muted-foreground">Hypothesis not found</div>;
   }
 
@@ -169,37 +182,54 @@ export default function HypothesisDetailPage() {
     <div className="flex h-full flex-col">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-6 py-3">
-        <Button variant="ghost" size="sm" onClick={() => navigate(`/product/${productId}/hypotheses`)} className="gap-2 text-muted-foreground hover:text-foreground">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(`/product/${productId}/hypotheses`)}
+          className="gap-2 text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="h-4 w-4" />
           <span className="text-sm">Hypotheses</span>
         </Button>
         <div className="flex items-center gap-2">
-          {saveStatus === "saving" && (
+          {saveStatus === 'saving' && (
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Loader2 className="h-3 w-3 animate-spin" />
               Saving...
             </span>
           )}
-          {saveStatus === "saved" && (
+          {saveStatus === 'saved' && (
             <span className="flex items-center gap-1.5 text-xs text-primary">
               <Check className="h-3 w-3" />
               Saved
             </span>
           )}
-          <Button variant="outline" size="sm" onClick={() => handleSave(true)} disabled={saveStatus === "saving"} className="gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleSave(true)}
+            disabled={saveStatus === 'saving'}
+            className="gap-2"
+          >
             <Save className="h-3.5 w-3.5" />
             Save
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete hypothesis?</AlertDialogTitle>
-                <AlertDialogDescription className="text-sm">This action cannot be undone.</AlertDialogDescription>
+                <AlertDialogDescription className="text-sm">
+                  This action cannot be undone.
+                </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -254,13 +284,19 @@ export default function HypothesisDetailPage() {
               />
             </div>
 
-            <Badge variant="outline" className="text-xs font-medium">Hypothesis</Badge>
+            <Badge variant="outline" className="text-xs font-medium">
+              Hypothesis
+            </Badge>
           </div>
 
           {/* Context Tags */}
           <Collapsible open={tagsOpen} onOpenChange={setTagsOpen}>
             <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm" className="mb-2 gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mb-2 gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+              >
                 Context Tags
                 <Badge variant="secondary" className="ml-1 text-[11px]">
                   {personaIds.length + featureIds.length + dimensionValueIds.length}
@@ -293,15 +329,17 @@ export default function HypothesisDetailPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-medium text-foreground">Linked Items</h3>
-              <Button variant="outline" size="sm" onClick={() => setLinkModalOpen(true)} className="gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setLinkModalOpen(true)}
+                className="gap-2"
+              >
                 <LinkIcon className="h-3.5 w-3.5" />
                 Link to...
               </Button>
             </div>
-            <LinkedItems
-              entityId={id!}
-              onOpenLink={handleOpenLink}
-            />
+            <LinkedItems entityId={id!} onOpenLink={handleOpenLink} />
           </div>
         </div>
       </div>

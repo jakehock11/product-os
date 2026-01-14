@@ -160,7 +160,10 @@ export default function ExperimentsPage() {
                 </div>
                 <div className="ml-4 flex items-center gap-2">
                   {outcome && (
-                    <Badge variant={OUTCOME_VARIANTS[outcome]} className="capitalize text-xs font-medium">
+                    <Badge
+                      variant={OUTCOME_VARIANTS[outcome]}
+                      className="capitalize text-xs font-medium"
+                    >
                       {outcome}
                     </Badge>
                   )}

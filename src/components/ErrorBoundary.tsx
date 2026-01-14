@@ -1,7 +1,7 @@
-import { Component, ErrorInfo, ReactNode } from "react";
-import { AlertTriangle, RefreshCw, Home } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface Props {
   children: ReactNode;
@@ -26,7 +26,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
     this.setState({ errorInfo });
   }
 
@@ -35,7 +35,7 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   private handleGoHome = () => {
-    window.location.href = "/products";
+    window.location.href = '/products';
   };
 
   private handleReset = () => {
@@ -57,7 +57,8 @@ export class ErrorBoundary extends Component<Props, State> {
               </div>
               <CardTitle className="text-lg">Something went wrong</CardTitle>
               <CardDescription className="text-sm">
-                An unexpected error occurred. You can try reloading the page or going back to the home screen.
+                An unexpected error occurred. You can try reloading the page or going back to the
+                home screen.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -70,28 +71,14 @@ export class ErrorBoundary extends Component<Props, State> {
               )}
 
               <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={this.handleReset}
-                  className="gap-2"
-                >
+                <Button variant="outline" size="sm" onClick={this.handleReset} className="gap-2">
                   Try Again
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={this.handleReload}
-                  className="gap-2"
-                >
+                <Button variant="outline" size="sm" onClick={this.handleReload} className="gap-2">
                   <RefreshCw className="h-4 w-4" />
                   Reload Page
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={this.handleGoHome}
-                  className="gap-2"
-                >
+                <Button size="sm" onClick={this.handleGoHome} className="gap-2">
                   <Home className="h-4 w-4" />
                   Go Home
                 </Button>
@@ -119,7 +106,7 @@ export class ComponentErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("ComponentErrorBoundary caught an error:", error, errorInfo);
+    console.error('ComponentErrorBoundary caught an error:', error, errorInfo);
     this.setState({ errorInfo });
   }
 

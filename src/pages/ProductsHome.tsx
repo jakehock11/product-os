@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Plus, Layers, MoreHorizontal, Pencil, Trash2, FolderOpen } from 'lucide-react';
-import { useProducts, useDeleteProduct, useUpdateProduct, useOpenProductFolder } from '@/hooks/useProducts';
+import {
+  useProducts,
+  useDeleteProduct,
+  useUpdateProduct,
+  useOpenProductFolder,
+} from '@/hooks/useProducts';
 import { useProductContext } from '@/contexts/ProductContext';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -202,9 +201,7 @@ export default function ProductsHome() {
                       )}
                     </div>
                     <div className="flex-1 overflow-hidden">
-                      <CardTitle className="truncate text-sm font-medium">
-                        {product.name}
-                      </CardTitle>
+                      <CardTitle className="truncate text-sm font-medium">{product.name}</CardTitle>
                       <CardDescription className="text-[11px] mt-0.5">
                         Last activity{' '}
                         {formatDistanceToNow(new Date(product.lastActivityAt), {
@@ -320,10 +317,19 @@ export default function ProductsHome() {
             </div>
 
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={() => setEditProduct(null)}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setEditProduct(null)}
+              >
                 Cancel
               </Button>
-              <Button type="submit" size="sm" disabled={!editName.trim() || updateProduct.isPending}>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={!editName.trim() || updateProduct.isPending}
+              >
                 {updateProduct.isPending ? 'Saving...' : 'Save'}
               </Button>
             </div>
@@ -332,7 +338,10 @@ export default function ProductsHome() {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteProductId} onOpenChange={(open) => !open && setDeleteProductId(null)}>
+      <AlertDialog
+        open={!!deleteProductId}
+        onOpenChange={(open) => !open && setDeleteProductId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete product?</AlertDialogTitle>

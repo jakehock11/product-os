@@ -1,5 +1,5 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   AlertCircle,
   Lightbulb,
@@ -8,7 +8,7 @@ import {
   Paperclip,
   Zap,
   Box,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   CommandDialog,
   CommandInput,
@@ -16,43 +16,45 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandItem,
-} from "@/components/ui/command";
-import { Badge } from "@/components/ui/badge";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useProducts } from "@/hooks/useProducts";
-import { useEntities } from "@/hooks/useEntities";
-import type { Entity, EntityType, Product } from "@/lib/types";
+} from '@/components/ui/command';
+import { Badge } from '@/components/ui/badge';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useProducts } from '@/hooks/useProducts';
+import { useEntities } from '@/hooks/useEntities';
+import type { Entity, EntityType, Product } from '@/lib/types';
 
-const TYPE_CONFIG: Partial<Record<EntityType, { icon: React.ElementType; label: string; route: string }>> = {
-  problem: { icon: AlertCircle, label: "Problem", route: "problems" },
-  hypothesis: { icon: Lightbulb, label: "Hypothesis", route: "hypotheses" },
-  experiment: { icon: FlaskConical, label: "Experiment", route: "experiments" },
-  decision: { icon: CheckCircle, label: "Decision", route: "decisions" },
-  artifact: { icon: Paperclip, label: "Artifact", route: "artifacts" },
-  capture: { icon: Zap, label: "Capture", route: "captures" },
-  feedback: { icon: Box, label: "Feedback", route: "feedback" },
-  feature_request: { icon: Box, label: "Request", route: "feature-requests" },
-  feature: { icon: Box, label: "Feature", route: "features" },
+const TYPE_CONFIG: Partial<
+  Record<EntityType, { icon: React.ElementType; label: string; route: string }>
+> = {
+  problem: { icon: AlertCircle, label: 'Problem', route: 'problems' },
+  hypothesis: { icon: Lightbulb, label: 'Hypothesis', route: 'hypotheses' },
+  experiment: { icon: FlaskConical, label: 'Experiment', route: 'experiments' },
+  decision: { icon: CheckCircle, label: 'Decision', route: 'decisions' },
+  artifact: { icon: Paperclip, label: 'Artifact', route: 'artifacts' },
+  capture: { icon: Zap, label: 'Capture', route: 'captures' },
+  feedback: { icon: Box, label: 'Feedback', route: 'feedback' },
+  feature_request: { icon: Box, label: 'Request', route: 'feature-requests' },
+  feature: { icon: Box, label: 'Feature', route: 'features' },
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  active: "bg-green-500/10 text-green-600 border-green-500/20",
-  draft: "bg-gray-500/10 text-gray-600 border-gray-500/20",
-  running: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  planned: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
-  complete: "bg-green-500/10 text-green-600 border-green-500/20",
-  solved: "bg-green-500/10 text-green-600 border-green-500/20",
-  exploring: "bg-purple-500/10 text-purple-600 border-purple-500/20",
-  blocked: "bg-red-500/10 text-red-600 border-red-500/20",
-  invalidated: "bg-red-500/10 text-red-600 border-red-500/20",
-  archived: "bg-gray-500/10 text-gray-500 border-gray-500/20",
-  paused: "bg-orange-500/10 text-orange-600 border-orange-500/20",
-  final: "bg-green-500/10 text-green-600 border-green-500/20",
+  active: 'bg-green-500/10 text-green-600 border-green-500/20',
+  draft: 'bg-gray-500/10 text-gray-600 border-gray-500/20',
+  running: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  planned: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
+  complete: 'bg-green-500/10 text-green-600 border-green-500/20',
+  solved: 'bg-green-500/10 text-green-600 border-green-500/20',
+  exploring: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+  blocked: 'bg-red-500/10 text-red-600 border-red-500/20',
+  invalidated: 'bg-red-500/10 text-red-600 border-red-500/20',
+  archived: 'bg-gray-500/10 text-gray-500 border-gray-500/20',
+  paused: 'bg-orange-500/10 text-orange-600 border-orange-500/20',
+  final: 'bg-green-500/10 text-green-600 border-green-500/20',
 };
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const navigate = useNavigate();
   const { currentProductId } = useProductContext();
   const { data: products } = useProducts();
@@ -61,20 +63,20 @@ export function CommandPalette() {
   // Handle keyboard shortcut (Cmd/Ctrl + K)
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
     };
 
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
   }, []);
 
   // Reset search when closing
   useEffect(() => {
     if (!open) {
-      setSearch("");
+      setSearch('');
     }
   }, [open]);
 
@@ -82,9 +84,7 @@ export function CommandPalette() {
   const filteredProducts = useMemo(() => {
     if (!products || !search.trim()) return [];
     const searchLower = search.toLowerCase();
-    return products.filter((p) =>
-      p.name.toLowerCase().includes(searchLower)
-    ).slice(0, 5);
+    return products.filter((p) => p.name.toLowerCase().includes(searchLower)).slice(0, 5);
   }, [products, search]);
 
   // Filter and group entities
@@ -110,17 +110,23 @@ export function CommandPalette() {
     return grouped;
   }, [entities, search]);
 
-  const handleSelectProduct = useCallback((product: Product) => {
-    setOpen(false);
-    navigate(`/product/${product.id}/inbox`);
-  }, [navigate]);
+  const handleSelectProduct = useCallback(
+    (product: Product) => {
+      setOpen(false);
+      navigate(`/product/${product.id}/inbox`);
+    },
+    [navigate]
+  );
 
-  const handleSelectEntity = useCallback((entity: Entity) => {
-    if (!currentProductId) return;
-    setOpen(false);
-    const config = TYPE_CONFIG[entity.type];
-    navigate(`/product/${currentProductId}/${config.route}/${entity.id}`);
-  }, [navigate, currentProductId]);
+  const handleSelectEntity = useCallback(
+    (entity: Entity) => {
+      if (!currentProductId) return;
+      setOpen(false);
+      const config = TYPE_CONFIG[entity.type];
+      navigate(`/product/${currentProductId}/${config.route}/${entity.id}`);
+    },
+    [navigate, currentProductId]
+  );
 
   const hasResults = filteredProducts.length > 0 || Object.keys(groupedEntities).length > 0;
 
@@ -138,9 +144,7 @@ export function CommandPalette() {
           </CommandEmpty>
         )}
 
-        {search.trim() && !hasResults && (
-          <CommandEmpty>No results found.</CommandEmpty>
-        )}
+        {search.trim() && !hasResults && <CommandEmpty>No results found.</CommandEmpty>}
 
         {/* Products */}
         {filteredProducts.length > 0 && (
@@ -175,13 +179,11 @@ export function CommandPalette() {
                   className="flex items-center gap-2"
                 >
                   <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <span className="flex-1 truncate">
-                    {entity.title || "Untitled"}
-                  </span>
+                  <span className="flex-1 truncate">{entity.title || 'Untitled'}</span>
                   {entity.status && (
                     <Badge
                       variant="outline"
-                      className={`shrink-0 text-[10px] px-1.5 py-0 ${STATUS_COLORS[entity.status] || ""}`}
+                      className={`shrink-0 text-[10px] px-1.5 py-0 ${STATUS_COLORS[entity.status] || ''}`}
                     >
                       {entity.status}
                     </Badge>

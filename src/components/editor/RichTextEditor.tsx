@@ -1,22 +1,22 @@
-import { useEditor, EditorContent, Editor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
-import Placeholder from "@tiptap/extension-placeholder";
-import { 
-  Bold, 
-  Italic, 
-  List, 
-  ListOrdered, 
+import { useEditor, EditorContent, Editor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Link from '@tiptap/extension-link';
+import Placeholder from '@tiptap/extension-placeholder';
+import {
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
   Link as LinkIcon,
   Heading2,
   Quote,
   Undo,
-  Redo
-} from "lucide-react";
-import { Toggle } from "@/components/ui/toggle";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { useCallback, useEffect } from "react";
+  Redo,
+} from 'lucide-react';
+import { Toggle } from '@/components/ui/toggle';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+import { useCallback, useEffect } from 'react';
 
 interface RichTextEditorProps {
   content: string;
@@ -29,7 +29,7 @@ interface RichTextEditorProps {
 export function RichTextEditor({
   content,
   onChange,
-  placeholder = "Start writing...",
+  placeholder = 'Start writing...',
   className,
   editable = true,
 }: RichTextEditorProps) {
@@ -43,7 +43,7 @@ export function RichTextEditor({
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: "text-primary underline underline-offset-4",
+          class: 'text-primary underline underline-offset-4',
         },
       }),
       Placeholder.configure({
@@ -58,12 +58,12 @@ export function RichTextEditor({
     editorProps: {
       attributes: {
         class: cn(
-          "prose prose-sm dark:prose-invert max-w-none min-h-[200px] focus:outline-none",
-          "prose-headings:font-semibold prose-headings:text-foreground",
-          "prose-p:text-foreground prose-p:leading-relaxed",
-          "prose-ul:text-foreground prose-ol:text-foreground",
-          "prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground",
-          "prose-a:text-primary"
+          'prose prose-sm dark:prose-invert max-w-none min-h-[200px] focus:outline-none',
+          'prose-headings:font-semibold prose-headings:text-foreground',
+          'prose-p:text-foreground prose-p:leading-relaxed',
+          'prose-ul:text-foreground prose-ol:text-foreground',
+          'prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground',
+          'prose-a:text-primary'
         ),
       },
     },
@@ -79,17 +79,17 @@ export function RichTextEditor({
   const setLink = useCallback(() => {
     if (!editor) return;
 
-    const previousUrl = editor.getAttributes("link").href;
-    const url = window.prompt("URL", previousUrl);
+    const previousUrl = editor.getAttributes('link').href;
+    const url = window.prompt('URL', previousUrl);
 
     if (url === null) return;
 
-    if (url === "") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run();
       return;
     }
 
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
   }, [editor]);
 
   if (!editor) {
@@ -97,7 +97,7 @@ export function RichTextEditor({
   }
 
   return (
-    <div className={cn("rounded-lg border border-border bg-card shadow-sm", className)}>
+    <div className={cn('rounded-lg border border-border bg-card shadow-sm', className)}>
       {editable && <EditorToolbar editor={editor} onSetLink={setLink} />}
       <div className="p-4">
         <EditorContent editor={editor} />
@@ -116,7 +116,7 @@ function EditorToolbar({ editor, onSetLink }: EditorToolbarProps) {
     <div className="flex flex-wrap items-center gap-1 border-b border-border p-2">
       <Toggle
         size="sm"
-        pressed={editor.isActive("bold")}
+        pressed={editor.isActive('bold')}
         onPressedChange={() => editor.chain().focus().toggleBold().run()}
         aria-label="Bold"
       >
@@ -124,7 +124,7 @@ function EditorToolbar({ editor, onSetLink }: EditorToolbarProps) {
       </Toggle>
       <Toggle
         size="sm"
-        pressed={editor.isActive("italic")}
+        pressed={editor.isActive('italic')}
         onPressedChange={() => editor.chain().focus().toggleItalic().run()}
         aria-label="Italic"
       >
@@ -135,7 +135,7 @@ function EditorToolbar({ editor, onSetLink }: EditorToolbarProps) {
 
       <Toggle
         size="sm"
-        pressed={editor.isActive("heading", { level: 2 })}
+        pressed={editor.isActive('heading', { level: 2 })}
         onPressedChange={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         aria-label="Heading"
       >
@@ -143,7 +143,7 @@ function EditorToolbar({ editor, onSetLink }: EditorToolbarProps) {
       </Toggle>
       <Toggle
         size="sm"
-        pressed={editor.isActive("bulletList")}
+        pressed={editor.isActive('bulletList')}
         onPressedChange={() => editor.chain().focus().toggleBulletList().run()}
         aria-label="Bullet List"
       >
@@ -151,7 +151,7 @@ function EditorToolbar({ editor, onSetLink }: EditorToolbarProps) {
       </Toggle>
       <Toggle
         size="sm"
-        pressed={editor.isActive("orderedList")}
+        pressed={editor.isActive('orderedList')}
         onPressedChange={() => editor.chain().focus().toggleOrderedList().run()}
         aria-label="Ordered List"
       >
@@ -159,7 +159,7 @@ function EditorToolbar({ editor, onSetLink }: EditorToolbarProps) {
       </Toggle>
       <Toggle
         size="sm"
-        pressed={editor.isActive("blockquote")}
+        pressed={editor.isActive('blockquote')}
         onPressedChange={() => editor.chain().focus().toggleBlockquote().run()}
         aria-label="Quote"
       >
@@ -170,7 +170,7 @@ function EditorToolbar({ editor, onSetLink }: EditorToolbarProps) {
 
       <Toggle
         size="sm"
-        pressed={editor.isActive("link")}
+        pressed={editor.isActive('link')}
         onPressedChange={onSetLink}
         aria-label="Link"
       >

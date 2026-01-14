@@ -1,19 +1,19 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Trash2, Link as LinkIcon, Save, Check, Loader2 } from "lucide-react";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useEntity, useUpdateEntity, useDeleteEntity } from "@/hooks/useEntities";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Trash2, Link as LinkIcon, Save, Check, Loader2 } from 'lucide-react';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useEntity, useUpdateEntity, useDeleteEntity } from '@/hooks/useEntities';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,25 +24,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { RichTextEditor } from "@/components/editor";
-import { ContextTagsPicker } from "@/components/taxonomy";
-import { LinkToModal, LinkedItems } from "@/components/linking";
-import { FilePath } from "@/components/entity/FilePath";
-import { useToast } from "@/hooks/use-toast";
-import type { ProblemStatus, EntityType } from "@/lib/types";
+} from '@/components/ui/alert-dialog';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { RichTextEditor } from '@/components/editor';
+import { ContextTagsPicker } from '@/components/taxonomy';
+import { LinkToModal, LinkedItems } from '@/components/linking';
+import { FilePath } from '@/components/entity/FilePath';
+import { useToast } from '@/hooks/use-toast';
+import type { ProblemStatus, EntityType } from '@/lib/types';
 
 const STATUS_OPTIONS: { value: ProblemStatus; label: string }[] = [
-  { value: "active", label: "Active" },
-  { value: "exploring", label: "Exploring" },
-  { value: "blocked", label: "Blocked" },
-  { value: "solved", label: "Solved" },
-  { value: "archived", label: "Archived" },
+  { value: 'active', label: 'Active' },
+  { value: 'exploring', label: 'Exploring' },
+  { value: 'blocked', label: 'Blocked' },
+  { value: 'solved', label: 'Solved' },
+  { value: 'archived', label: 'Archived' },
 ];
 
 export default function ProblemDetailPage() {
@@ -54,15 +50,15 @@ export default function ProblemDetailPage() {
   const deleteEntity = useDeleteEntity();
   const { toast } = useToast();
 
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [status, setStatus] = useState<ProblemStatus>("active");
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [status, setStatus] = useState<ProblemStatus>('active');
   const [personaIds, setPersonaIds] = useState<string[]>([]);
   const [featureIds, setFeatureIds] = useState<string[]>([]);
   const [dimensionValueIds, setDimensionValueIds] = useState<string[]>([]);
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [tagsOpen, setTagsOpen] = useState(true);
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const savedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -71,43 +67,59 @@ export default function ProblemDetailPage() {
   }, [productId, setCurrentProduct]);
 
   useEffect(() => {
-    if (entity && entity.type === "problem") {
+    if (entity && entity.type === 'problem') {
       setTitle(entity.title);
       setBody(entity.body);
-      setStatus((entity.status as ProblemStatus) || "active");
+      setStatus((entity.status as ProblemStatus) || 'active');
       setPersonaIds(entity.personaIds || []);
       setFeatureIds(entity.featureIds || []);
       setDimensionValueIds(entity.dimensionValueIds || []);
     }
   }, [entity]);
 
-  const handleSave = useCallback(async (navigateAfter = false) => {
-    if (!entity || entity.type !== "problem" || !id) return;
-    setSaveStatus("saving");
-    try {
-      await updateEntity.mutateAsync({
-        id,
-        data: {
-          title,
-          body,
-          status,
-          personaIds,
-          featureIds,
-          dimensionValueIds,
-        },
-      });
-      setSaveStatus("saved");
-      if (navigateAfter) {
-        navigate(`/product/${productId}/problems`);
-      } else {
-        if (savedTimeoutRef.current) clearTimeout(savedTimeoutRef.current);
-        savedTimeoutRef.current = setTimeout(() => setSaveStatus("idle"), 2000);
+  const handleSave = useCallback(
+    async (navigateAfter = false) => {
+      if (!entity || entity.type !== 'problem' || !id) return;
+      setSaveStatus('saving');
+      try {
+        await updateEntity.mutateAsync({
+          id,
+          data: {
+            title,
+            body,
+            status,
+            personaIds,
+            featureIds,
+            dimensionValueIds,
+          },
+        });
+        setSaveStatus('saved');
+        if (navigateAfter) {
+          navigate(`/product/${productId}/problems`);
+        } else {
+          if (savedTimeoutRef.current) clearTimeout(savedTimeoutRef.current);
+          savedTimeoutRef.current = setTimeout(() => setSaveStatus('idle'), 2000);
+        }
+      } catch {
+        setSaveStatus('idle');
+        toast({ title: 'Error', description: 'Failed to save.', variant: 'destructive' });
       }
-    } catch {
-      setSaveStatus("idle");
-      toast({ title: "Error", description: "Failed to save.", variant: "destructive" });
-    }
-  }, [entity, id, title, body, status, personaIds, featureIds, dimensionValueIds, updateEntity, toast, navigate, productId]);
+    },
+    [
+      entity,
+      id,
+      title,
+      body,
+      status,
+      personaIds,
+      featureIds,
+      dimensionValueIds,
+      updateEntity,
+      toast,
+      navigate,
+      productId,
+    ]
+  );
 
   // Auto-save on changes with debounce
   useEffect(() => {
@@ -123,24 +135,24 @@ export default function ProblemDetailPage() {
     if (!id) return;
     try {
       await deleteEntity.mutateAsync(id);
-      toast({ title: "Deleted" });
+      toast({ title: 'Deleted' });
       navigate(`/product/${productId}/problems`);
     } catch {
-      toast({ title: "Error", variant: "destructive" });
+      toast({ title: 'Error', variant: 'destructive' });
     }
   };
 
   const handleOpenLink = (entityId: string, entityType: EntityType) => {
     const pathMap: Record<EntityType, string> = {
-      problem: "problems",
-      hypothesis: "hypotheses",
-      experiment: "experiments",
-      decision: "decisions",
-      artifact: "artifacts",
-      capture: "captures",
-      feedback: "feedback",
-      feature_request: "feature-requests",
-      feature: "features",
+      problem: 'problems',
+      hypothesis: 'hypotheses',
+      experiment: 'experiments',
+      decision: 'decisions',
+      artifact: 'artifacts',
+      capture: 'captures',
+      feedback: 'feedback',
+      feature_request: 'feature-requests',
+      feature: 'features',
     };
     navigate(`/product/${productId}/${pathMap[entityType]}/${entityId}`);
   };
@@ -155,7 +167,7 @@ export default function ProblemDetailPage() {
     );
   }
 
-  if (!entity || entity.type !== "problem") {
+  if (!entity || entity.type !== 'problem') {
     return <div className="page-container text-sm text-muted-foreground">Problem not found</div>;
   }
 
@@ -163,30 +175,45 @@ export default function ProblemDetailPage() {
     <div className="flex h-full flex-col">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-6 py-3">
-        <Button variant="ghost" size="sm" onClick={() => navigate(`/product/${productId}/problems`)} className="gap-2 text-muted-foreground hover:text-foreground">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(`/product/${productId}/problems`)}
+          className="gap-2 text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="h-4 w-4" />
           <span className="text-sm">Problems</span>
         </Button>
         <div className="flex items-center gap-2">
-          {saveStatus === "saving" && (
+          {saveStatus === 'saving' && (
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Loader2 className="h-3 w-3 animate-spin" />
               Saving...
             </span>
           )}
-          {saveStatus === "saved" && (
+          {saveStatus === 'saved' && (
             <span className="flex items-center gap-1.5 text-xs text-primary">
               <Check className="h-3 w-3" />
               Saved
             </span>
           )}
-          <Button variant="outline" size="sm" onClick={() => handleSave(true)} disabled={saveStatus === "saving"} className="gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleSave(true)}
+            disabled={saveStatus === 'saving'}
+            className="gap-2"
+          >
             <Save className="h-3.5 w-3.5" />
             Save
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
@@ -234,13 +261,19 @@ export default function ProblemDetailPage() {
                 ))}
               </SelectContent>
             </Select>
-            <Badge variant="outline" className="text-xs font-medium">Problem</Badge>
+            <Badge variant="outline" className="text-xs font-medium">
+              Problem
+            </Badge>
           </div>
 
           {/* Context Tags */}
           <Collapsible open={tagsOpen} onOpenChange={setTagsOpen}>
             <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm" className="mb-2 gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mb-2 gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+              >
                 Context Tags
                 <Badge variant="secondary" className="ml-1 text-[11px]">
                   {personaIds.length + featureIds.length + dimensionValueIds.length}
@@ -263,25 +296,23 @@ export default function ProblemDetailPage() {
           </Collapsible>
 
           {/* Body Editor */}
-          <RichTextEditor
-            content={body}
-            onChange={setBody}
-            placeholder="Describe the problem..."
-          />
+          <RichTextEditor content={body} onChange={setBody} placeholder="Describe the problem..." />
 
           {/* Linked Items */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-medium text-foreground">Linked Items</h3>
-              <Button variant="outline" size="sm" onClick={() => setLinkModalOpen(true)} className="gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setLinkModalOpen(true)}
+                className="gap-2"
+              >
                 <LinkIcon className="h-3.5 w-3.5" />
                 Link to...
               </Button>
             </div>
-            <LinkedItems
-              entityId={id!}
-              onOpenLink={handleOpenLink}
-            />
+            <LinkedItems entityId={id!} onOpenLink={handleOpenLink} />
           </div>
         </div>
       </div>

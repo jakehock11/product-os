@@ -1,13 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { api } from '@/lib/ipc';
-import type {
-  Taxonomy,
-  Persona,
-  Feature,
-  Dimension,
-  DimensionValue,
-} from '@/lib/types';
+import type { Taxonomy, Persona, Feature, Dimension, DimensionValue } from '@/lib/types';
 
 const TAXONOMY_KEY = ['taxonomy'];
 
@@ -62,8 +56,15 @@ export function useUpdatePersona() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data, productId }: { id: string; data: { name?: string }; productId: string }) =>
-      api.taxonomy.updatePersona(id, data),
+    mutationFn: ({
+      id,
+      data,
+      productId,
+    }: {
+      id: string;
+      data: { name?: string };
+      productId: string;
+    }) => api.taxonomy.updatePersona(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: [...TAXONOMY_KEY, variables.productId] });
     },
@@ -114,8 +115,15 @@ export function useUpdateFeature() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data, productId }: { id: string; data: { name?: string }; productId: string }) =>
-      api.taxonomy.updateFeature(id, data),
+    mutationFn: ({
+      id,
+      data,
+      productId,
+    }: {
+      id: string;
+      data: { name?: string };
+      productId: string;
+    }) => api.taxonomy.updateFeature(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: [...TAXONOMY_KEY, variables.productId] });
     },
@@ -166,8 +174,15 @@ export function useUpdateDimension() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data, productId }: { id: string; data: { name?: string }; productId: string }) =>
-      api.taxonomy.updateDimension(id, data),
+    mutationFn: ({
+      id,
+      data,
+      productId,
+    }: {
+      id: string;
+      data: { name?: string };
+      productId: string;
+    }) => api.taxonomy.updateDimension(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: [...TAXONOMY_KEY, variables.productId] });
     },

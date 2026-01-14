@@ -1,9 +1,19 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Settings, Trash2, Download, Moon, Sun, Monitor, FolderOpen, RefreshCw, AlertTriangle } from "lucide-react";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useProduct, useUpdateProduct, useDeleteProduct } from "@/hooks/useProducts";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import {
+  Settings,
+  Trash2,
+  Download,
+  Moon,
+  Sun,
+  Monitor,
+  FolderOpen,
+  RefreshCw,
+  AlertTriangle,
+} from 'lucide-react';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useProduct, useUpdateProduct, useDeleteProduct } from '@/hooks/useProducts';
+import { useTheme } from '@/contexts/ThemeContext';
 import {
   useSettings,
   useUpdateSettings,
@@ -12,21 +22,21 @@ import {
   useOpenWorkspaceFolder,
   useClearExportHistory,
   useClearAllData,
-} from "@/hooks/useSettings";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Switch } from "@/components/ui/switch";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+} from '@/hooks/useSettings';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Switch } from '@/components/ui/switch';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,8 +47,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SettingsPage() {
   const { productId } = useParams<{ productId: string }>();
@@ -59,7 +69,7 @@ export default function SettingsPage() {
   const clearExportHistory = useClearExportHistory();
   const clearAllData = useClearAllData();
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [backupPath, setBackupPath] = useState<string | null>(null);
 
@@ -78,9 +88,13 @@ export default function SettingsPage() {
     setIsSaving(true);
     try {
       await updateProduct.mutateAsync({ id: product.id, data: { name: name.trim() } });
-      toast({ title: "Saved", description: "Product name updated." });
+      toast({ title: 'Saved', description: 'Product name updated.' });
     } catch {
-      toast({ title: "Error", description: "Failed to update product name.", variant: "destructive" });
+      toast({
+        title: 'Error',
+        description: 'Failed to update product name.',
+        variant: 'destructive',
+      });
     } finally {
       setIsSaving(false);
     }
@@ -90,10 +104,10 @@ export default function SettingsPage() {
     if (!productId) return;
     try {
       await deleteProduct.mutateAsync(productId);
-      toast({ title: "Deleted", description: "Product has been deleted." });
+      toast({ title: 'Deleted', description: 'Product has been deleted.' });
       exitProduct();
     } catch {
-      toast({ title: "Error", description: "Failed to delete product.", variant: "destructive" });
+      toast({ title: 'Error', description: 'Failed to delete product.', variant: 'destructive' });
     }
   };
 
@@ -103,12 +117,16 @@ export default function SettingsPage() {
       if (result) {
         setBackupPath(result.backupPath);
         toast({
-          title: "Workspace Migrated",
+          title: 'Workspace Migrated',
           description: `Data copied to new location. Old data preserved at: ${result.backupPath}`,
         });
       }
     } catch {
-      toast({ title: "Error", description: "Failed to migrate workspace.", variant: "destructive" });
+      toast({
+        title: 'Error',
+        description: 'Failed to migrate workspace.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -116,26 +134,34 @@ export default function SettingsPage() {
     try {
       await openWorkspaceFolder.mutateAsync();
     } catch {
-      toast({ title: "Error", description: "Failed to open workspace folder.", variant: "destructive" });
+      toast({
+        title: 'Error',
+        description: 'Failed to open workspace folder.',
+        variant: 'destructive',
+      });
     }
   };
 
   const handleClearExportHistory = async () => {
     try {
       await clearExportHistory.mutateAsync();
-      toast({ title: "Cleared", description: "Export history has been cleared." });
+      toast({ title: 'Cleared', description: 'Export history has been cleared.' });
     } catch {
-      toast({ title: "Error", description: "Failed to clear export history.", variant: "destructive" });
+      toast({
+        title: 'Error',
+        description: 'Failed to clear export history.',
+        variant: 'destructive',
+      });
     }
   };
 
   const handleClearAllData = async () => {
     try {
       await clearAllData.mutateAsync();
-      toast({ title: "Cleared", description: "All data has been deleted." });
+      toast({ title: 'Cleared', description: 'All data has been deleted.' });
       exitProduct();
     } catch {
-      toast({ title: "Error", description: "Failed to clear data.", variant: "destructive" });
+      toast({ title: 'Error', description: 'Failed to clear data.', variant: 'destructive' });
     }
   };
 
@@ -143,7 +169,7 @@ export default function SettingsPage() {
     try {
       await updateSettings.mutateAsync({ [key]: value });
     } catch {
-      toast({ title: "Error", description: "Failed to update settings.", variant: "destructive" });
+      toast({ title: 'Error', description: 'Failed to update settings.', variant: 'destructive' });
     }
   };
 
@@ -174,9 +200,7 @@ export default function SettingsPage() {
     <div className="page-container scrollbar-thin">
       <div className="page-header">
         <h1 className="text-lg font-semibold text-foreground">Settings</h1>
-        <p className="text-sm text-muted-foreground">
-          Configure your product and preferences
-        </p>
+        <p className="text-sm text-muted-foreground">Configure your product and preferences</p>
       </div>
 
       <div className="mx-auto max-w-2xl space-y-4">
@@ -187,13 +211,13 @@ export default function SettingsPage() {
               <Settings className="h-4 w-4" />
               Product Settings
             </CardTitle>
-            <CardDescription className="text-xs">
-              Manage your product configuration
-            </CardDescription>
+            <CardDescription className="text-xs">Manage your product configuration</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="space-y-2">
-              <Label htmlFor="productName" className="text-sm">Product Name</Label>
+              <Label htmlFor="productName" className="text-sm">
+                Product Name
+              </Label>
               <div className="flex gap-2">
                 <Input
                   id="productName"
@@ -208,7 +232,7 @@ export default function SettingsPage() {
                   onClick={handleSaveName}
                   disabled={isSaving || name === product.name}
                 >
-                  {isSaving ? "Saving..." : "Save"}
+                  {isSaving ? 'Saving...' : 'Save'}
                 </Button>
               </div>
             </div>
@@ -222,16 +246,14 @@ export default function SettingsPage() {
               <FolderOpen className="h-4 w-4" />
               Workspace
             </CardTitle>
-            <CardDescription className="text-xs">
-              Manage your data storage location
-            </CardDescription>
+            <CardDescription className="text-xs">Manage your data storage location</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label className="text-sm">Workspace Folder</Label>
               <div className="flex items-center gap-2">
                 <code className="flex-1 rounded-md bg-muted px-3 py-2 text-xs font-mono truncate">
-                  {settings?.workspacePath || "Not configured"}
+                  {settings?.workspacePath || 'Not configured'}
                 </code>
                 <Button
                   variant="outline"
@@ -249,11 +271,12 @@ export default function SettingsPage() {
                   onClick={handleMigrateWorkspace}
                   disabled={migrateWorkspace.isPending}
                 >
-                  {migrateWorkspace.isPending ? "Migrating..." : "Change Location"}
+                  {migrateWorkspace.isPending ? 'Migrating...' : 'Change Location'}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                Changing location will copy all data to the new folder. Your old data is preserved as a backup.
+                Changing location will copy all data to the new folder. Your old data is preserved
+                as a backup.
               </p>
             </div>
 
@@ -275,7 +298,7 @@ export default function SettingsPage() {
               </div>
               <Switch
                 checked={settings?.restoreLastContext ?? true}
-                onCheckedChange={(checked) => handleSettingsChange("restoreLastContext", checked)}
+                onCheckedChange={(checked) => handleSettingsChange('restoreLastContext', checked)}
               />
             </div>
           </CardContent>
@@ -285,23 +308,24 @@ export default function SettingsPage() {
         <Card className="border-border/50 shadow-xs">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-sm font-medium">
-              {theme === "dark" ? (
+              {theme === 'dark' ? (
                 <Moon className="h-4 w-4" />
-              ) : theme === "light" ? (
+              ) : theme === 'light' ? (
                 <Sun className="h-4 w-4" />
               ) : (
                 <Monitor className="h-4 w-4" />
               )}
               Appearance
             </CardTitle>
-            <CardDescription className="text-xs">
-              Customize how Product OS looks
-            </CardDescription>
+            <CardDescription className="text-xs">Customize how Product OS looks</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2.5">
               <Label className="text-sm">Theme</Label>
-              <RadioGroup value={theme} onValueChange={(v) => setTheme(v as "light" | "dark" | "system")}>
+              <RadioGroup
+                value={theme}
+                onValueChange={(v) => setTheme(v as 'light' | 'dark' | 'system')}
+              >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="light" id="light" />
                   <Label htmlFor="light" className="flex items-center gap-2 text-sm font-normal">
@@ -335,16 +359,14 @@ export default function SettingsPage() {
               <Download className="h-4 w-4" />
               Export Defaults
             </CardTitle>
-            <CardDescription className="text-xs">
-              Default settings for exports
-            </CardDescription>
+            <CardDescription className="text-xs">Default settings for exports</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label className="text-sm">Default Export Mode</Label>
               <Select
-                value={settings?.defaultExportMode ?? "incremental"}
-                onValueChange={(value) => handleSettingsChange("defaultExportMode", value)}
+                value={settings?.defaultExportMode ?? 'incremental'}
+                onValueChange={(value) => handleSettingsChange('defaultExportMode', value)}
               >
                 <SelectTrigger className="h-9 text-sm">
                   <SelectValue placeholder="Select mode" />
@@ -359,8 +381,8 @@ export default function SettingsPage() {
             <div className="space-y-2">
               <Label className="text-sm">Default Incremental Range</Label>
               <Select
-                value={settings?.defaultIncrementalRange ?? "since_last_export"}
-                onValueChange={(value) => handleSettingsChange("defaultIncrementalRange", value)}
+                value={settings?.defaultIncrementalRange ?? 'since_last_export'}
+                onValueChange={(value) => handleSettingsChange('defaultIncrementalRange', value)}
               >
                 <SelectTrigger className="h-9 text-sm">
                   <SelectValue placeholder="Select range" />
@@ -382,7 +404,7 @@ export default function SettingsPage() {
               </div>
               <Switch
                 checked={settings?.includeLinkedContext ?? true}
-                onCheckedChange={(checked) => handleSettingsChange("includeLinkedContext", checked)}
+                onCheckedChange={(checked) => handleSettingsChange('includeLinkedContext', checked)}
               />
             </div>
           </CardContent>
@@ -395,18 +417,14 @@ export default function SettingsPage() {
               <AlertTriangle className="h-4 w-4" />
               Danger Zone
             </CardTitle>
-            <CardDescription className="text-xs">
-              Irreversible actions
-            </CardDescription>
+            <CardDescription className="text-xs">Irreversible actions</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Clear Export History */}
             <div className="flex items-center justify-between gap-3">
               <div className="space-y-0.5">
                 <Label className="text-sm">Clear export history</Label>
-                <p className="text-xs text-muted-foreground">
-                  Delete all export history records
-                </p>
+                <p className="text-xs text-muted-foreground">Delete all export history records</p>
               </div>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -419,15 +437,13 @@ export default function SettingsPage() {
                   <AlertDialogHeader>
                     <AlertDialogTitle className="text-base">Clear export history?</AlertDialogTitle>
                     <AlertDialogDescription className="text-sm">
-                      This will delete all records of past exports. The exported files will not be affected.
+                      This will delete all records of past exports. The exported files will not be
+                      affected.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter className="gap-2 sm:gap-0">
                     <AlertDialogCancel className="h-9 text-sm">Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleClearExportHistory}
-                      className="h-9 text-sm"
-                    >
+                    <AlertDialogAction onClick={handleClearExportHistory} className="h-9 text-sm">
                       Clear History
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -451,10 +467,12 @@ export default function SettingsPage() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="text-base">Delete "{product.name}"?</AlertDialogTitle>
+                    <AlertDialogTitle className="text-base">
+                      Delete "{product.name}"?
+                    </AlertDialogTitle>
                     <AlertDialogDescription className="text-sm">
-                      This will permanently delete all problems, hypotheses, experiments,
-                      decisions, artifacts, and captures. This action cannot be undone.
+                      This will permanently delete all problems, hypotheses, experiments, decisions,
+                      artifacts, and captures. This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter className="gap-2 sm:gap-0">
@@ -492,8 +510,8 @@ export default function SettingsPage() {
                     </AlertDialogTitle>
                     <AlertDialogDescription className="text-sm">
                       This will permanently delete ALL products, entities, taxonomy items,
-                      relationships, and export history. Your workspace folder and settings
-                      will be preserved, but all data will be gone forever.
+                      relationships, and export history. Your workspace folder and settings will be
+                      preserved, but all data will be gone forever.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter className="gap-2 sm:gap-0">

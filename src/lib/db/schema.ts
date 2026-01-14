@@ -3,7 +3,7 @@
 export interface Product {
   id: string;
   name: string;
-  icon?: { type: "initials" | "image"; data?: string };
+  icon?: { type: 'initials' | 'image'; data?: string };
   createdAt: string;
   updatedAt: string;
   lastActivityAt: string;
@@ -33,13 +33,13 @@ export interface TaxonomyDimension {
   values: TaxonomyItem[];
 }
 
-export type EntityType = 
-  | "problem" 
-  | "hypothesis" 
-  | "experiment" 
-  | "decision" 
-  | "artifact" 
-  | "quick_capture";
+export type EntityType =
+  | 'problem'
+  | 'hypothesis'
+  | 'experiment'
+  | 'decision'
+  | 'artifact'
+  | 'quick_capture';
 
 export interface LinkedIds {
   problems?: string[];
@@ -64,18 +64,18 @@ export interface BaseEntity {
   linkedIds?: LinkedIds;
 }
 
-export type ProblemStatus = "active" | "exploring" | "blocked" | "solved" | "archived";
+export type ProblemStatus = 'active' | 'exploring' | 'blocked' | 'solved' | 'archived';
 
 export interface Problem extends BaseEntity {
-  type: "problem";
+  type: 'problem';
   status: ProblemStatus;
 }
 
-export type ExperimentStatus = "planned" | "running" | "paused" | "complete";
-export type ExperimentOutcome = "win" | "partial" | "inconclusive" | "fail";
+export type ExperimentStatus = 'planned' | 'running' | 'paused' | 'complete';
+export type ExperimentOutcome = 'win' | 'partial' | 'inconclusive' | 'fail';
 
 export interface Experiment extends BaseEntity {
-  type: "experiment";
+  type: 'experiment';
   status: ExperimentStatus;
   startDate?: string;
   endDate?: string;
@@ -83,37 +83,37 @@ export interface Experiment extends BaseEntity {
   outcome?: ExperimentOutcome;
 }
 
-export type DecisionType = "reversible" | "irreversible";
+export type DecisionType = 'reversible' | 'irreversible';
 
 export interface Decision extends BaseEntity {
-  type: "decision";
+  type: 'decision';
   decisionType?: DecisionType;
   decidedAt?: string;
 }
 
-export type ArtifactType = "link" | "image" | "file" | "note" | "query";
+export type ArtifactType = 'link' | 'image' | 'file' | 'note' | 'query';
 
 export interface Attachment {
   id: string;
-  kind: "image" | "file";
+  kind: 'image' | 'file';
   filename: string;
   mimeType?: string;
   localRef: string; // base64 or objectURL for web
 }
 
 export interface Artifact extends BaseEntity {
-  type: "artifact";
+  type: 'artifact';
   artifactType: ArtifactType;
   source?: string;
   attachments?: Attachment[];
 }
 
 export interface Hypothesis extends BaseEntity {
-  type: "hypothesis";
+  type: 'hypothesis';
 }
 
 export interface QuickCapture extends BaseEntity {
-  type: "quick_capture";
+  type: 'quick_capture';
   promotedToId?: string;
 }
 
@@ -124,7 +124,7 @@ export interface ExportRecord {
   id: string;
   productId: string;
   timestamp: string;
-  mode: "full" | "incremental";
+  mode: 'full' | 'incremental';
   startDate?: string;
   endDate?: string;
   counts: Record<EntityType, number>;
@@ -134,8 +134,8 @@ export interface ExportRecord {
 export interface ProductSettings {
   productId: string;
   exportDefaults: {
-    mode: "full" | "incremental";
-    incrementalRange: "since_last_export" | "custom";
+    mode: 'full' | 'incremental';
+    incrementalRange: 'since_last_export' | 'custom';
     includeParentContext: boolean;
   };
 }

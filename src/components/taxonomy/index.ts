@@ -1,1 +1,1 @@
-export { ContextTagsPicker } from "./ContextTagsPicker";
+export { ContextTagsPicker } from './ContextTagsPicker';

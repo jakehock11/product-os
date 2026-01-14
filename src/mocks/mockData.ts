@@ -30,17 +30,73 @@ export const MOCK_PRODUCTS: Product[] = [
 // ============================================
 
 const MOCK_PERSONAS: Persona[] = [
-  { id: 'persona_1', productId: 'prod_1', name: 'Livestreamer', isArchived: false, createdAt: '2024-06-15T10:00:00Z', updatedAt: '2024-06-15T10:00:00Z' },
-  { id: 'persona_2', productId: 'prod_1', name: 'Coach', isArchived: false, createdAt: '2024-06-15T10:00:00Z', updatedAt: '2024-06-15T10:00:00Z' },
-  { id: 'persona_3', productId: 'prod_1', name: 'Player Manager', isArchived: false, createdAt: '2024-06-15T10:00:00Z', updatedAt: '2024-06-15T10:00:00Z' },
-  { id: 'persona_4', productId: 'prod_1', name: 'Admin', isArchived: false, createdAt: '2024-06-15T10:00:00Z', updatedAt: '2024-06-15T10:00:00Z' },
+  {
+    id: 'persona_1',
+    productId: 'prod_1',
+    name: 'Livestreamer',
+    isArchived: false,
+    createdAt: '2024-06-15T10:00:00Z',
+    updatedAt: '2024-06-15T10:00:00Z',
+  },
+  {
+    id: 'persona_2',
+    productId: 'prod_1',
+    name: 'Coach',
+    isArchived: false,
+    createdAt: '2024-06-15T10:00:00Z',
+    updatedAt: '2024-06-15T10:00:00Z',
+  },
+  {
+    id: 'persona_3',
+    productId: 'prod_1',
+    name: 'Player Manager',
+    isArchived: false,
+    createdAt: '2024-06-15T10:00:00Z',
+    updatedAt: '2024-06-15T10:00:00Z',
+  },
+  {
+    id: 'persona_4',
+    productId: 'prod_1',
+    name: 'Admin',
+    isArchived: false,
+    createdAt: '2024-06-15T10:00:00Z',
+    updatedAt: '2024-06-15T10:00:00Z',
+  },
 ];
 
 const MOCK_FEATURES: Feature[] = [
-  { id: 'feat_1', productId: 'prod_1', name: 'Streaming Quality', isArchived: false, createdAt: '2024-06-15T10:00:00Z', updatedAt: '2024-06-15T10:00:00Z' },
-  { id: 'feat_2', productId: 'prod_1', name: 'Scoring', isArchived: false, createdAt: '2024-06-15T10:00:00Z', updatedAt: '2024-06-15T10:00:00Z' },
-  { id: 'feat_3', productId: 'prod_1', name: 'Monetization', isArchived: false, createdAt: '2024-06-15T10:00:00Z', updatedAt: '2024-06-15T10:00:00Z' },
-  { id: 'feat_4', productId: 'prod_1', name: 'Notifications', isArchived: false, createdAt: '2024-06-15T10:00:00Z', updatedAt: '2024-06-15T10:00:00Z' },
+  {
+    id: 'feat_1',
+    productId: 'prod_1',
+    name: 'Streaming Quality',
+    isArchived: false,
+    createdAt: '2024-06-15T10:00:00Z',
+    updatedAt: '2024-06-15T10:00:00Z',
+  },
+  {
+    id: 'feat_2',
+    productId: 'prod_1',
+    name: 'Scoring',
+    isArchived: false,
+    createdAt: '2024-06-15T10:00:00Z',
+    updatedAt: '2024-06-15T10:00:00Z',
+  },
+  {
+    id: 'feat_3',
+    productId: 'prod_1',
+    name: 'Monetization',
+    isArchived: false,
+    createdAt: '2024-06-15T10:00:00Z',
+    updatedAt: '2024-06-15T10:00:00Z',
+  },
+  {
+    id: 'feat_4',
+    productId: 'prod_1',
+    name: 'Notifications',
+    isArchived: false,
+    createdAt: '2024-06-15T10:00:00Z',
+    updatedAt: '2024-06-15T10:00:00Z',
+  },
 ];
 
 const MOCK_DIMENSIONS: Dimension[] = [
@@ -52,9 +108,30 @@ const MOCK_DIMENSIONS: Dimension[] = [
     createdAt: '2024-06-15T10:00:00Z',
     updatedAt: '2024-06-15T10:00:00Z',
     values: [
-      { id: 'sport_1', dimensionId: 'dim_sport', name: 'Baseball', isArchived: false, createdAt: '2024-06-15T10:00:00Z', updatedAt: '2024-06-15T10:00:00Z' },
-      { id: 'sport_2', dimensionId: 'dim_sport', name: 'Volleyball', isArchived: false, createdAt: '2024-06-15T10:00:00Z', updatedAt: '2024-06-15T10:00:00Z' },
-      { id: 'sport_3', dimensionId: 'dim_sport', name: 'Hockey', isArchived: false, createdAt: '2024-06-15T10:00:00Z', updatedAt: '2024-06-15T10:00:00Z' },
+      {
+        id: 'sport_1',
+        dimensionId: 'dim_sport',
+        name: 'Baseball',
+        isArchived: false,
+        createdAt: '2024-06-15T10:00:00Z',
+        updatedAt: '2024-06-15T10:00:00Z',
+      },
+      {
+        id: 'sport_2',
+        dimensionId: 'dim_sport',
+        name: 'Volleyball',
+        isArchived: false,
+        createdAt: '2024-06-15T10:00:00Z',
+        updatedAt: '2024-06-15T10:00:00Z',
+      },
+      {
+        id: 'sport_3',
+        dimensionId: 'dim_sport',
+        name: 'Hockey',
+        isArchived: false,
+        createdAt: '2024-06-15T10:00:00Z',
+        updatedAt: '2024-06-15T10:00:00Z',
+      },
     ],
   },
 ];
@@ -212,7 +289,12 @@ export const MOCK_FEATURES_ENTITIES: Entity[] = [
       health: 'healthy',
       shippedAt: '2024-09-15T00:00:00Z',
       checkIns: [
-        { id: 'ci_1', date: '2025-01-01T00:00:00Z', health: 'healthy', notes: 'No issues reported' },
+        {
+          id: 'ci_1',
+          date: '2025-01-01T00:00:00Z',
+          health: 'healthy',
+          notes: 'No issues reported',
+        },
       ],
     },
     promotedToId: null,

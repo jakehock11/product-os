@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 import {
   Inbox,
   Brain,
@@ -8,10 +8,10 @@ import {
   Download,
   Settings,
   Tags,
-} from "lucide-react";
-import { useProductContext } from "@/contexts/ProductContext";
-import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
+} from 'lucide-react';
+import { useProductContext } from '@/contexts/ProductContext';
+import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 interface NavItemProps {
   to: string;
@@ -25,11 +25,11 @@ function NavItem({ to, icon: Icon, label }: NavItemProps) {
       to={to}
       className={({ isActive }) =>
         cn(
-          "flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-all duration-100",
-          "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+          'flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-all duration-100',
+          'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
           isActive
-            ? "bg-sidebar-accent text-sidebar-accent-foreground"
-            : "text-sidebar-foreground/80 hover:text-sidebar-foreground"
+            ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+            : 'text-sidebar-foreground/80 hover:text-sidebar-foreground'
         )
       }
     >
@@ -51,7 +51,7 @@ export function ProductSidebar() {
       {/* Product Name Header */}
       <div className="flex h-12 items-center border-b border-sidebar-border px-3">
         <h2 className="truncate text-[13px] font-semibold text-sidebar-foreground tracking-tight">
-          {currentProduct?.name || "Loading..."}
+          {currentProduct?.name || 'Loading...'}
         </h2>
       </div>
 

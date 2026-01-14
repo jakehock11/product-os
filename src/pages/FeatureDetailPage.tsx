@@ -1,22 +1,22 @@
-import { useEffect, useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Package, ArrowLeft, Trash2, Link2, Plus, Calendar } from "lucide-react";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useEntity, useUpdateEntity, useDeleteEntity } from "@/hooks/useEntities";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Package, ArrowLeft, Trash2, Link2, Plus, Calendar } from 'lucide-react';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useEntity, useUpdateEntity, useDeleteEntity } from '@/hooks/useEntities';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,48 +27,48 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { RichTextEditor } from "@/components/editor";
-import { ContextTagsPicker } from "@/components/taxonomy";
-import { LinkToModal, LinkedItems } from "@/components/linking";
-import { useToast } from "@/hooks/use-toast";
-import { format, formatDistanceToNow } from "date-fns";
-import { nanoid } from "nanoid";
-import type { FeatureStatus, FeatureHealth, FeatureCheckIn } from "@/lib/types";
+} from '@/components/ui/dialog';
+import { RichTextEditor } from '@/components/editor';
+import { ContextTagsPicker } from '@/components/taxonomy';
+import { LinkToModal, LinkedItems } from '@/components/linking';
+import { useToast } from '@/hooks/use-toast';
+import { format, formatDistanceToNow } from 'date-fns';
+import { nanoid } from 'nanoid';
+import type { FeatureStatus, FeatureHealth, FeatureCheckIn } from '@/lib/types';
 
 const STATUSES: { value: FeatureStatus; label: string }[] = [
-  { value: "building", label: "Building" },
-  { value: "shipped", label: "Shipped" },
-  { value: "monitoring", label: "Monitoring" },
-  { value: "stable", label: "Stable" },
-  { value: "deprecated", label: "Deprecated" },
+  { value: 'building', label: 'Building' },
+  { value: 'shipped', label: 'Shipped' },
+  { value: 'monitoring', label: 'Monitoring' },
+  { value: 'stable', label: 'Stable' },
+  { value: 'deprecated', label: 'Deprecated' },
 ];
 
 const HEALTH_OPTIONS: { value: FeatureHealth; label: string; color: string }[] = [
-  { value: "healthy", label: "Healthy", color: "bg-green-500" },
-  { value: "needs_attention", label: "Needs Attention", color: "bg-yellow-500" },
-  { value: "underperforming", label: "Underperforming", color: "bg-red-500" },
+  { value: 'healthy', label: 'Healthy', color: 'bg-green-500' },
+  { value: 'needs_attention', label: 'Needs Attention', color: 'bg-yellow-500' },
+  { value: 'underperforming', label: 'Underperforming', color: 'bg-red-500' },
 ];
 
 const STATUS_COLORS: Record<FeatureStatus, string> = {
-  building: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  shipped: "bg-green-500/10 text-green-600 border-green-500/20",
-  monitoring: "bg-purple-500/10 text-purple-600 border-purple-500/20",
-  stable: "bg-green-500/10 text-green-600 border-green-500/20",
-  deprecated: "bg-gray-500/10 text-gray-500 border-gray-500/20",
+  building: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  shipped: 'bg-green-500/10 text-green-600 border-green-500/20',
+  monitoring: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+  stable: 'bg-green-500/10 text-green-600 border-green-500/20',
+  deprecated: 'bg-gray-500/10 text-gray-500 border-gray-500/20',
 };
 
 const HEALTH_COLORS: Record<FeatureHealth, string> = {
-  healthy: "bg-green-500",
-  needs_attention: "bg-yellow-500",
-  underperforming: "bg-red-500",
+  healthy: 'bg-green-500',
+  needs_attention: 'bg-yellow-500',
+  underperforming: 'bg-red-500',
 };
 
 export default function FeatureDetailPage() {
@@ -80,19 +80,19 @@ export default function FeatureDetailPage() {
   const deleteEntity = useDeleteEntity();
   const { toast } = useToast();
 
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [status, setStatus] = useState<FeatureStatus>("building");
-  const [health, setHealth] = useState<FeatureHealth>("healthy");
-  const [shippedAt, setShippedAt] = useState("");
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [status, setStatus] = useState<FeatureStatus>('building');
+  const [health, setHealth] = useState<FeatureHealth>('healthy');
+  const [shippedAt, setShippedAt] = useState('');
   const [checkIns, setCheckIns] = useState<FeatureCheckIn[]>([]);
   const [personaIds, setPersonaIds] = useState<string[]>([]);
   const [featureIds, setFeatureIds] = useState<string[]>([]);
   const [dimensionValueIds, setDimensionValueIds] = useState<string[]>([]);
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [checkInModalOpen, setCheckInModalOpen] = useState(false);
-  const [newCheckInHealth, setNewCheckInHealth] = useState<FeatureHealth>("healthy");
-  const [newCheckInNotes, setNewCheckInNotes] = useState("");
+  const [newCheckInHealth, setNewCheckInHealth] = useState<FeatureHealth>('healthy');
+  const [newCheckInNotes, setNewCheckInNotes] = useState('');
 
   useEffect(() => {
     if (productId) setCurrentProduct(productId);
@@ -100,11 +100,11 @@ export default function FeatureDetailPage() {
 
   useEffect(() => {
     if (entity) {
-      setTitle(entity.title || "");
-      setBody(entity.body || "");
-      setStatus((entity.status as FeatureStatus) || "building");
-      setHealth((entity.metadata?.health as FeatureHealth) || "healthy");
-      setShippedAt(entity.metadata?.shippedAt || "");
+      setTitle(entity.title || '');
+      setBody(entity.body || '');
+      setStatus((entity.status as FeatureStatus) || 'building');
+      setHealth((entity.metadata?.health as FeatureHealth) || 'healthy');
+      setShippedAt(entity.metadata?.shippedAt || '');
       setCheckIns(entity.metadata?.checkIns || []);
       setPersonaIds(entity.personaIds || []);
       setFeatureIds(entity.featureIds || []);
@@ -113,7 +113,7 @@ export default function FeatureDetailPage() {
   }, [entity]);
 
   const debouncedSave = useCallback(
-    (data: Parameters<typeof updateEntity.mutateAsync>[0]["data"]) => {
+    (data: Parameters<typeof updateEntity.mutateAsync>[0]['data']) => {
       if (!id) return;
       updateEntity.mutate({ id, data });
     },
@@ -163,19 +163,19 @@ export default function FeatureDetailPage() {
       },
     });
     setCheckInModalOpen(false);
-    setNewCheckInHealth("healthy");
-    setNewCheckInNotes("");
-    toast({ title: "Check-in added", description: "Feature health has been updated." });
+    setNewCheckInHealth('healthy');
+    setNewCheckInNotes('');
+    toast({ title: 'Check-in added', description: 'Feature health has been updated.' });
   };
 
   const handleDelete = async () => {
     if (!id) return;
     try {
       await deleteEntity.mutateAsync(id);
-      toast({ title: "Deleted", description: "Feature has been deleted." });
+      toast({ title: 'Deleted', description: 'Feature has been deleted.' });
       navigate(`/product/${productId}/work`);
     } catch {
-      toast({ title: "Error", description: "Failed to delete feature.", variant: "destructive" });
+      toast({ title: 'Error', description: 'Failed to delete feature.', variant: 'destructive' });
     }
   };
 
@@ -194,10 +194,10 @@ export default function FeatureDetailPage() {
           metadata: { health, shippedAt, checkIns },
         },
       });
-      toast({ title: "Saved", description: "Feature has been saved." });
+      toast({ title: 'Saved', description: 'Feature has been saved.' });
       navigate(`/product/${productId}/work`);
     } catch {
-      toast({ title: "Error", description: "Failed to save feature.", variant: "destructive" });
+      toast({ title: 'Error', description: 'Failed to save feature.', variant: 'destructive' });
     }
   };
 
@@ -242,20 +242,25 @@ export default function FeatureDetailPage() {
         <div className="flex items-center gap-2">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete feature?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone.
-                </AlertDialogDescription>
+                <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
                   Delete
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -320,8 +325,10 @@ export default function FeatureDetailPage() {
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <Input
               type="date"
-              value={shippedAt ? format(new Date(shippedAt), "yyyy-MM-dd") : ""}
-              onChange={(e) => handleShippedAtChange(e.target.value ? new Date(e.target.value).toISOString() : "")}
+              value={shippedAt ? format(new Date(shippedAt), 'yyyy-MM-dd') : ''}
+              onChange={(e) =>
+                handleShippedAtChange(e.target.value ? new Date(e.target.value).toISOString() : '')
+              }
               className="h-9 w-40"
             />
           </div>
@@ -363,11 +370,13 @@ export default function FeatureDetailPage() {
                     key={checkIn.id}
                     className="flex items-start gap-3 rounded-lg border border-border/50 p-3"
                   >
-                    <div className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${HEALTH_COLORS[checkIn.health]}`} />
+                    <div
+                      className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${HEALTH_COLORS[checkIn.health]}`}
+                    />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-medium capitalize">
-                          {checkIn.health.replace("_", " ")}
+                          {checkIn.health.replace('_', ' ')}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {formatDistanceToNow(new Date(checkIn.date), { addSuffix: true })}
@@ -427,15 +436,15 @@ export default function FeatureDetailPage() {
             entityId={id!}
             onOpenLink={(entityId, entityType) => {
               const routes: Record<string, string> = {
-                problem: "problems",
-                hypothesis: "hypotheses",
-                experiment: "experiments",
-                decision: "decisions",
-                artifact: "artifacts",
-                capture: "captures",
-                feedback: "feedback",
-                feature_request: "feature-requests",
-                feature: "features",
+                problem: 'problems',
+                hypothesis: 'hypotheses',
+                experiment: 'experiments',
+                decision: 'decisions',
+                artifact: 'artifacts',
+                capture: 'captures',
+                feedback: 'feedback',
+                feature_request: 'feature-requests',
+                feature: 'features',
               };
               navigate(`/product/${productId}/${routes[entityType]}/${entityId}`);
             }}
@@ -462,7 +471,10 @@ export default function FeatureDetailPage() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label className="text-sm">Health Status</Label>
-              <Select value={newCheckInHealth} onValueChange={(v) => setNewCheckInHealth(v as FeatureHealth)}>
+              <Select
+                value={newCheckInHealth}
+                onValueChange={(v) => setNewCheckInHealth(v as FeatureHealth)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

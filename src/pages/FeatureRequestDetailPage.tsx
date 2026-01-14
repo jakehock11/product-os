@@ -1,21 +1,21 @@
-import { useEffect, useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Sparkles, ArrowLeft, Trash2, Link2 } from "lucide-react";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useEntity, useUpdateEntity, useDeleteEntity } from "@/hooks/useEntities";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useState, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Sparkles, ArrowLeft, Trash2, Link2 } from 'lucide-react';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useEntity, useUpdateEntity, useDeleteEntity } from '@/hooks/useEntities';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,43 +26,43 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { RichTextEditor } from "@/components/editor";
-import { ContextTagsPicker } from "@/components/taxonomy";
-import { LinkToModal, LinkedItems } from "@/components/linking";
-import { useToast } from "@/hooks/use-toast";
-import type { FeatureRequestStatus, FeatureRequestPriority } from "@/lib/types";
+} from '@/components/ui/alert-dialog';
+import { RichTextEditor } from '@/components/editor';
+import { ContextTagsPicker } from '@/components/taxonomy';
+import { LinkToModal, LinkedItems } from '@/components/linking';
+import { useToast } from '@/hooks/use-toast';
+import type { FeatureRequestStatus, FeatureRequestPriority } from '@/lib/types';
 
 const STATUSES: { value: FeatureRequestStatus; label: string }[] = [
-  { value: "new", label: "New" },
-  { value: "considering", label: "Considering" },
-  { value: "planned", label: "Planned" },
-  { value: "in_progress", label: "In Progress" },
-  { value: "shipped", label: "Shipped" },
-  { value: "declined", label: "Declined" },
+  { value: 'new', label: 'New' },
+  { value: 'considering', label: 'Considering' },
+  { value: 'planned', label: 'Planned' },
+  { value: 'in_progress', label: 'In Progress' },
+  { value: 'shipped', label: 'Shipped' },
+  { value: 'declined', label: 'Declined' },
 ];
 
 const PRIORITIES: { value: FeatureRequestPriority; label: string }[] = [
-  { value: "low", label: "Low" },
-  { value: "medium", label: "Medium" },
-  { value: "high", label: "High" },
-  { value: "critical", label: "Critical" },
+  { value: 'low', label: 'Low' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'high', label: 'High' },
+  { value: 'critical', label: 'Critical' },
 ];
 
 const STATUS_COLORS: Record<FeatureRequestStatus, string> = {
-  new: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  considering: "bg-purple-500/10 text-purple-600 border-purple-500/20",
-  planned: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20",
-  in_progress: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  shipped: "bg-green-500/10 text-green-600 border-green-500/20",
-  declined: "bg-red-500/10 text-red-600 border-red-500/20",
+  new: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  considering: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+  planned: 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20',
+  in_progress: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  shipped: 'bg-green-500/10 text-green-600 border-green-500/20',
+  declined: 'bg-red-500/10 text-red-600 border-red-500/20',
 };
 
 const PRIORITY_COLORS: Record<FeatureRequestPriority, string> = {
-  low: "bg-gray-500/10 text-gray-600 border-gray-500/20",
-  medium: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
-  high: "bg-orange-500/10 text-orange-600 border-orange-500/20",
-  critical: "bg-red-500/10 text-red-600 border-red-500/20",
+  low: 'bg-gray-500/10 text-gray-600 border-gray-500/20',
+  medium: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
+  high: 'bg-orange-500/10 text-orange-600 border-orange-500/20',
+  critical: 'bg-red-500/10 text-red-600 border-red-500/20',
 };
 
 export default function FeatureRequestDetailPage() {
@@ -74,12 +74,12 @@ export default function FeatureRequestDetailPage() {
   const deleteEntity = useDeleteEntity();
   const { toast } = useToast();
 
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [status, setStatus] = useState<FeatureRequestStatus>("new");
-  const [priority, setPriority] = useState<FeatureRequestPriority>("medium");
-  const [source, setSource] = useState("");
-  const [declinedReason, setDeclinedReason] = useState("");
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [status, setStatus] = useState<FeatureRequestStatus>('new');
+  const [priority, setPriority] = useState<FeatureRequestPriority>('medium');
+  const [source, setSource] = useState('');
+  const [declinedReason, setDeclinedReason] = useState('');
   const [personaIds, setPersonaIds] = useState<string[]>([]);
   const [featureIds, setFeatureIds] = useState<string[]>([]);
   const [dimensionValueIds, setDimensionValueIds] = useState<string[]>([]);
@@ -91,12 +91,12 @@ export default function FeatureRequestDetailPage() {
 
   useEffect(() => {
     if (entity) {
-      setTitle(entity.title || "");
-      setBody(entity.body || "");
-      setStatus((entity.status as FeatureRequestStatus) || "new");
-      setPriority((entity.metadata?.priority as FeatureRequestPriority) || "medium");
-      setSource(entity.metadata?.source || "");
-      setDeclinedReason(entity.metadata?.declinedReason || "");
+      setTitle(entity.title || '');
+      setBody(entity.body || '');
+      setStatus((entity.status as FeatureRequestStatus) || 'new');
+      setPriority((entity.metadata?.priority as FeatureRequestPriority) || 'medium');
+      setSource(entity.metadata?.source || '');
+      setDeclinedReason(entity.metadata?.declinedReason || '');
       setPersonaIds(entity.personaIds || []);
       setFeatureIds(entity.featureIds || []);
       setDimensionValueIds(entity.dimensionValueIds || []);
@@ -104,7 +104,7 @@ export default function FeatureRequestDetailPage() {
   }, [entity]);
 
   const debouncedSave = useCallback(
-    (data: Parameters<typeof updateEntity.mutateAsync>[0]["data"]) => {
+    (data: Parameters<typeof updateEntity.mutateAsync>[0]['data']) => {
       if (!id) return;
       updateEntity.mutate({ id, data });
     },
@@ -145,10 +145,14 @@ export default function FeatureRequestDetailPage() {
     if (!id) return;
     try {
       await deleteEntity.mutateAsync(id);
-      toast({ title: "Deleted", description: "Feature request has been deleted." });
+      toast({ title: 'Deleted', description: 'Feature request has been deleted.' });
       navigate(`/product/${productId}/inbox`);
     } catch {
-      toast({ title: "Error", description: "Failed to delete feature request.", variant: "destructive" });
+      toast({
+        title: 'Error',
+        description: 'Failed to delete feature request.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -167,10 +171,14 @@ export default function FeatureRequestDetailPage() {
           metadata: { priority, source, declinedReason },
         },
       });
-      toast({ title: "Saved", description: "Feature request has been saved." });
+      toast({ title: 'Saved', description: 'Feature request has been saved.' });
       navigate(`/product/${productId}/inbox`);
     } catch {
-      toast({ title: "Error", description: "Failed to save feature request.", variant: "destructive" });
+      toast({
+        title: 'Error',
+        description: 'Failed to save feature request.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -215,20 +223,25 @@ export default function FeatureRequestDetailPage() {
         <div className="flex items-center gap-2">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete feature request?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone.
-                </AlertDialogDescription>
+                <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
                   Delete
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -294,7 +307,7 @@ export default function FeatureRequestDetailPage() {
         </div>
 
         {/* Declined Reason (only show when status is declined) */}
-        {status === "declined" && (
+        {status === 'declined' && (
           <div className="space-y-2">
             <Label className="text-xs text-muted-foreground">Reason for Declining</Label>
             <Textarea
@@ -359,15 +372,15 @@ export default function FeatureRequestDetailPage() {
             entityId={id!}
             onOpenLink={(entityId, entityType) => {
               const routes: Record<string, string> = {
-                problem: "problems",
-                hypothesis: "hypotheses",
-                experiment: "experiments",
-                decision: "decisions",
-                artifact: "artifacts",
-                capture: "captures",
-                feedback: "feedback",
-                feature_request: "feature-requests",
-                feature: "features",
+                problem: 'problems',
+                hypothesis: 'hypotheses',
+                experiment: 'experiments',
+                decision: 'decisions',
+                artifact: 'artifacts',
+                capture: 'captures',
+                feedback: 'feedback',
+                feature_request: 'feature-requests',
+                feature: 'features',
               };
               navigate(`/product/${productId}/${routes[entityType]}/${entityId}`);
             }}

@@ -1,6 +1,6 @@
-import { Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useQuickCapture } from "@/contexts/QuickCaptureContext";
+import { Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useQuickCapture } from '@/contexts/QuickCaptureContext';
 
 export function QuickCaptureButton() {
   const { open } = useQuickCapture();

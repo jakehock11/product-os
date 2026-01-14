@@ -1,46 +1,38 @@
-import { useEffect, useState, useMemo } from "react";
-import { useParams, Link, useSearchParams, useNavigate } from "react-router-dom";
-import {
-  FileText,
-  Search,
-  Link2,
-  Image,
-  StickyNote,
-  Plus,
-  Paperclip,
-} from "lucide-react";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useEntities, useCreateEntity } from "@/hooks/useEntities";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState, useMemo } from 'react';
+import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { FileText, Search, Link2, Image, StickyNote, Plus, Paperclip } from 'lucide-react';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useEntities, useCreateEntity } from '@/hooks/useEntities';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useToast } from "@/hooks/use-toast";
-import { formatDistanceToNow } from "date-fns";
-import type { Entity } from "@/lib/types";
+} from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
+import { formatDistanceToNow } from 'date-fns';
+import type { Entity } from '@/lib/types';
 
 const ARTIFACT_TYPE_CONFIG: Record<string, { icon: React.ElementType; label: string }> = {
-  link: { icon: Link2, label: "Link" },
-  image: { icon: Image, label: "Image" },
-  note: { icon: StickyNote, label: "Note" },
-  file: { icon: FileText, label: "File" },
-  query: { icon: FileText, label: "Query" },
+  link: { icon: Link2, label: 'Link' },
+  image: { icon: Image, label: 'Image' },
+  note: { icon: StickyNote, label: 'Note' },
+  file: { icon: FileText, label: 'File' },
+  query: { icon: FileText, label: 'Query' },
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  draft: "bg-gray-500/10 text-gray-600 border-gray-500/20",
-  final: "bg-green-500/10 text-green-600 border-green-500/20",
-  archived: "bg-gray-500/10 text-gray-500 border-gray-500/20",
+  draft: 'bg-gray-500/10 text-gray-600 border-gray-500/20',
+  final: 'bg-green-500/10 text-green-600 border-green-500/20',
+  archived: 'bg-gray-500/10 text-gray-500 border-gray-500/20',
 };
 
-type TabValue = "all" | "link" | "image" | "note";
+type TabValue = 'all' | 'link' | 'image' | 'note';
 
 export default function EvidencePage() {
   const { productId } = useParams<{ productId: string }>();
@@ -51,9 +43,9 @@ export default function EvidencePage() {
   const createEntity = useCreateEntity();
   const { toast } = useToast();
 
-  const [search, setSearch] = useState("");
-  const filterParam = searchParams.get("filter") as TabValue | null;
-  const [activeTab, setActiveTab] = useState<TabValue>(filterParam || "all");
+  const [search, setSearch] = useState('');
+  const filterParam = searchParams.get('filter') as TabValue | null;
+  const [activeTab, setActiveTab] = useState<TabValue>(filterParam || 'all');
 
   useEffect(() => {
     if (productId) setCurrentProduct(productId);
@@ -67,22 +59,22 @@ export default function EvidencePage() {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value as TabValue);
-    if (value === "all") {
-      searchParams.delete("filter");
+    if (value === 'all') {
+      searchParams.delete('filter');
     } else {
-      searchParams.set("filter", value);
+      searchParams.set('filter', value);
     }
     setSearchParams(searchParams);
   };
 
   const filteredEntities = useMemo(() => {
     if (!entities) return [];
-    
+
     return entities
       .filter((e) => {
-        if (e.type !== "artifact") return false;
+        if (e.type !== 'artifact') return false;
         const artifactType = e.metadata?.artifactType;
-        if (activeTab !== "all" && artifactType !== activeTab) return false;
+        if (activeTab !== 'all' && artifactType !== activeTab) return false;
         if (search) {
           const searchLower = search.toLowerCase();
           return (
@@ -97,14 +89,14 @@ export default function EvidencePage() {
 
   const counts = useMemo(() => {
     if (!entities) return { all: 0, link: 0, image: 0, note: 0 };
-    
-    const artifacts = entities.filter((e) => e.type === "artifact");
+
+    const artifacts = entities.filter((e) => e.type === 'artifact');
 
     return {
       all: artifacts.length,
-      link: artifacts.filter((e) => e.metadata?.artifactType === "link").length,
-      image: artifacts.filter((e) => e.metadata?.artifactType === "image").length,
-      note: artifacts.filter((e) => e.metadata?.artifactType === "note").length,
+      link: artifacts.filter((e) => e.metadata?.artifactType === 'link').length,
+      image: artifacts.filter((e) => e.metadata?.artifactType === 'image').length,
+      note: artifacts.filter((e) => e.metadata?.artifactType === 'note').length,
     };
   }, [entities]);
 
@@ -113,17 +105,17 @@ export default function EvidencePage() {
     try {
       const newEntity = await createEntity.mutateAsync({
         productId,
-        type: "artifact",
-        title: `New ${ARTIFACT_TYPE_CONFIG[artifactType]?.label || "Artifact"}`,
-        status: "draft",
+        type: 'artifact',
+        title: `New ${ARTIFACT_TYPE_CONFIG[artifactType]?.label || 'Artifact'}`,
+        status: 'draft',
         metadata: { artifactType },
       });
       navigate(`/product/${productId}/artifacts/${newEntity.id}`);
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to create artifact.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to create artifact.',
+        variant: 'destructive',
       });
     }
   };
@@ -151,9 +143,7 @@ export default function EvidencePage() {
               <Paperclip className="h-5 w-5 text-muted-foreground" />
               Evidence
             </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Artifacts, links, and notes
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">Artifacts, links, and notes</p>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -163,15 +153,15 @@ export default function EvidencePage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleCreate("link")} className="gap-2">
+              <DropdownMenuItem onClick={() => handleCreate('link')} className="gap-2">
                 <Link2 className="h-4 w-4" />
                 Link
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleCreate("image")} className="gap-2">
+              <DropdownMenuItem onClick={() => handleCreate('image')} className="gap-2">
                 <Image className="h-4 w-4" />
                 Image
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleCreate("note")} className="gap-2">
+              <DropdownMenuItem onClick={() => handleCreate('note')} className="gap-2">
                 <StickyNote className="h-4 w-4" />
                 Note
               </DropdownMenuItem>
@@ -230,14 +220,24 @@ export default function EvidencePage() {
         <div className="py-16 text-center">
           <Paperclip className="mx-auto h-10 w-10 text-muted-foreground/50" />
           <p className="mt-3 text-sm text-muted-foreground">
-            {search ? "No items match your search." : "No evidence yet."}
+            {search ? 'No items match your search.' : 'No evidence yet.'}
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => handleCreate("link")} className="gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleCreate('link')}
+              className="gap-1.5"
+            >
               <Link2 className="h-3.5 w-3.5" />
               Add Link
             </Button>
-            <Button variant="outline" size="sm" onClick={() => handleCreate("note")} className="gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleCreate('note')}
+              className="gap-1.5"
+            >
               <StickyNote className="h-3.5 w-3.5" />
               Add Note
             </Button>
@@ -246,7 +246,7 @@ export default function EvidencePage() {
       ) : (
         <div className="space-y-1">
           {filteredEntities.map((entity) => {
-            const artifactType = entity.metadata?.artifactType || "note";
+            const artifactType = entity.metadata?.artifactType || 'note';
             const config = ARTIFACT_TYPE_CONFIG[artifactType] || ARTIFACT_TYPE_CONFIG.note;
             const Icon = config.icon;
             return (
@@ -260,16 +260,17 @@ export default function EvidencePage() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-foreground">
-                    {entity.title || "Untitled"}
+                    {entity.title || 'Untitled'}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {config.label} · {formatDistanceToNow(new Date(entity.updatedAt), { addSuffix: true })}
+                    {config.label} ·{' '}
+                    {formatDistanceToNow(new Date(entity.updatedAt), { addSuffix: true })}
                   </p>
                 </div>
                 {entity.status && (
                   <Badge
                     variant="outline"
-                    className={`text-[10px] capitalize ${STATUS_COLORS[entity.status] || ""}`}
+                    className={`text-[10px] capitalize ${STATUS_COLORS[entity.status] || ''}`}
                   >
                     {entity.status}
                   </Badge>

@@ -1,8 +1,8 @@
-import { useEffect, useState, useMemo } from "react";
-import { useParams } from "react-router-dom";
-import { Download, FileText, Clock, FolderOpen, Trash2, Copy, ClipboardCheck } from "lucide-react";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useProduct } from "@/hooks/useProducts";
+import { useEffect, useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import { Download, FileText, Clock, FolderOpen, Trash2, Copy, ClipboardCheck } from 'lucide-react';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useProduct } from '@/hooks/useProducts';
 import {
   useExportHistory,
   useExportPreview,
@@ -10,16 +10,16 @@ import {
   useClearExportHistory,
   useOpenExportFolder,
   useCopySnapshot,
-} from "@/hooks/useExports";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+} from '@/hooks/useExports';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,21 +29,21 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
-import { format, formatDistanceToNow } from "date-fns";
-import type { ExportOptions, ExportMode, EntityType } from "@/lib/types";
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import { format, formatDistanceToNow } from 'date-fns';
+import type { ExportOptions, ExportMode, EntityType } from '@/lib/types';
 
 const TYPE_LABELS: Record<string, string> = {
-  capture: "Captures",
-  problem: "Problems",
-  hypothesis: "Hypotheses",
-  experiment: "Experiments",
-  decision: "Decisions",
-  artifact: "Artifacts",
-  feedback: "Feedback",
-  feature_request: "Requests",
-  feature: "Features",
+  capture: 'Captures',
+  problem: 'Problems',
+  hypothesis: 'Hypotheses',
+  experiment: 'Experiments',
+  decision: 'Decisions',
+  artifact: 'Artifacts',
+  feedback: 'Feedback',
+  feature_request: 'Requests',
+  feature: 'Features',
 };
 
 export default function ExportsPage() {
@@ -52,9 +52,9 @@ export default function ExportsPage() {
   const { data: product } = useProduct(productId);
   const { toast } = useToast();
 
-  const [mode, setMode] = useState<ExportMode>("full");
+  const [mode, setMode] = useState<ExportMode>('full');
   const [includeLinkedContext, setIncludeLinkedContext] = useState(true);
-  const [sinceDate, setSinceDate] = useState("");
+  const [sinceDate, setSinceDate] = useState('');
   const [showClearDialog, setShowClearDialog] = useState(false);
 
   // Hooks
@@ -70,7 +70,7 @@ export default function ExportsPage() {
     return {
       productId,
       mode,
-      startDate: mode === "incremental" ? sinceDate || undefined : undefined,
+      startDate: mode === 'incremental' ? sinceDate || undefined : undefined,
       includeLinkedContext,
     };
   }, [productId, mode, sinceDate, includeLinkedContext]);
@@ -97,7 +97,7 @@ export default function ExportsPage() {
       const result = await executeExport.mutateAsync(exportOptions);
 
       toast({
-        title: "Export complete",
+        title: 'Export complete',
         description: `Exported ${result.counts.total} items to ${result.outputPath}`,
       });
 
@@ -107,9 +107,9 @@ export default function ExportsPage() {
       }
     } catch (error) {
       toast({
-        title: "Export failed",
+        title: 'Export failed',
         description: String(error),
-        variant: "destructive",
+        variant: 'destructive',
       });
     }
   };
@@ -118,15 +118,15 @@ export default function ExportsPage() {
     try {
       await clearHistory.mutateAsync(productId);
       toast({
-        title: "History cleared",
-        description: "Export history has been cleared.",
+        title: 'History cleared',
+        description: 'Export history has been cleared.',
       });
       setShowClearDialog(false);
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to clear history.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to clear history.',
+        variant: 'destructive',
       });
     }
   };
@@ -142,14 +142,14 @@ export default function ExportsPage() {
       const snapshot = await copySnapshot.mutateAsync(productId);
       await navigator.clipboard.writeText(snapshot);
       toast({
-        title: "Copied to clipboard",
-        description: "Product snapshot is ready to paste into your AI chat.",
+        title: 'Copied to clipboard',
+        description: 'Product snapshot is ready to paste into your AI chat.',
       });
     } catch (error) {
       toast({
-        title: "Copy failed",
+        title: 'Copy failed',
         description: String(error),
-        variant: "destructive",
+        variant: 'destructive',
       });
     }
   };
@@ -204,7 +204,7 @@ export default function ExportsPage() {
               </RadioGroup>
             </div>
 
-            {mode === "incremental" && (
+            {mode === 'incremental' && (
               <>
                 {/* Date Selection */}
                 <div className="space-y-2">
@@ -221,7 +221,7 @@ export default function ExportsPage() {
                         variant="outline"
                         size="sm"
                         className="h-9 text-xs"
-                        onClick={() => setSinceDate(lastExportDate.split("T")[0])}
+                        onClick={() => setSinceDate(lastExportDate.split('T')[0])}
                       >
                         Since last export
                       </Button>
@@ -229,7 +229,7 @@ export default function ExportsPage() {
                   </div>
                   {lastExportDate && (
                     <p className="text-xs text-muted-foreground">
-                      Last export: {format(new Date(lastExportDate), "MMM d, yyyy h:mm a")}
+                      Last export: {format(new Date(lastExportDate), 'MMM d, yyyy h:mm a')}
                     </p>
                   )}
                 </div>
@@ -270,11 +270,7 @@ export default function ExportsPage() {
                       {Object.entries(preview.counts.byType)
                         .filter(([, count]) => count > 0)
                         .map(([type, count]) => (
-                          <Badge
-                            key={type}
-                            variant="secondary"
-                            className="h-5 px-1.5 text-[10px]"
-                          >
+                          <Badge key={type} variant="secondary" className="h-5 px-1.5 text-[10px]">
                             {count} {TYPE_LABELS[type as EntityType]}
                           </Badge>
                         ))}
@@ -282,7 +278,7 @@ export default function ExportsPage() {
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    {mode === "full" ? "All items" : "Configure options to see preview"}
+                    {mode === 'full' ? 'All items' : 'Configure options to see preview'}
                   </p>
                 )}
               </div>
@@ -294,7 +290,7 @@ export default function ExportsPage() {
               size="sm"
               className="w-full"
             >
-              {executeExport.isPending ? "Exporting..." : "Download Export"}
+              {executeExport.isPending ? 'Exporting...' : 'Download Export'}
             </Button>
           </CardContent>
         </Card>
@@ -330,16 +326,11 @@ export default function ExportsPage() {
                 <Skeleton className="h-14 w-full rounded-md" />
               </div>
             ) : !exportHistory || exportHistory.length === 0 ? (
-              <p className="py-10 text-center text-xs text-muted-foreground">
-                No exports yet
-              </p>
+              <p className="py-10 text-center text-xs text-muted-foreground">No exports yet</p>
             ) : (
               <div className="space-y-2">
                 {[...exportHistory]
-                  .sort(
-                    (a, b) =>
-                      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-                  )
+                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
                   .slice(0, 10)
                   .map((record) => (
                     <div
@@ -349,7 +340,7 @@ export default function ExportsPage() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
                           <Badge
-                            variant={record.mode === "full" ? "default" : "secondary"}
+                            variant={record.mode === 'full' ? 'default' : 'secondary'}
                             className="h-5 px-1.5 text-[10px] font-medium"
                           >
                             {record.mode}
@@ -363,11 +354,8 @@ export default function ExportsPage() {
                         <p className="mt-1 truncate text-xs text-muted-foreground">
                           {Object.entries(record.counts.byType)
                             .filter(([, count]) => count > 0)
-                            .map(
-                              ([type, count]) =>
-                                `${count} ${type}${count > 1 ? "s" : ""}`
-                            )
-                            .join(", ")}
+                            .map(([type, count]) => `${count} ${type}${count > 1 ? 's' : ''}`)
+                            .join(', ')}
                         </p>
                       </div>
                       {record.outputPath && (
@@ -403,8 +391,8 @@ export default function ExportsPage() {
         <CardContent>
           <div className="space-y-3">
             <p className="text-xs text-muted-foreground">
-              Generates a markdown summary including active problems, running experiments,
-              recent decisions, and open questions.
+              Generates a markdown summary including active problems, running experiments, recent
+              decisions, and open questions.
             </p>
             <Button
               onClick={handleCopySnapshot}
@@ -432,8 +420,8 @@ export default function ExportsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Clear Export History?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will remove all export records from history. The exported files will not
-              be deleted.
+              This will remove all export records from history. The exported files will not be
+              deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

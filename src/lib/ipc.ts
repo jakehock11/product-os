@@ -74,7 +74,7 @@ export const api = {
         console.log('[Mock] Workspace select - not available in preview');
         return null;
       }
-      const result = await window.api.workspace.select() as WorkspaceSelectResult;
+      const result = (await window.api.workspace.select()) as WorkspaceSelectResult;
       if (!result.success) {
         throw new IPCError(result.error || 'Failed to select workspace');
       }
@@ -86,7 +86,7 @@ export const api = {
         console.log('[Mock] Workspace initialize - not available in preview');
         return;
       }
-      const result = await window.api.workspace.initialize(folderPath) as IPCResult;
+      const result = (await window.api.workspace.initialize(folderPath)) as IPCResult;
       unwrapVoid(result);
     },
 
@@ -94,7 +94,7 @@ export const api = {
       if (!isElectron) {
         return '/mock/workspace';
       }
-      const result = await window.api.workspace.getPath() as WorkspacePathResult;
+      const result = (await window.api.workspace.getPath()) as WorkspacePathResult;
       if (!result.success) {
         throw new IPCError(result.error || 'Failed to get workspace path');
       }
@@ -105,7 +105,7 @@ export const api = {
       if (!isElectron) {
         return true; // Always configured in mock mode
       }
-      const result = await window.api.workspace.isConfigured() as WorkspaceConfiguredResult;
+      const result = (await window.api.workspace.isConfigured()) as WorkspaceConfiguredResult;
       if (!result.success) {
         throw new IPCError(result.error || 'Failed to check workspace configuration');
       }
@@ -117,7 +117,7 @@ export const api = {
         console.log('[Mock] Open folder - not available in preview');
         return;
       }
-      const result = await window.api.workspace.openFolder() as IPCResult;
+      const result = (await window.api.workspace.openFolder()) as IPCResult;
       unwrapVoid(result);
     },
   },
@@ -128,7 +128,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.getProducts();
       }
-      const result = await window.api.products.getAll() as IPCResult<Product[]>;
+      const result = (await window.api.products.getAll()) as IPCResult<Product[]>;
       return unwrap(result);
     },
 
@@ -136,7 +136,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.getProduct(id);
       }
-      const result = await window.api.products.getById(id) as IPCResult<Product | null>;
+      const result = (await window.api.products.getById(id)) as IPCResult<Product | null>;
       return unwrap(result);
     },
 
@@ -144,7 +144,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.createProduct(data);
       }
-      const result = await window.api.products.create(data) as IPCResult<Product>;
+      const result = (await window.api.products.create(data)) as IPCResult<Product>;
       return unwrap(result);
     },
 
@@ -152,7 +152,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.updateProduct(id, data);
       }
-      const result = await window.api.products.update(id, data) as IPCResult<Product>;
+      const result = (await window.api.products.update(id, data)) as IPCResult<Product>;
       return unwrap(result);
     },
 
@@ -161,7 +161,7 @@ export const api = {
         mockStore.deleteProduct(id);
         return;
       }
-      const result = await window.api.products.delete(id) as IPCResult;
+      const result = (await window.api.products.delete(id)) as IPCResult;
       unwrapVoid(result);
     },
 
@@ -170,7 +170,7 @@ export const api = {
         console.log('[Mock] Open product folder - not available in preview');
         return;
       }
-      const result = await window.api.products.openFolder(productId) as IPCResult;
+      const result = (await window.api.products.openFolder(productId)) as IPCResult;
       unwrapVoid(result);
     },
 
@@ -178,7 +178,9 @@ export const api = {
       if (!isElectron) {
         return `/mock/workspace/products/${productId}`;
       }
-      const result = await window.api.products.getFolderPath(productId) as IPCResult<string | null>;
+      const result = (await window.api.products.getFolderPath(productId)) as IPCResult<
+        string | null
+      >;
       return unwrap(result);
     },
   },
@@ -189,7 +191,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.getTaxonomy(productId);
       }
-      const result = await window.api.taxonomy.getAll(productId) as IPCResult<Taxonomy>;
+      const result = (await window.api.taxonomy.getAll(productId)) as IPCResult<Taxonomy>;
       return unwrap(result);
     },
 
@@ -198,7 +200,10 @@ export const api = {
       if (!isElectron) {
         return mockStore.createPersona(productId, name);
       }
-      const result = await window.api.taxonomy.createPersona(productId, name) as IPCResult<Persona>;
+      const result = (await window.api.taxonomy.createPersona(
+        productId,
+        name
+      )) as IPCResult<Persona>;
       return unwrap(result);
     },
 
@@ -206,7 +211,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.updatePersona(id, data);
       }
-      const result = await window.api.taxonomy.updatePersona(id, data) as IPCResult<Persona>;
+      const result = (await window.api.taxonomy.updatePersona(id, data)) as IPCResult<Persona>;
       return unwrap(result);
     },
 
@@ -215,7 +220,7 @@ export const api = {
         mockStore.archivePersona(id);
         return;
       }
-      const result = await window.api.taxonomy.archivePersona(id) as IPCResult;
+      const result = (await window.api.taxonomy.archivePersona(id)) as IPCResult;
       unwrapVoid(result);
     },
 
@@ -223,7 +228,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.unarchivePersona(id);
       }
-      const result = await window.api.taxonomy.unarchivePersona(id) as IPCResult<Persona>;
+      const result = (await window.api.taxonomy.unarchivePersona(id)) as IPCResult<Persona>;
       return unwrap(result);
     },
 
@@ -232,7 +237,10 @@ export const api = {
       if (!isElectron) {
         return mockStore.createFeature(productId, name);
       }
-      const result = await window.api.taxonomy.createFeature(productId, name) as IPCResult<Feature>;
+      const result = (await window.api.taxonomy.createFeature(
+        productId,
+        name
+      )) as IPCResult<Feature>;
       return unwrap(result);
     },
 
@@ -240,7 +248,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.updateFeature(id, data);
       }
-      const result = await window.api.taxonomy.updateFeature(id, data) as IPCResult<Feature>;
+      const result = (await window.api.taxonomy.updateFeature(id, data)) as IPCResult<Feature>;
       return unwrap(result);
     },
 
@@ -249,7 +257,7 @@ export const api = {
         mockStore.archiveFeature(id);
         return;
       }
-      const result = await window.api.taxonomy.archiveFeature(id) as IPCResult;
+      const result = (await window.api.taxonomy.archiveFeature(id)) as IPCResult;
       unwrapVoid(result);
     },
 
@@ -257,7 +265,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.unarchiveFeature(id);
       }
-      const result = await window.api.taxonomy.unarchiveFeature(id) as IPCResult<Feature>;
+      const result = (await window.api.taxonomy.unarchiveFeature(id)) as IPCResult<Feature>;
       return unwrap(result);
     },
 
@@ -266,7 +274,10 @@ export const api = {
       if (!isElectron) {
         return mockStore.createDimension(productId, name);
       }
-      const result = await window.api.taxonomy.createDimension(productId, name) as IPCResult<Dimension>;
+      const result = (await window.api.taxonomy.createDimension(
+        productId,
+        name
+      )) as IPCResult<Dimension>;
       return unwrap(result);
     },
 
@@ -274,7 +285,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.updateDimension(id, data);
       }
-      const result = await window.api.taxonomy.updateDimension(id, data) as IPCResult<Dimension>;
+      const result = (await window.api.taxonomy.updateDimension(id, data)) as IPCResult<Dimension>;
       return unwrap(result);
     },
 
@@ -283,7 +294,7 @@ export const api = {
         mockStore.archiveDimension(id);
         return;
       }
-      const result = await window.api.taxonomy.archiveDimension(id) as IPCResult;
+      const result = (await window.api.taxonomy.archiveDimension(id)) as IPCResult;
       unwrapVoid(result);
     },
 
@@ -291,7 +302,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.unarchiveDimension(id);
       }
-      const result = await window.api.taxonomy.unarchiveDimension(id) as IPCResult<Dimension>;
+      const result = (await window.api.taxonomy.unarchiveDimension(id)) as IPCResult<Dimension>;
       return unwrap(result);
     },
 
@@ -300,7 +311,10 @@ export const api = {
       if (!isElectron) {
         return mockStore.createDimensionValue(dimensionId, name);
       }
-      const result = await window.api.taxonomy.createDimensionValue(dimensionId, name) as IPCResult<DimensionValue>;
+      const result = (await window.api.taxonomy.createDimensionValue(
+        dimensionId,
+        name
+      )) as IPCResult<DimensionValue>;
       return unwrap(result);
     },
 
@@ -308,7 +322,10 @@ export const api = {
       if (!isElectron) {
         return mockStore.updateDimensionValue(id, data);
       }
-      const result = await window.api.taxonomy.updateDimensionValue(id, data) as IPCResult<DimensionValue>;
+      const result = (await window.api.taxonomy.updateDimensionValue(
+        id,
+        data
+      )) as IPCResult<DimensionValue>;
       return unwrap(result);
     },
 
@@ -317,7 +334,7 @@ export const api = {
         mockStore.archiveDimensionValue(id);
         return;
       }
-      const result = await window.api.taxonomy.archiveDimensionValue(id) as IPCResult;
+      const result = (await window.api.taxonomy.archiveDimensionValue(id)) as IPCResult;
       unwrapVoid(result);
     },
 
@@ -325,7 +342,9 @@ export const api = {
       if (!isElectron) {
         return mockStore.unarchiveDimensionValue(id);
       }
-      const result = await window.api.taxonomy.unarchiveDimensionValue(id) as IPCResult<DimensionValue>;
+      const result = (await window.api.taxonomy.unarchiveDimensionValue(
+        id
+      )) as IPCResult<DimensionValue>;
       return unwrap(result);
     },
   },
@@ -336,7 +355,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.getEntities(productId, filters);
       }
-      const result = await window.api.entities.getAll(productId, filters) as IPCResult<Entity[]>;
+      const result = (await window.api.entities.getAll(productId, filters)) as IPCResult<Entity[]>;
       return unwrap(result);
     },
 
@@ -344,7 +363,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.getEntity(id);
       }
-      const result = await window.api.entities.getById(id) as IPCResult<Entity | null>;
+      const result = (await window.api.entities.getById(id)) as IPCResult<Entity | null>;
       return unwrap(result);
     },
 
@@ -352,7 +371,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.createEntity(data);
       }
-      const result = await window.api.entities.create(data) as IPCResult<Entity>;
+      const result = (await window.api.entities.create(data)) as IPCResult<Entity>;
       return unwrap(result);
     },
 
@@ -360,7 +379,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.updateEntity(id, data);
       }
-      const result = await window.api.entities.update(id, data) as IPCResult<Entity>;
+      const result = (await window.api.entities.update(id, data)) as IPCResult<Entity>;
       return unwrap(result);
     },
 
@@ -369,7 +388,7 @@ export const api = {
         mockStore.deleteEntity(id);
         return;
       }
-      const result = await window.api.entities.delete(id) as IPCResult;
+      const result = (await window.api.entities.delete(id)) as IPCResult;
       unwrapVoid(result);
     },
 
@@ -377,7 +396,10 @@ export const api = {
       if (!isElectron) {
         return mockStore.promoteEntity(captureId, targetType);
       }
-      const result = await window.api.entities.promote(captureId, targetType) as IPCResult<Entity>;
+      const result = (await window.api.entities.promote(
+        captureId,
+        targetType
+      )) as IPCResult<Entity>;
       return unwrap(result);
     },
 
@@ -386,15 +408,23 @@ export const api = {
         console.log('[Mock] Open entity folder - not available in preview');
         return;
       }
-      const result = await window.api.entities.openFolder(entityId) as IPCResult;
+      const result = (await window.api.entities.openFolder(entityId)) as IPCResult;
       unwrapVoid(result);
     },
 
-    getFilePath: async (entityId: string): Promise<{ absolutePath: string; relativePath: string } | null> => {
+    getFilePath: async (
+      entityId: string
+    ): Promise<{ absolutePath: string; relativePath: string } | null> => {
       if (!isElectron) {
-        return { absolutePath: `/mock/entities/${entityId}.md`, relativePath: `entities/${entityId}.md` };
+        return {
+          absolutePath: `/mock/entities/${entityId}.md`,
+          relativePath: `entities/${entityId}.md`,
+        };
       }
-      const result = await window.api.entities.getFilePath(entityId) as IPCResult<{ absolutePath: string; relativePath: string } | null>;
+      const result = (await window.api.entities.getFilePath(entityId)) as IPCResult<{
+        absolutePath: string;
+        relativePath: string;
+      } | null>;
       return unwrap(result);
     },
   },
@@ -405,7 +435,9 @@ export const api = {
       if (!isElectron) {
         return mockStore.getRelationshipsForEntity(entityId);
       }
-      const result = await window.api.relationships.getForEntity(entityId) as IPCResult<RelationshipWithEntity[]>;
+      const result = (await window.api.relationships.getForEntity(entityId)) as IPCResult<
+        RelationshipWithEntity[]
+      >;
       return unwrap(result);
     },
 
@@ -413,7 +445,9 @@ export const api = {
       if (!isElectron) {
         return mockStore.getOutgoingRelationships(entityId);
       }
-      const result = await window.api.relationships.getOutgoing(entityId) as IPCResult<RelationshipWithEntity[]>;
+      const result = (await window.api.relationships.getOutgoing(entityId)) as IPCResult<
+        RelationshipWithEntity[]
+      >;
       return unwrap(result);
     },
 
@@ -421,7 +455,9 @@ export const api = {
       if (!isElectron) {
         return mockStore.getIncomingRelationships(entityId);
       }
-      const result = await window.api.relationships.getIncoming(entityId) as IPCResult<RelationshipWithEntity[]>;
+      const result = (await window.api.relationships.getIncoming(entityId)) as IPCResult<
+        RelationshipWithEntity[]
+      >;
       return unwrap(result);
     },
 
@@ -429,7 +465,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.createRelationship(data);
       }
-      const result = await window.api.relationships.create(data) as IPCResult<Relationship>;
+      const result = (await window.api.relationships.create(data)) as IPCResult<Relationship>;
       return unwrap(result);
     },
 
@@ -438,7 +474,7 @@ export const api = {
         mockStore.deleteRelationship(id);
         return;
       }
-      const result = await window.api.relationships.delete(id, sourceEntityId) as IPCResult;
+      const result = (await window.api.relationships.delete(id, sourceEntityId)) as IPCResult;
       unwrapVoid(result);
     },
   },
@@ -449,7 +485,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.getExportPreview(options);
       }
-      const result = await window.api.exports.getPreview(options) as IPCResult<ExportPreview>;
+      const result = (await window.api.exports.getPreview(options)) as IPCResult<ExportPreview>;
       return unwrap(result);
     },
 
@@ -457,7 +493,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.executeExport(options);
       }
-      const result = await window.api.exports.execute(options) as IPCResult<ExportResult>;
+      const result = (await window.api.exports.execute(options)) as IPCResult<ExportResult>;
       return unwrap(result);
     },
 
@@ -465,7 +501,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.getExportHistory();
       }
-      const result = await window.api.exports.getHistory(productId) as IPCResult<ExportRecord[]>;
+      const result = (await window.api.exports.getHistory(productId)) as IPCResult<ExportRecord[]>;
       return unwrap(result);
     },
 
@@ -474,7 +510,7 @@ export const api = {
         mockStore.clearExportHistory();
         return;
       }
-      const result = await window.api.exports.clearHistory(productId) as IPCResult;
+      const result = (await window.api.exports.clearHistory(productId)) as IPCResult;
       unwrapVoid(result);
     },
 
@@ -483,7 +519,7 @@ export const api = {
         console.log('[Mock] Open export folder - not available in preview');
         return;
       }
-      const result = await window.api.exports.openFolder(folderPath) as IPCResult;
+      const result = (await window.api.exports.openFolder(folderPath)) as IPCResult;
       unwrapVoid(result);
     },
 
@@ -491,7 +527,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.copySnapshot(productId);
       }
-      const result = await window.api.exports.copySnapshot(productId) as IPCResult<string>;
+      const result = (await window.api.exports.copySnapshot(productId)) as IPCResult<string>;
       return unwrap(result);
     },
   },
@@ -502,7 +538,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.getSettings();
       }
-      const result = await window.api.settings.get() as IPCResult<Settings>;
+      const result = (await window.api.settings.get()) as IPCResult<Settings>;
       return unwrap(result);
     },
 
@@ -510,7 +546,7 @@ export const api = {
       if (!isElectron) {
         return mockStore.updateSettings(data);
       }
-      const result = await window.api.settings.update(data) as IPCResult<Settings>;
+      const result = (await window.api.settings.update(data)) as IPCResult<Settings>;
       return unwrap(result);
     },
 
@@ -519,16 +555,24 @@ export const api = {
         console.log('[Mock] Change workspace - not available in preview');
         return null;
       }
-      const result = await window.api.settings.changeWorkspace() as IPCResult<Settings | null>;
+      const result = (await window.api.settings.changeWorkspace()) as IPCResult<Settings | null>;
       return unwrap(result);
     },
 
-    migrateWorkspace: async (): Promise<{ settings: Settings; backupPath: string; newPath: string } | null> => {
+    migrateWorkspace: async (): Promise<{
+      settings: Settings;
+      backupPath: string;
+      newPath: string;
+    } | null> => {
       if (!isElectron) {
         console.log('[Mock] Migrate workspace - not available in preview');
         return null;
       }
-      const result = await window.api.settings.migrateWorkspace() as IPCResult<{ settings: Settings; backupPath: string; newPath: string } | null>;
+      const result = (await window.api.settings.migrateWorkspace()) as IPCResult<{
+        settings: Settings;
+        backupPath: string;
+        newPath: string;
+      } | null>;
       return unwrap(result);
     },
 
@@ -537,7 +581,7 @@ export const api = {
         console.log('[Mock] Open workspace folder - not available in preview');
         return;
       }
-      const result = await window.api.settings.openWorkspaceFolder() as IPCResult;
+      const result = (await window.api.settings.openWorkspaceFolder()) as IPCResult;
       unwrapVoid(result);
     },
 
@@ -546,7 +590,7 @@ export const api = {
         mockStore.clearExportHistory();
         return;
       }
-      const result = await window.api.settings.clearExportHistory() as IPCResult;
+      const result = (await window.api.settings.clearExportHistory()) as IPCResult;
       unwrapVoid(result);
     },
 
@@ -555,7 +599,7 @@ export const api = {
         console.log('[Mock] Clear all data - not available in preview');
         return;
       }
-      const result = await window.api.settings.clearAllData() as IPCResult;
+      const result = (await window.api.settings.clearAllData()) as IPCResult;
       unwrapVoid(result);
     },
   },
@@ -602,8 +646,14 @@ declare global {
         updateDimension: (id: string, data: { name?: string }) => Promise<IPCResult<Dimension>>;
         archiveDimension: (id: string) => Promise<IPCResult>;
         unarchiveDimension: (id: string) => Promise<IPCResult<Dimension>>;
-        createDimensionValue: (dimensionId: string, name: string) => Promise<IPCResult<DimensionValue>>;
-        updateDimensionValue: (id: string, data: { name?: string }) => Promise<IPCResult<DimensionValue>>;
+        createDimensionValue: (
+          dimensionId: string,
+          name: string
+        ) => Promise<IPCResult<DimensionValue>>;
+        updateDimensionValue: (
+          id: string,
+          data: { name?: string }
+        ) => Promise<IPCResult<DimensionValue>>;
         archiveDimensionValue: (id: string) => Promise<IPCResult>;
         unarchiveDimensionValue: (id: string) => Promise<IPCResult<DimensionValue>>;
       };
@@ -615,7 +665,9 @@ declare global {
         delete: (id: string) => Promise<IPCResult>;
         promote: (captureId: string, targetType: EntityType) => Promise<IPCResult<Entity>>;
         openFolder: (entityId: string) => Promise<IPCResult>;
-        getFilePath: (entityId: string) => Promise<IPCResult<{ absolutePath: string; relativePath: string } | null>>;
+        getFilePath: (
+          entityId: string
+        ) => Promise<IPCResult<{ absolutePath: string; relativePath: string } | null>>;
       };
       relationships: {
         getForEntity: (entityId: string) => Promise<IPCResult<RelationshipWithEntity[]>>;
@@ -636,7 +688,9 @@ declare global {
         get: () => Promise<IPCResult<Settings>>;
         update: (data: UpdateSettingsData) => Promise<IPCResult<Settings>>;
         changeWorkspace: () => Promise<IPCResult<Settings | null>>;
-        migrateWorkspace: () => Promise<IPCResult<{ settings: Settings; backupPath: string; newPath: string } | null>>;
+        migrateWorkspace: () => Promise<
+          IPCResult<{ settings: Settings; backupPath: string; newPath: string } | null>
+        >;
         openWorkspaceFolder: () => Promise<IPCResult>;
         clearExportHistory: () => Promise<IPCResult>;
         clearAllData: () => Promise<IPCResult>;

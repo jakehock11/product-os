@@ -1,1 +1,1 @@
-export { InboxCaptureForm } from "./InboxCaptureForm";
+export { InboxCaptureForm } from './InboxCaptureForm';

@@ -1,38 +1,47 @@
-import { useState, useMemo } from "react";
-import { Search, AlertCircle, Lightbulb, FlaskConical, CheckCircle, Paperclip, Zap, X } from "lucide-react";
+import { useState, useMemo } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+  Search,
+  AlertCircle,
+  Lightbulb,
+  FlaskConical,
+  CheckCircle,
+  Paperclip,
+  Zap,
+  X,
+} from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useEntities } from "@/hooks/useEntities";
-import { useRelationships, useRelationshipsGrouped, useCreateRelationship, useDeleteRelationship } from "@/hooks/useRelationships";
-import { formatDistanceToNow } from "date-fns";
-import type { Entity, EntityType, RelationshipType } from "@/lib/types";
-import { RELATIONSHIP_TYPES } from "@/lib/types";
+} from '@/components/ui/select';
+import { useEntities } from '@/hooks/useEntities';
+import {
+  useRelationships,
+  useRelationshipsGrouped,
+  useCreateRelationship,
+  useDeleteRelationship,
+} from '@/hooks/useRelationships';
+import { formatDistanceToNow } from 'date-fns';
+import type { Entity, EntityType, RelationshipType } from '@/lib/types';
+import { RELATIONSHIP_TYPES } from '@/lib/types';
 
 const TYPE_CONFIG: Partial<Record<EntityType, { icon: React.ElementType; label: string }>> = {
-  problem: { icon: AlertCircle, label: "Problem" },
-  hypothesis: { icon: Lightbulb, label: "Hypothesis" },
-  experiment: { icon: FlaskConical, label: "Experiment" },
-  decision: { icon: CheckCircle, label: "Decision" },
-  artifact: { icon: Paperclip, label: "Artifact" },
-  capture: { icon: Zap, label: "Capture" },
-  feedback: { icon: Zap, label: "Feedback" },
-  feature_request: { icon: Zap, label: "Request" },
-  feature: { icon: Zap, label: "Feature" },
+  problem: { icon: AlertCircle, label: 'Problem' },
+  hypothesis: { icon: Lightbulb, label: 'Hypothesis' },
+  experiment: { icon: FlaskConical, label: 'Experiment' },
+  decision: { icon: CheckCircle, label: 'Decision' },
+  artifact: { icon: Paperclip, label: 'Artifact' },
+  capture: { icon: Zap, label: 'Capture' },
+  feedback: { icon: Zap, label: 'Feedback' },
+  feature_request: { icon: Zap, label: 'Request' },
+  feature: { icon: Zap, label: 'Feature' },
 };
 
 export interface LinkToModalProps {
@@ -50,9 +59,9 @@ export function LinkToModal({
   currentEntityId,
   onLinked,
 }: LinkToModalProps) {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [typeFilters, setTypeFilters] = useState<EntityType[]>([]);
-  const [relationshipType, setRelationshipType] = useState<RelationshipType>("relates_to");
+  const [relationshipType, setRelationshipType] = useState<RelationshipType>('relates_to');
   const { data: entities } = useEntities(productId);
   const { data: relationships } = useRelationships(currentEntityId);
   const createRelationship = useCreateRelationship();
@@ -102,8 +111,8 @@ export function LinkToModal({
         relationshipType,
         productId,
       });
-      setSearch("");
-      setRelationshipType("relates_to");
+      setSearch('');
+      setRelationshipType('relates_to');
       onLinked?.();
       onOpenChange(false);
     } catch {
@@ -134,7 +143,10 @@ export function LinkToModal({
           {/* Relationship Type Selector */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <span className="text-sm text-muted-foreground whitespace-nowrap">Link as:</span>
-            <Select value={relationshipType} onValueChange={(v) => setRelationshipType(v as RelationshipType)}>
+            <Select
+              value={relationshipType}
+              onValueChange={(v) => setRelationshipType(v as RelationshipType)}
+            >
               <SelectTrigger className="w-[160px]">
                 <SelectValue />
               </SelectTrigger>
@@ -173,8 +185,8 @@ export function LinkToModal({
             {displayItems.length === 0 ? (
               <div className="flex h-20 items-center justify-center text-sm text-muted-foreground">
                 {search || typeFilters.length > 0
-                  ? "No items match your search."
-                  : "No items available to link."}
+                  ? 'No items match your search.'
+                  : 'No items available to link.'}
               </div>
             ) : (
               <div className="p-1">
@@ -204,7 +216,8 @@ export function LinkToModal({
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          {config.label} · {formatDistanceToNow(new Date(entity.updatedAt), { addSuffix: true })}
+                          {config.label} ·{' '}
+                          {formatDistanceToNow(new Date(entity.updatedAt), { addSuffix: true })}
                         </p>
                       </div>
                     </button>
@@ -252,18 +265,17 @@ export function LinkedItems({ entityId, onOpenLink }: LinkedItemsProps) {
   }
 
   if (!grouped || (grouped.outgoing.length === 0 && grouped.incoming.length === 0)) {
-    return (
-      <p className="text-sm text-muted-foreground">No linked items yet.</p>
-    );
+    return <p className="text-sm text-muted-foreground">No linked items yet.</p>;
   }
 
-  const renderRelationship = (rel: typeof grouped.outgoing[0]) => {
+  const renderRelationship = (rel: (typeof grouped.outgoing)[0]) => {
     const entity = rel.linkedEntity;
     const config = TYPE_CONFIG[entity.type];
     const Icon = config.icon;
 
     const relTypeLabel = rel.relationshipType
-      ? RELATIONSHIP_TYPES.find(rt => rt.value === rel.relationshipType)?.label || rel.relationshipType
+      ? RELATIONSHIP_TYPES.find((rt) => rt.value === rel.relationshipType)?.label ||
+        rel.relationshipType
       : null;
 
     return (
@@ -307,9 +319,7 @@ export function LinkedItems({ entityId, onOpenLink }: LinkedItemsProps) {
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             Links to ({grouped.outgoing.length})
           </p>
-          <div className="flex flex-wrap gap-2">
-            {grouped.outgoing.map(renderRelationship)}
-          </div>
+          <div className="flex flex-wrap gap-2">{grouped.outgoing.map(renderRelationship)}</div>
         </div>
       )}
       {grouped.incoming.length > 0 && (
@@ -317,9 +327,7 @@ export function LinkedItems({ entityId, onOpenLink }: LinkedItemsProps) {
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             Linked from ({grouped.incoming.length})
           </p>
-          <div className="flex flex-wrap gap-2">
-            {grouped.incoming.map(renderRelationship)}
-          </div>
+          <div className="flex flex-wrap gap-2">{grouped.incoming.map(renderRelationship)}</div>
         </div>
       )}
     </div>

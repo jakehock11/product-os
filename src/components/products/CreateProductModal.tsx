@@ -1,19 +1,19 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Layers } from "lucide-react";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Layers } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useCreateProduct } from "@/hooks/useProducts";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useToast } from "@/hooks/use-toast";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useCreateProduct } from '@/hooks/useProducts';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface CreateProductModalProps {
   open: boolean;
@@ -21,7 +21,7 @@ interface CreateProductModalProps {
 }
 
 export function CreateProductModal({ open, onOpenChange }: CreateProductModalProps) {
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const createProduct = useCreateProduct();
   const { enterProduct } = useProductContext();
   const { toast } = useToast();
@@ -34,18 +34,18 @@ export function CreateProductModal({ open, onOpenChange }: CreateProductModalPro
       const product = await createProduct.mutateAsync({ name: name.trim() });
 
       toast({
-        title: "Product created",
+        title: 'Product created',
         description: `${product.name} is ready to use.`,
       });
 
-      setName("");
+      setName('');
       onOpenChange(false);
       enterProduct(product.id);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to create product.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to create product.',
+        variant: 'destructive',
       });
     }
   };
@@ -65,7 +65,9 @@ export function CreateProductModal({ open, onOpenChange }: CreateProductModalPro
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm">Product name</Label>
+            <Label htmlFor="name" className="text-sm">
+              Product name
+            </Label>
             <Input
               id="name"
               value={name}
@@ -81,7 +83,7 @@ export function CreateProductModal({ open, onOpenChange }: CreateProductModalPro
               Cancel
             </Button>
             <Button type="submit" size="sm" disabled={!name.trim() || createProduct.isPending}>
-              {createProduct.isPending ? "Creating..." : "Create"}
+              {createProduct.isPending ? 'Creating...' : 'Create'}
             </Button>
           </div>
         </form>

@@ -1,12 +1,29 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Trash2, ArrowUpRight, AlertCircle, Lightbulb, FlaskConical, CheckCircle, Paperclip, Save, Check, Loader2 } from "lucide-react";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useEntity, useUpdateEntity, useDeleteEntity, usePromoteCapture } from "@/hooks/useEntities";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import {
+  ArrowLeft,
+  Trash2,
+  ArrowUpRight,
+  AlertCircle,
+  Lightbulb,
+  FlaskConical,
+  CheckCircle,
+  Paperclip,
+  Save,
+  Check,
+  Loader2,
+} from 'lucide-react';
+import { useProductContext } from '@/contexts/ProductContext';
+import {
+  useEntity,
+  useUpdateEntity,
+  useDeleteEntity,
+  usePromoteCapture,
+} from '@/hooks/useEntities';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,38 +34,34 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ContextTagsPicker } from "@/components/taxonomy";
-import { FilePath } from "@/components/entity/FilePath";
-import { useToast } from "@/hooks/use-toast";
-import { formatDistanceToNow } from "date-fns";
-import type { EntityType } from "@/lib/types";
+} from '@/components/ui/dropdown-menu';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ContextTagsPicker } from '@/components/taxonomy';
+import { FilePath } from '@/components/entity/FilePath';
+import { useToast } from '@/hooks/use-toast';
+import { formatDistanceToNow } from 'date-fns';
+import type { EntityType } from '@/lib/types';
 
 const PROMOTE_OPTIONS: { type: EntityType; label: string; icon: React.ElementType }[] = [
-  { type: "problem", label: "Problem", icon: AlertCircle },
-  { type: "hypothesis", label: "Hypothesis", icon: Lightbulb },
-  { type: "experiment", label: "Experiment", icon: FlaskConical },
-  { type: "decision", label: "Decision", icon: CheckCircle },
-  { type: "artifact", label: "Artifact", icon: Paperclip },
+  { type: 'problem', label: 'Problem', icon: AlertCircle },
+  { type: 'hypothesis', label: 'Hypothesis', icon: Lightbulb },
+  { type: 'experiment', label: 'Experiment', icon: FlaskConical },
+  { type: 'decision', label: 'Decision', icon: CheckCircle },
+  { type: 'artifact', label: 'Artifact', icon: Paperclip },
 ];
 
 function deriveTitle(content: string): string {
-  const firstLine = content.split("\n")[0].trim();
+  const firstLine = content.split('\n')[0].trim();
   if (firstLine.length > 100) {
-    return firstLine.slice(0, 100) + "...";
+    return firstLine.slice(0, 100) + '...';
   }
-  return firstLine || "Untitled Capture";
+  return firstLine || 'Untitled Capture';
 }
 
 export default function QuickCaptureDetailPage() {
@@ -61,12 +74,12 @@ export default function QuickCaptureDetailPage() {
   const promoteCapture = usePromoteCapture();
   const { toast } = useToast();
 
-  const [body, setBody] = useState("");
+  const [body, setBody] = useState('');
   const [personaIds, setPersonaIds] = useState<string[]>([]);
   const [featureIds, setFeatureIds] = useState<string[]>([]);
   const [dimensionValueIds, setDimensionValueIds] = useState<string[]>([]);
   const [tagsOpen, setTagsOpen] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const savedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -77,7 +90,7 @@ export default function QuickCaptureDetailPage() {
   }, [productId, setCurrentProduct]);
 
   useEffect(() => {
-    if (entity && entity.type === "capture") {
+    if (entity && entity.type === 'capture') {
       setBody(entity.body);
       setPersonaIds(entity.personaIds || []);
       setFeatureIds(entity.featureIds || []);
@@ -86,8 +99,8 @@ export default function QuickCaptureDetailPage() {
   }, [entity]);
 
   const handleSave = useCallback(async () => {
-    if (!entity || entity.type !== "capture" || !id) return;
-    setSaveStatus("saving");
+    if (!entity || entity.type !== 'capture' || !id) return;
+    setSaveStatus('saving');
     try {
       await updateEntity.mutateAsync({
         id,
@@ -99,12 +112,12 @@ export default function QuickCaptureDetailPage() {
           dimensionValueIds,
         },
       });
-      setSaveStatus("saved");
+      setSaveStatus('saved');
       if (savedTimeoutRef.current) clearTimeout(savedTimeoutRef.current);
-      savedTimeoutRef.current = setTimeout(() => setSaveStatus("idle"), 2000);
+      savedTimeoutRef.current = setTimeout(() => setSaveStatus('idle'), 2000);
     } catch {
-      setSaveStatus("idle");
-      toast({ title: "Error", description: "Failed to save.", variant: "destructive" });
+      setSaveStatus('idle');
+      toast({ title: 'Error', description: 'Failed to save.', variant: 'destructive' });
     }
   }, [entity, id, body, personaIds, featureIds, dimensionValueIds, updateEntity, toast]);
 
@@ -121,10 +134,10 @@ export default function QuickCaptureDetailPage() {
     if (!id) return;
     try {
       await deleteEntity.mutateAsync(id);
-      toast({ title: "Deleted" });
+      toast({ title: 'Deleted' });
       navigate(`/product/${productId}/inbox`);
     } catch {
-      toast({ title: "Error", variant: "destructive" });
+      toast({ title: 'Error', variant: 'destructive' });
     }
   };
 
@@ -132,22 +145,22 @@ export default function QuickCaptureDetailPage() {
     if (!id) return;
     try {
       const newEntity = await promoteCapture.mutateAsync({ captureId: id, targetType });
-      toast({ title: "Promoted", description: `Converted to ${targetType}.` });
+      toast({ title: 'Promoted', description: `Converted to ${targetType}.` });
 
       const pathMap: Record<EntityType, string> = {
-        problem: "problems",
-        hypothesis: "hypotheses",
-        experiment: "experiments",
-        decision: "decisions",
-        artifact: "artifacts",
-        capture: "captures",
-        feedback: "feedback",
-        feature_request: "feature-requests",
-        feature: "features",
+        problem: 'problems',
+        hypothesis: 'hypotheses',
+        experiment: 'experiments',
+        decision: 'decisions',
+        artifact: 'artifacts',
+        capture: 'captures',
+        feedback: 'feedback',
+        feature_request: 'feature-requests',
+        feature: 'features',
       };
       navigate(`/product/${productId}/${pathMap[targetType]}/${newEntity.id}`);
     } catch {
-      toast({ title: "Error", description: "Failed to promote.", variant: "destructive" });
+      toast({ title: 'Error', description: 'Failed to promote.', variant: 'destructive' });
     }
   };
 
@@ -160,7 +173,7 @@ export default function QuickCaptureDetailPage() {
     );
   }
 
-  if (!entity || entity.type !== "capture") {
+  if (!entity || entity.type !== 'capture') {
     return (
       <div className="page-container flex items-center justify-center py-16">
         <p className="text-sm text-muted-foreground">Capture not found</p>
@@ -171,18 +184,23 @@ export default function QuickCaptureDetailPage() {
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between border-b border-border px-6 py-3">
-        <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground" onClick={() => navigate(`/product/${productId}/inbox`)}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2 text-muted-foreground hover:text-foreground"
+          onClick={() => navigate(`/product/${productId}/inbox`)}
+        >
           <ArrowLeft className="h-4 w-4" />
           <span className="text-sm">Inbox</span>
         </Button>
         <div className="flex items-center gap-2">
-          {saveStatus === "saving" && (
+          {saveStatus === 'saving' && (
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Loader2 className="h-3 w-3 animate-spin" />
               Saving...
             </span>
           )}
-          {saveStatus === "saved" && (
+          {saveStatus === 'saved' && (
             <span className="flex items-center gap-1.5 text-xs text-primary">
               <Check className="h-3 w-3" />
               Saved
@@ -195,7 +213,12 @@ export default function QuickCaptureDetailPage() {
           {!entity.promotedToId && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2" disabled={promoteCapture.isPending}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  disabled={promoteCapture.isPending}
+                >
                   <ArrowUpRight className="h-3.5 w-3.5" />
                   Promote to...
                 </Button>
@@ -217,14 +240,20 @@ export default function QuickCaptureDetailPage() {
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete capture?</AlertDialogTitle>
-                <AlertDialogDescription className="text-sm">This action cannot be undone.</AlertDialogDescription>
+                <AlertDialogDescription className="text-sm">
+                  This action cannot be undone.
+                </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -244,7 +273,9 @@ export default function QuickCaptureDetailPage() {
           )}
 
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-xs font-medium">Capture</Badge>
+            <Badge variant="outline" className="text-xs font-medium">
+              Capture
+            </Badge>
           </div>
 
           {id && <FilePath entityId={id} />}
@@ -259,7 +290,11 @@ export default function QuickCaptureDetailPage() {
           {/* Context Tags */}
           <Collapsible open={tagsOpen} onOpenChange={setTagsOpen}>
             <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm" className="mb-2 gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mb-2 gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+              >
                 Context Tags
                 <Badge variant="secondary" className="ml-1 text-[11px]">
                   {totalTags}

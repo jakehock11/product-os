@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   differenceInDays,
   subMonths,
@@ -10,7 +10,7 @@ import {
   eachWeekOfInterval,
   startOfQuarter,
   eachQuarterOfInterval,
-} from "date-fns";
+} from 'date-fns';
 import {
   AlertCircle,
   Lightbulb,
@@ -20,21 +20,12 @@ import {
   MessageSquare,
   Sparkles,
   Check,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Command,
   CommandEmpty,
@@ -42,19 +33,19 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { cn } from "@/lib/utils";
-import type { Entity, EntityType } from "@/lib/types";
+} from '@/components/ui/command';
+import { cn } from '@/lib/utils';
+import type { Entity, EntityType } from '@/lib/types';
 
 // Types
 type TimelineEntityType =
-  | "problem"
-  | "hypothesis"
-  | "experiment"
-  | "decision"
-  | "feature"
-  | "feedback"
-  | "feature_request";
+  | 'problem'
+  | 'hypothesis'
+  | 'experiment'
+  | 'decision'
+  | 'feature'
+  | 'feedback'
+  | 'feature_request';
 
 interface TimelineItem {
   id: string;
@@ -67,7 +58,7 @@ interface TimelineItem {
   dimensionValueIds: string[];
 }
 
-type TimeRangeKey = "1M" | "3M" | "6M" | "1Y" | "3Y" | "all";
+type TimeRangeKey = '1M' | '3M' | '6M' | '1Y' | '3Y' | 'all';
 
 interface SwimLaneTimelineProps {
   productId: string;
@@ -80,41 +71,93 @@ interface SwimLaneTimelineProps {
 }
 
 // Config
-const SWIMLANE_CONFIG: Record<TimelineEntityType, {
-  icon: React.ElementType;
-  label: string;
-  fillColor: string;
-  strokeColor: string;
-}> = {
-  problem: { icon: AlertCircle, label: "Problems", fillColor: "fill-red-500", strokeColor: "stroke-red-500" },
-  hypothesis: { icon: Lightbulb, label: "Hypotheses", fillColor: "fill-yellow-500", strokeColor: "stroke-yellow-500" },
-  experiment: { icon: FlaskConical, label: "Experiments", fillColor: "fill-blue-500", strokeColor: "stroke-blue-500" },
-  decision: { icon: CheckCircle, label: "Decisions", fillColor: "fill-green-500", strokeColor: "stroke-green-500" },
-  feature: { icon: Package, label: "Features", fillColor: "fill-indigo-500", strokeColor: "stroke-indigo-500" },
-  feedback: { icon: MessageSquare, label: "Feedback", fillColor: "fill-sky-400", strokeColor: "stroke-sky-400" },
-  feature_request: { icon: Sparkles, label: "Requests", fillColor: "fill-purple-400", strokeColor: "stroke-purple-400" },
+const SWIMLANE_CONFIG: Record<
+  TimelineEntityType,
+  {
+    icon: React.ElementType;
+    label: string;
+    fillColor: string;
+    strokeColor: string;
+  }
+> = {
+  problem: {
+    icon: AlertCircle,
+    label: 'Problems',
+    fillColor: 'fill-red-500',
+    strokeColor: 'stroke-red-500',
+  },
+  hypothesis: {
+    icon: Lightbulb,
+    label: 'Hypotheses',
+    fillColor: 'fill-yellow-500',
+    strokeColor: 'stroke-yellow-500',
+  },
+  experiment: {
+    icon: FlaskConical,
+    label: 'Experiments',
+    fillColor: 'fill-blue-500',
+    strokeColor: 'stroke-blue-500',
+  },
+  decision: {
+    icon: CheckCircle,
+    label: 'Decisions',
+    fillColor: 'fill-green-500',
+    strokeColor: 'stroke-green-500',
+  },
+  feature: {
+    icon: Package,
+    label: 'Features',
+    fillColor: 'fill-indigo-500',
+    strokeColor: 'stroke-indigo-500',
+  },
+  feedback: {
+    icon: MessageSquare,
+    label: 'Feedback',
+    fillColor: 'fill-sky-400',
+    strokeColor: 'stroke-sky-400',
+  },
+  feature_request: {
+    icon: Sparkles,
+    label: 'Requests',
+    fillColor: 'fill-purple-400',
+    strokeColor: 'stroke-purple-400',
+  },
 };
 
 const COMPLETED_STATUSES = [
-  "solved", "validated", "invalidated", "complete", "shipped",
-  "stable", "archived", "actioned", "declined", "deprecated"
+  'solved',
+  'validated',
+  'invalidated',
+  'complete',
+  'shipped',
+  'stable',
+  'archived',
+  'actioned',
+  'declined',
+  'deprecated',
 ];
 
-const TIME_RANGES: TimeRangeKey[] = ["1M", "3M", "6M", "1Y", "3Y", "all"];
+const TIME_RANGES: TimeRangeKey[] = ['1M', '3M', '6M', '1Y', '3Y', 'all'];
 
 const SWIMLANE_ORDER: TimelineEntityType[] = [
-  "problem", "hypothesis", "experiment", "decision", "feature", "feedback", "feature_request"
+  'problem',
+  'hypothesis',
+  'experiment',
+  'decision',
+  'feature',
+  'feedback',
+  'feature_request',
 ];
 
 // Entity type to route path mapping
 const TYPE_TO_PATH: Record<TimelineEntityType, string> = {
-  problem: "problems",
-  hypothesis: "hypotheses",
-  experiment: "experiments",
-  decision: "decisions",
-  feature: "features",
-  feedback: "feedback",
-  feature_request: "feature-requests",
+  problem: 'problems',
+  hypothesis: 'hypotheses',
+  experiment: 'experiments',
+  decision: 'decisions',
+  feature: 'features',
+  feedback: 'feedback',
+  feature_request: 'feature-requests',
 };
 
 // Helpers
@@ -133,7 +176,7 @@ const MultiSelectDropdown: React.FC<{
 
   const toggleOption = (id: string) => {
     if (selected.includes(id)) {
-      onChange(selected.filter(s => s !== id));
+      onChange(selected.filter((s) => s !== id));
     } else {
       onChange([...selected, id]);
     }
@@ -142,10 +185,10 @@ const MultiSelectDropdown: React.FC<{
   const getTriggerText = () => {
     if (selected.length === 0) return `All ${dimensionName}`;
     const selectedNames = selected
-      .map(id => options.find(o => o.id === id)?.name)
+      .map((id) => options.find((o) => o.id === id)?.name)
       .filter(Boolean) as string[];
     if (selectedNames.length === 1) return selectedNames[0];
-    if (selectedNames.length <= 3) return selectedNames.join(", ");
+    if (selectedNames.length <= 3) return selectedNames.join(', ');
     return `${selectedNames[0]}, ${selectedNames[1]} +${selectedNames.length - 2} more`;
   };
 
@@ -172,10 +215,14 @@ const MultiSelectDropdown: React.FC<{
                   onSelect={() => toggleOption(option.id)}
                   className="cursor-pointer"
                 >
-                  <div className={cn(
-                    "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                    selected.includes(option.id) ? "bg-primary text-primary-foreground" : "opacity-50"
-                  )}>
+                  <div
+                    className={cn(
+                      'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                      selected.includes(option.id)
+                        ? 'bg-primary text-primary-foreground'
+                        : 'opacity-50'
+                    )}
+                  >
                     {selected.includes(option.id) && <Check className="h-3 w-3" />}
                   </div>
                   {option.name}
@@ -196,12 +243,12 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
   taxonomy,
 }) => {
   const navigate = useNavigate();
-  const [timeRange, setTimeRange] = useState<TimeRangeKey>("6M");
+  const [timeRange, setTimeRange] = useState<TimeRangeKey>('6M');
   const [visibleTypes, setVisibleTypes] = useState<TimelineEntityType[]>([...SWIMLANE_ORDER]);
   const [filters, setFilters] = useState<Record<string, string[]>>({});
 
   const updateFilter = (key: string, selected: string[]) => {
-    setFilters(prev => ({ ...prev, [key]: selected }));
+    setFilters((prev) => ({ ...prev, [key]: selected }));
   };
 
   const today = new Date();
@@ -216,7 +263,7 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
         id: e.id,
         type: e.type as TimelineEntityType,
         title: e.title,
-        status: e.status || "",
+        status: e.status || '',
         createdAt: e.createdAt,
         personaIds: e.personaIds || [],
         featureIds: e.featureIds || [],
@@ -228,43 +275,51 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
   const getTimeRangeStart = (range: TimeRangeKey): Date => {
     const now = new Date();
     switch (range) {
-      case "1M": return subMonths(now, 1);
-      case "3M": return subMonths(now, 3);
-      case "6M": return subMonths(now, 6);
-      case "1Y": return subYears(now, 1);
-      case "3Y": return subYears(now, 3);
-      case "all": {
+      case '1M':
+        return subMonths(now, 1);
+      case '3M':
+        return subMonths(now, 3);
+      case '6M':
+        return subMonths(now, 6);
+      case '1Y':
+        return subYears(now, 1);
+      case '3Y':
+        return subYears(now, 3);
+      case 'all': {
         if (timelineData.length === 0) return subMonths(now, 6);
-        return new Date(Math.min(...timelineData.map(d => new Date(d.createdAt).getTime())));
+        return new Date(Math.min(...timelineData.map((d) => new Date(d.createdAt).getTime())));
       }
     }
   };
 
   const timeRangeStart = useMemo(() => getTimeRangeStart(timeRange), [timeRange, timelineData]);
-  const totalDays = useMemo(() => Math.max(1, differenceInDays(today, timeRangeStart)), [timeRangeStart]);
+  const totalDays = useMemo(
+    () => Math.max(1, differenceInDays(today, timeRangeStart)),
+    [timeRangeStart]
+  );
 
   // Filter items by visible types, date range, and taxonomy filters
   const filteredItems = useMemo(() => {
-    return timelineData.filter(item => {
+    return timelineData.filter((item) => {
       const itemDate = new Date(item.createdAt);
       const inDateRange = itemDate >= timeRangeStart && itemDate <= today;
       const typeVisible = visibleTypes.includes(item.type);
 
       // Persona filter
       const personaFilter = filters['personas'] || [];
-      const personaMatch = personaFilter.length === 0 ||
-        personaFilter.some(pid => item.personaIds.includes(pid));
+      const personaMatch =
+        personaFilter.length === 0 || personaFilter.some((pid) => item.personaIds.includes(pid));
 
       // Feature filter
       const featureFilter = filters['features'] || [];
-      const featureMatch = featureFilter.length === 0 ||
-        featureFilter.some(fid => item.featureIds.includes(fid));
+      const featureMatch =
+        featureFilter.length === 0 || featureFilter.some((fid) => item.featureIds.includes(fid));
 
       // Custom dimension filters
-      const dimensionMatch = taxonomy.dimensions.every(dim => {
+      const dimensionMatch = taxonomy.dimensions.every((dim) => {
         const dimFilter = filters[dim.id] || [];
         if (dimFilter.length === 0) return true;
-        return dimFilter.some(vid => item.dimensionValueIds.includes(vid));
+        return dimFilter.some((vid) => item.dimensionValueIds.includes(vid));
       });
 
       return inDateRange && typeVisible && personaMatch && featureMatch && dimensionMatch;
@@ -274,10 +329,15 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
   // Group items by type
   const swimlanes = useMemo(() => {
     const groups: Record<TimelineEntityType, TimelineItem[]> = {
-      problem: [], hypothesis: [], experiment: [], decision: [],
-      feature: [], feedback: [], feature_request: [],
+      problem: [],
+      hypothesis: [],
+      experiment: [],
+      decision: [],
+      feature: [],
+      feedback: [],
+      feature_request: [],
     };
-    filteredItems.forEach(item => {
+    filteredItems.forEach((item) => {
       groups[item.type].push(item);
     });
     return groups;
@@ -287,20 +347,20 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
   const gridLines = useMemo(() => {
     const interval = { start: timeRangeStart, end: today };
 
-    if (timeRange === "1M" || timeRange === "3M") {
-      return eachWeekOfInterval(interval).map(date => ({
+    if (timeRange === '1M' || timeRange === '3M') {
+      return eachWeekOfInterval(interval).map((date) => ({
         date,
-        label: format(date, "MMM d"),
+        label: format(date, 'MMM d'),
       }));
-    } else if (timeRange === "6M" || timeRange === "1Y") {
-      return eachMonthOfInterval(interval).map(date => ({
+    } else if (timeRange === '6M' || timeRange === '1Y') {
+      return eachMonthOfInterval(interval).map((date) => ({
         date: startOfMonth(date),
-        label: format(date, "MMM"),
+        label: format(date, 'MMM'),
       }));
     } else {
-      return eachQuarterOfInterval(interval).map(date => ({
+      return eachQuarterOfInterval(interval).map((date) => ({
         date: startOfQuarter(date),
-        label: format(date, "QQQ yyyy"),
+        label: format(date, 'QQQ yyyy'),
       }));
     }
   }, [timeRange, timeRangeStart]);
@@ -312,7 +372,7 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
 
   const toggleType = (type: TimelineEntityType) => {
     if (visibleTypes.includes(type)) {
-      setVisibleTypes(visibleTypes.filter(t => t !== type));
+      setVisibleTypes(visibleTypes.filter((t) => t !== type));
     } else {
       setVisibleTypes([...visibleTypes, type]);
     }
@@ -323,7 +383,7 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
     navigate(`/product/${productId}/${path}/${item.id}`);
   };
 
-  const visibleSwimlanes = SWIMLANE_ORDER.filter(type => visibleTypes.includes(type));
+  const visibleSwimlanes = SWIMLANE_ORDER.filter((type) => visibleTypes.includes(type));
 
   return (
     <TooltipProvider delayDuration={100}>
@@ -344,7 +404,7 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
               onChange={(sel) => updateFilter('features', sel)}
               dimensionName="Feature Areas"
             />
-            {taxonomy.dimensions.map(dim => (
+            {taxonomy.dimensions.map((dim) => (
               <MultiSelectDropdown
                 key={dim.id}
                 options={dim.values}
@@ -355,7 +415,7 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
             ))}
             <div className="h-5 w-px bg-border" />
             <div className="flex items-center gap-1.5 flex-wrap">
-              {SWIMLANE_ORDER.map(type => {
+              {SWIMLANE_ORDER.map((type) => {
                 const config = SWIMLANE_CONFIG[type];
                 const Icon = config.icon;
                 const isActive = visibleTypes.includes(type);
@@ -364,16 +424,13 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
                     key={type}
                     onClick={() => toggleType(type)}
                     className={cn(
-                      "flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors",
+                      'flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors',
                       isActive
-                        ? "bg-secondary text-secondary-foreground"
-                        : "text-muted-foreground hover:bg-muted"
+                        ? 'bg-secondary text-secondary-foreground'
+                        : 'text-muted-foreground hover:bg-muted'
                     )}
                   >
-                    <Checkbox
-                      checked={isActive}
-                      className="h-3.5 w-3.5 pointer-events-none"
-                    />
+                    <Checkbox checked={isActive} className="h-3.5 w-3.5 pointer-events-none" />
                     <Icon className="h-3.5 w-3.5" />
                     <span className="hidden sm:inline">{config.label}</span>
                   </button>
@@ -387,12 +444,12 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
             {TIME_RANGES.map((range) => (
               <Button
                 key={range}
-                variant={timeRange === range ? "default" : "ghost"}
+                variant={timeRange === range ? 'default' : 'ghost'}
                 size="sm"
                 className="h-7 px-2.5 text-xs"
                 onClick={() => setTimeRange(range)}
               >
-                {range === "all" ? "All" : range}
+                {range === 'all' ? 'All' : range}
               </Button>
             ))}
           </div>
@@ -435,13 +492,15 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
                   <div
                     key={type}
                     className={cn(
-                      "flex items-center h-12 relative",
-                      rowIndex !== visibleSwimlanes.length - 1 && "border-b border-border/50"
+                      'flex items-center h-12 relative',
+                      rowIndex !== visibleSwimlanes.length - 1 && 'border-b border-border/50'
                     )}
                   >
                     {/* Row label */}
                     <div className="w-[100px] shrink-0 flex items-center gap-2 px-3 sticky left-0 bg-background z-20">
-                      <Icon className={cn("h-4 w-4", config.strokeColor.replace("stroke-", "text-"))} />
+                      <Icon
+                        className={cn('h-4 w-4', config.strokeColor.replace('stroke-', 'text-'))}
+                      />
                       <span className="text-xs font-medium text-muted-foreground truncate">
                         {config.label}
                       </span>
@@ -467,12 +526,10 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
                                     cy="7"
                                     r="5"
                                     className={cn(
-                                      "transition-colors",
-                                      filled
-                                        ? config.fillColor
-                                        : "fill-transparent",
+                                      'transition-colors',
+                                      filled ? config.fillColor : 'fill-transparent',
                                       config.strokeColor,
-                                      "stroke-2"
+                                      'stroke-2'
                                     )}
                                   />
                                 </svg>
@@ -482,7 +539,7 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
                               <div className="space-y-1">
                                 <p className="font-medium text-sm leading-tight">{item.title}</p>
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                  <span>{format(new Date(item.createdAt), "MMM d, yyyy")}</span>
+                                  <span>{format(new Date(item.createdAt), 'MMM d, yyyy')}</span>
                                   {item.status && (
                                     <Badge variant="secondary" className="h-4 text-[10px] px-1.5">
                                       {item.status}
@@ -525,13 +582,23 @@ export const SwimLaneTimeline: React.FC<SwimLaneTimelineProps> = ({
         <div className="flex items-center justify-center gap-6 py-2 border-t border-border text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <svg width="12" height="12" viewBox="0 0 12 12">
-              <circle cx="6" cy="6" r="4" className="fill-transparent stroke-muted-foreground stroke-2" />
+              <circle
+                cx="6"
+                cy="6"
+                r="4"
+                className="fill-transparent stroke-muted-foreground stroke-2"
+              />
             </svg>
             <span>Active / In Progress</span>
           </div>
           <div className="flex items-center gap-1.5">
             <svg width="12" height="12" viewBox="0 0 12 12">
-              <circle cx="6" cy="6" r="4" className="fill-muted-foreground stroke-muted-foreground stroke-2" />
+              <circle
+                cx="6"
+                cy="6"
+                r="4"
+                className="fill-muted-foreground stroke-muted-foreground stroke-2"
+              />
             </svg>
             <span>Complete / Resolved</span>
           </div>

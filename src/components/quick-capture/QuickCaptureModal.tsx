@@ -1,33 +1,46 @@
-import { useState, useMemo } from "react";
-import { Zap, Link2, Search, AlertCircle, Lightbulb, FlaskConical, CheckCircle, Paperclip, X, Loader2, MessageSquare, Sparkles } from "lucide-react";
+import { useState, useMemo } from 'react';
+import {
+  Zap,
+  Link2,
+  Search,
+  AlertCircle,
+  Lightbulb,
+  FlaskConical,
+  CheckCircle,
+  Paperclip,
+  X,
+  Loader2,
+  MessageSquare,
+  Sparkles,
+} from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useCreateEntity, useEntities } from "@/hooks/useEntities";
-import { useCreateRelationship } from "@/hooks/useRelationships";
-import { ContextTagsPicker } from "@/components/taxonomy";
-import { useToast } from "@/hooks/use-toast";
-import { formatDistanceToNow } from "date-fns";
-import type { Entity, EntityType, RelationshipType } from "@/lib/types";
-import { RELATIONSHIP_TYPES } from "@/lib/types";
+} from '@/components/ui/select';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useCreateEntity, useEntities } from '@/hooks/useEntities';
+import { useCreateRelationship } from '@/hooks/useRelationships';
+import { ContextTagsPicker } from '@/components/taxonomy';
+import { useToast } from '@/hooks/use-toast';
+import { formatDistanceToNow } from 'date-fns';
+import type { Entity, EntityType, RelationshipType } from '@/lib/types';
+import { RELATIONSHIP_TYPES } from '@/lib/types';
 
 interface QuickCaptureModalProps {
   open: boolean;
@@ -35,15 +48,15 @@ interface QuickCaptureModalProps {
 }
 
 const TYPE_CONFIG: Partial<Record<EntityType, { icon: React.ElementType; label: string }>> = {
-  problem: { icon: AlertCircle, label: "Problem" },
-  hypothesis: { icon: Lightbulb, label: "Hypothesis" },
-  experiment: { icon: FlaskConical, label: "Experiment" },
-  decision: { icon: CheckCircle, label: "Decision" },
-  artifact: { icon: Paperclip, label: "Artifact" },
-  capture: { icon: Zap, label: "Capture" },
-  feedback: { icon: Zap, label: "Feedback" },
-  feature_request: { icon: Zap, label: "Request" },
-  feature: { icon: Zap, label: "Feature" },
+  problem: { icon: AlertCircle, label: 'Problem' },
+  hypothesis: { icon: Lightbulb, label: 'Hypothesis' },
+  experiment: { icon: FlaskConical, label: 'Experiment' },
+  decision: { icon: CheckCircle, label: 'Decision' },
+  artifact: { icon: Paperclip, label: 'Artifact' },
+  capture: { icon: Zap, label: 'Capture' },
+  feedback: { icon: Zap, label: 'Feedback' },
+  feature_request: { icon: Zap, label: 'Request' },
+  feature: { icon: Zap, label: 'Feature' },
 };
 
 interface PendingLink {
@@ -52,15 +65,17 @@ interface PendingLink {
 }
 
 export function QuickCaptureModal({ open, onOpenChange }: QuickCaptureModalProps) {
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
   const [personaIds, setPersonaIds] = useState<string[]>([]);
   const [featureIds, setFeatureIds] = useState<string[]>([]);
   const [dimensionValueIds, setDimensionValueIds] = useState<string[]>([]);
   const [pendingLinks, setPendingLinks] = useState<PendingLink[]>([]);
   const [linkPickerOpen, setLinkPickerOpen] = useState(false);
-  const [entityType, setEntityType] = useState<'capture' | 'feedback' | 'feature_request'>('capture');
-  const [source, setSource] = useState("");
+  const [entityType, setEntityType] = useState<'capture' | 'feedback' | 'feature_request'>(
+    'capture'
+  );
+  const [source, setSource] = useState('');
   const [sentiment, setSentiment] = useState<'positive' | 'neutral' | 'negative' | null>(null);
   const [priority, setPriority] = useState<'low' | 'medium' | 'high' | 'critical' | null>(null);
 
@@ -70,15 +85,15 @@ export function QuickCaptureModal({ open, onOpenChange }: QuickCaptureModalProps
   const { toast } = useToast();
 
   const resetForm = () => {
-    setTitle("");
-    setBody("");
+    setTitle('');
+    setBody('');
     setPersonaIds([]);
     setFeatureIds([]);
     setDimensionValueIds([]);
     setPendingLinks([]);
     setLinkPickerOpen(false);
     setEntityType('capture');
-    setSource("");
+    setSource('');
     setSentiment(null);
     setPriority(null);
   };
@@ -88,11 +103,12 @@ export function QuickCaptureModal({ open, onOpenChange }: QuickCaptureModalProps
 
     try {
       // Build metadata based on entity type
-      const metadata = entityType === 'feedback'
-        ? { source: source.trim() || undefined, sentiment: sentiment || undefined }
-        : entityType === 'feature_request'
-        ? { source: source.trim() || undefined, priority: priority || undefined }
-        : undefined;
+      const metadata =
+        entityType === 'feedback'
+          ? { source: source.trim() || undefined, sentiment: sentiment || undefined }
+          : entityType === 'feature_request'
+            ? { source: source.trim() || undefined, priority: priority || undefined }
+            : undefined;
 
       // Create the entity
       const newEntity = await createEntity.mutateAsync({
@@ -121,9 +137,12 @@ export function QuickCaptureModal({ open, onOpenChange }: QuickCaptureModalProps
       }
 
       const toastMessages: Record<string, { title: string; description: string }> = {
-        capture: { title: "Captured!", description: "Your thought has been saved." },
-        feedback: { title: "Feedback saved!", description: "Your feedback has been recorded." },
-        feature_request: { title: "Request saved!", description: "Your feature request has been recorded." },
+        capture: { title: 'Captured!', description: 'Your thought has been saved.' },
+        feedback: { title: 'Feedback saved!', description: 'Your feedback has been recorded.' },
+        feature_request: {
+          title: 'Request saved!',
+          description: 'Your feature request has been recorded.',
+        },
       };
       toast(toastMessages[entityType]);
 
@@ -131,9 +150,9 @@ export function QuickCaptureModal({ open, onOpenChange }: QuickCaptureModalProps
       onOpenChange(false);
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to save capture.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save capture.',
+        variant: 'destructive',
       });
     }
   };
@@ -165,7 +184,11 @@ export function QuickCaptureModal({ open, onOpenChange }: QuickCaptureModalProps
             {entityType === 'capture' && <Zap className="h-4 w-4 text-yellow-500" />}
             {entityType === 'feedback' && <MessageSquare className="h-4 w-4 text-blue-500" />}
             {entityType === 'feature_request' && <Sparkles className="h-4 w-4 text-purple-500" />}
-            {entityType === 'capture' ? 'New Capture' : entityType === 'feedback' ? 'New Feedback' : 'New Request'}
+            {entityType === 'capture'
+              ? 'New Capture'
+              : entityType === 'feedback'
+                ? 'New Feedback'
+                : 'New Request'}
           </DialogTitle>
         </DialogHeader>
 
@@ -333,11 +356,7 @@ export function QuickCaptureModal({ open, onOpenChange }: QuickCaptureModalProps
                     const config = TYPE_CONFIG[link.entity.type];
                     const Icon = config?.icon || Zap;
                     return (
-                      <Badge
-                        key={link.entity.id}
-                        variant="secondary"
-                        className="gap-1.5 pr-1 py-1"
-                      >
+                      <Badge key={link.entity.id} variant="secondary" className="gap-1.5 pr-1 py-1">
                         <Icon className="h-3 w-3" />
                         <span className="truncate max-w-[150px]">{link.entity.title}</span>
                         <button
@@ -361,17 +380,14 @@ export function QuickCaptureModal({ open, onOpenChange }: QuickCaptureModalProps
           <Button variant="outline" onClick={() => handleOpenChange(false)} disabled={isSaving}>
             Cancel
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={!title.trim() || !currentProductId || isSaving}
-          >
+          <Button onClick={handleSubmit} disabled={!title.trim() || !currentProductId || isSaving}>
             {isSaving ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 Saving...
               </>
             ) : (
-              "Save"
+              'Save'
             )}
           </Button>
         </DialogFooter>
@@ -407,9 +423,9 @@ function LinkPickerDialog({
   excludeIds,
   onSelect,
 }: LinkPickerDialogProps) {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [typeFilters, setTypeFilters] = useState<EntityType[]>([]);
-  const [relationshipType, setRelationshipType] = useState<RelationshipType>("relates_to");
+  const [relationshipType, setRelationshipType] = useState<RelationshipType>('relates_to');
   const { data: entities } = useEntities(productId);
 
   const excludeSet = useMemo(() => new Set(excludeIds), [excludeIds]);
@@ -440,8 +456,8 @@ function LinkPickerDialog({
 
   const handleSelect = (entity: Entity) => {
     onSelect(entity, relationshipType);
-    setSearch("");
-    setRelationshipType("relates_to");
+    setSearch('');
+    setRelationshipType('relates_to');
     onOpenChange(false);
   };
 
@@ -468,7 +484,10 @@ function LinkPickerDialog({
           {/* Relationship Type Selector */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <span className="text-sm text-muted-foreground whitespace-nowrap">Link as:</span>
-            <Select value={relationshipType} onValueChange={(v) => setRelationshipType(v as RelationshipType)}>
+            <Select
+              value={relationshipType}
+              onValueChange={(v) => setRelationshipType(v as RelationshipType)}
+            >
               <SelectTrigger className="w-[160px]">
                 <SelectValue />
               </SelectTrigger>
@@ -507,8 +526,8 @@ function LinkPickerDialog({
             {displayItems.length === 0 ? (
               <div className="flex h-20 items-center justify-center text-sm text-muted-foreground">
                 {search || typeFilters.length > 0
-                  ? "No items match your search."
-                  : "No items available to link."}
+                  ? 'No items match your search.'
+                  : 'No items available to link.'}
               </div>
             ) : (
               <div className="p-1">
@@ -537,7 +556,8 @@ function LinkPickerDialog({
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          {config?.label} · {formatDistanceToNow(new Date(entity.updatedAt), { addSuffix: true })}
+                          {config?.label} ·{' '}
+                          {formatDistanceToNow(new Date(entity.updatedAt), { addSuffix: true })}
                         </p>
                       </div>
                     </button>

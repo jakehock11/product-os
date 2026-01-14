@@ -1,12 +1,8 @@
-import { useMemo } from "react";
-import { X, ChevronDown } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { useMemo } from 'react';
+import { X, ChevronDown } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Command,
   CommandEmpty,
@@ -14,10 +10,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useActiveTaxonomy } from "@/hooks/useTaxonomy";
-import type { Persona, Feature, DimensionValue } from "@/lib/types";
+} from '@/components/ui/command';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useActiveTaxonomy } from '@/hooks/useTaxonomy';
+import type { Persona, Feature, DimensionValue } from '@/lib/types';
 
 interface ContextTagsPickerProps {
   productId: string;
@@ -107,12 +103,12 @@ export function ContextTagsPicker({
       })}
 
       {activePersonas.length === 0 &&
-       activeFeatures.length === 0 &&
-       activeDimensions.length === 0 && (
-        <p className="text-sm text-muted-foreground">
-          No context tags defined. Add them in Manage Context.
-        </p>
-      )}
+        activeFeatures.length === 0 &&
+        activeDimensions.length === 0 && (
+          <p className="text-sm text-muted-foreground">
+            No context tags defined. Add them in Manage Context.
+          </p>
+        )}
     </div>
   );
 }
@@ -179,11 +175,7 @@ function TagSection({ label, items, selectedIds, onChange }: TagSectionProps) {
       {selectedItems.length > 0 ? (
         <div className="flex flex-wrap gap-1.5">
           {selectedItems.map((item) => (
-            <Badge
-              key={item.id}
-              variant="secondary"
-              className="gap-1 pr-1"
-            >
+            <Badge key={item.id} variant="secondary" className="gap-1 pr-1">
               {item.name}
               <button
                 onClick={() => removeItem(item.id)}
@@ -258,11 +250,7 @@ function DimensionTagSection({
       {selectedItems.length > 0 ? (
         <div className="flex flex-wrap gap-1.5">
           {selectedItems.map((item) => (
-            <Badge
-              key={item.id}
-              variant="secondary"
-              className="gap-1 pr-1"
-            >
+            <Badge key={item.id} variant="secondary" className="gap-1 pr-1">
               {item.name}
               <button
                 onClick={() => onRemove(item.id)}

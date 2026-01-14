@@ -1,45 +1,40 @@
-import { useState, useRef, useMemo } from "react";
-import {
-  Zap,
-  MessageSquare,
-  Sparkles,
-  Link2,
-  X,
-  Search,
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useState, useRef, useMemo } from 'react';
+import { Zap, MessageSquare, Sparkles, Link2, X, Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { useCreateEntity, useEntity, useEntities } from "@/hooks/useEntities";
-import { useCreateRelationship } from "@/hooks/useRelationships";
-import { useActiveTaxonomy } from "@/hooks/useTaxonomy";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
-import type { Entity, EntityType, CreateEntityData, FeedbackType, FeatureRequestPriority } from "@/lib/types";
-import { formatDistanceToNow } from "date-fns";
+} from '@/components/ui/select';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { useCreateEntity, useEntity, useEntities } from '@/hooks/useEntities';
+import { useCreateRelationship } from '@/hooks/useRelationships';
+import { useActiveTaxonomy } from '@/hooks/useTaxonomy';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+import type {
+  Entity,
+  EntityType,
+  CreateEntityData,
+  FeedbackType,
+  FeatureRequestPriority,
+} from '@/lib/types';
+import { formatDistanceToNow } from 'date-fns';
 
-type CaptureType = "capture" | "feedback" | "feature_request";
-type Sentiment = "positive" | "neutral" | "negative";
+type CaptureType = 'capture' | 'feedback' | 'feature_request';
+type Sentiment = 'positive' | 'neutral' | 'negative';
 type Priority = FeatureRequestPriority;
 
 const TYPE_LABELS: Record<CaptureType, string> = {
-  capture: "Capture",
-  feedback: "Feedback",
-  feature_request: "Request",
+  capture: 'Capture',
+  feedback: 'Feedback',
+  feature_request: 'Request',
 };
 
 interface InboxCaptureFormProps {
@@ -55,12 +50,12 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
   const { data: taxonomy } = useActiveTaxonomy(productId);
 
   // Form state
-  const [captureType, setCaptureType] = useState<CaptureType>("capture");
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [source, setSource] = useState("");
-  const [sentiment, setSentiment] = useState<Sentiment>("neutral");
-  const [priority, setPriority] = useState<Priority>("medium");
+  const [captureType, setCaptureType] = useState<CaptureType>('capture');
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [source, setSource] = useState('');
+  const [sentiment, setSentiment] = useState<Sentiment>('neutral');
+  const [priority, setPriority] = useState<Priority>('medium');
   const [personaIds, setPersonaIds] = useState<string[]>([]);
   const [featureIds, setFeatureIds] = useState<string[]>([]);
   const [dimensionValueIds, setDimensionValueIds] = useState<string[]>([]);
@@ -74,23 +69,23 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
   const handleBodyChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setBody(e.target.value);
     const target = e.target;
-    target.style.height = "auto";
+    target.style.height = 'auto';
     target.style.height = `${target.scrollHeight}px`;
   };
 
   // Reset form (keeping type selection)
   const resetForm = () => {
-    setTitle("");
-    setBody("");
-    setSource("");
-    setSentiment("neutral");
-    setPriority("medium");
+    setTitle('');
+    setBody('');
+    setSource('');
+    setSentiment('neutral');
+    setPriority('medium');
     setPersonaIds([]);
     setFeatureIds([]);
     setDimensionValueIds([]);
     setLinkedEntityIds([]);
     if (bodyRef.current) {
-      bodyRef.current.style.height = "auto";
+      bodyRef.current.style.height = 'auto';
       bodyRef.current.focus();
     }
   };
@@ -100,9 +95,9 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
 
     // Map sentiment to feedbackType
     const feedbackTypeMap: Record<Sentiment, FeedbackType> = {
-      positive: "praise",
-      neutral: "suggestion",
-      negative: "complaint",
+      positive: 'praise',
+      neutral: 'suggestion',
+      negative: 'complaint',
     };
 
     const entityData: CreateEntityData = {
@@ -110,16 +105,16 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
       type: captureType as EntityType,
       title: title.trim() || undefined,
       body: body.trim(),
-      status: captureType === "capture" ? undefined : "new",
+      status: captureType === 'capture' ? undefined : 'new',
       personaIds,
       featureIds,
       dimensionValueIds,
       metadata: {
-        ...(captureType === "feedback" && {
+        ...(captureType === 'feedback' && {
           source: source.trim() || undefined,
           feedbackType: feedbackTypeMap[sentiment],
         }),
-        ...(captureType === "feature_request" && {
+        ...(captureType === 'feature_request' && {
           source: source.trim() || undefined,
           priority,
         }),
@@ -134,13 +129,13 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
         await createRelationship.mutateAsync({
           sourceId: newEntity.id,
           targetId,
-          relationshipType: "relates_to",
+          relationshipType: 'relates_to',
           productId,
         });
       }
 
       toast({
-        title: "Saved",
+        title: 'Saved',
         description: `${TYPE_LABELS[captureType]} added to inbox.`,
       });
 
@@ -148,9 +143,9 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
       resetForm();
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to save. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -168,29 +163,26 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
 
   // Taxonomy dropdown helper
   const handleTaxonomySelect = (
-    type: "persona" | "feature" | "dimension",
+    type: 'persona' | 'feature' | 'dimension',
     id: string | undefined,
     dimensionId?: string
   ) => {
     if (!id) {
-      if (type === "persona") setPersonaIds([]);
-      else if (type === "feature") setFeatureIds([]);
+      if (type === 'persona') setPersonaIds([]);
+      else if (type === 'feature') setFeatureIds([]);
       return;
     }
 
-    if (type === "persona") {
+    if (type === 'persona') {
       setPersonaIds((prev) => (prev.includes(id) ? prev : [id]));
-    } else if (type === "feature") {
+    } else if (type === 'feature') {
       setFeatureIds((prev) => (prev.includes(id) ? prev : [id]));
-    } else if (type === "dimension" && dimensionId) {
+    } else if (type === 'dimension' && dimensionId) {
       // Replace any existing value from this dimension
       const dimension = taxonomy?.dimensions.find((d) => d.id === dimensionId);
       if (dimension) {
         const dimensionValueIdSet = new Set(dimension.values.map((v) => v.id));
-        setDimensionValueIds((prev) => [
-          ...prev.filter((v) => !dimensionValueIdSet.has(v)),
-          id,
-        ]);
+        setDimensionValueIds((prev) => [...prev.filter((v) => !dimensionValueIdSet.has(v)), id]);
       }
     }
   };
@@ -245,7 +237,7 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
       />
 
       {/* Type-Specific Fields */}
-      {captureType === "feedback" && (
+      {captureType === 'feedback' && (
         <div className="mb-4 grid gap-3 animate-in fade-in-50 duration-200 sm:grid-cols-2">
           <Input
             value={source}
@@ -281,7 +273,7 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
         </div>
       )}
 
-      {captureType === "feature_request" && (
+      {captureType === 'feature_request' && (
         <div className="mb-4 grid gap-3 animate-in fade-in-50 duration-200 sm:grid-cols-2">
           <Input
             value={source}
@@ -329,8 +321,8 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
           {/* Personas */}
           {taxonomy.personas.length > 0 && (
             <Select
-              value={personaIds[0] || ""}
-              onValueChange={(v) => handleTaxonomySelect("persona", v || undefined)}
+              value={personaIds[0] || ''}
+              onValueChange={(v) => handleTaxonomySelect('persona', v || undefined)}
             >
               <SelectTrigger className="h-8 w-auto min-w-[120px] text-xs">
                 <SelectValue placeholder="Persona" />
@@ -348,8 +340,8 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
           {/* Features */}
           {taxonomy.features.length > 0 && (
             <Select
-              value={featureIds[0] || ""}
-              onValueChange={(v) => handleTaxonomySelect("feature", v || undefined)}
+              value={featureIds[0] || ''}
+              onValueChange={(v) => handleTaxonomySelect('feature', v || undefined)}
             >
               <SelectTrigger className="h-8 w-auto min-w-[120px] text-xs">
                 <SelectValue placeholder="Feature Area" />
@@ -373,10 +365,8 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
             return (
               <Select
                 key={dim.id}
-                value={selectedValue || ""}
-                onValueChange={(v) =>
-                  handleTaxonomySelect("dimension", v || undefined, dim.id)
-                }
+                value={selectedValue || ''}
+                onValueChange={(v) => handleTaxonomySelect('dimension', v || undefined, dim.id)}
               >
                 <SelectTrigger className="h-8 w-auto min-w-[120px] text-xs">
                   <SelectValue placeholder={dim.name} />
@@ -422,12 +412,8 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
 
       {/* Save Button */}
       <div className="flex justify-end">
-        <Button
-          onClick={handleSubmit}
-          disabled={!canSubmit}
-          className="min-w-[120px]"
-        >
-          {isSubmitting ? "Saving..." : "Save to Inbox"}
+        <Button onClick={handleSubmit} disabled={!canSubmit} className="min-w-[120px]">
+          {isSubmitting ? 'Saving...' : 'Save to Inbox'}
         </Button>
       </div>
     </div>
@@ -435,13 +421,7 @@ export function InboxCaptureForm({ productId, onSaved }: InboxCaptureFormProps) 
 }
 
 // Small component for displaying linked entity badges
-function LinkedEntityBadge({
-  entityId,
-  onRemove,
-}: {
-  entityId: string;
-  onRemove: () => void;
-}) {
+function LinkedEntityBadge({ entityId, onRemove }: { entityId: string; onRemove: () => void }) {
   const { data: entity } = useEntity(entityId);
 
   if (!entity) {
@@ -457,7 +437,7 @@ function LinkedEntityBadge({
 
   return (
     <Badge variant="secondary" className="gap-1 pr-1">
-      {entity.title || "Untitled"}
+      {entity.title || 'Untitled'}
       <button onClick={onRemove} className="rounded hover:bg-muted">
         <X className="h-3 w-3" />
       </button>
@@ -473,7 +453,7 @@ interface InlineLinkPickerProps {
 }
 
 function InlineLinkPicker({ productId, excludeIds, onSelect }: InlineLinkPickerProps) {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const { data: entities } = useEntities(productId);
 
   const filteredEntities = useMemo(() => {
@@ -522,7 +502,7 @@ function InlineLinkPicker({ productId, excludeIds, onSelect }: InlineLinkPickerP
       <div className="max-h-40 overflow-y-auto">
         {filteredEntities.length === 0 ? (
           <p className="py-3 text-center text-xs text-muted-foreground">
-            {search ? "No items match your search." : "No items available."}
+            {search ? 'No items match your search.' : 'No items available.'}
           </p>
         ) : (
           <div className="space-y-0.5">
@@ -535,7 +515,7 @@ function InlineLinkPicker({ productId, excludeIds, onSelect }: InlineLinkPickerP
                   className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs transition-colors hover:bg-muted"
                 >
                   <Icon className="h-3.5 w-3.5 text-muted-foreground" />
-                  <span className="flex-1 truncate">{entity.title || "Untitled"}</span>
+                  <span className="flex-1 truncate">{entity.title || 'Untitled'}</span>
                   <span className="text-muted-foreground">
                     {formatDistanceToNow(new Date(entity.updatedAt), { addSuffix: true })}
                   </span>

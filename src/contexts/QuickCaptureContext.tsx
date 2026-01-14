@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
-import { QuickCaptureModal } from "@/components/quick-capture/QuickCaptureModal";
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
+import { QuickCaptureModal } from '@/components/quick-capture/QuickCaptureModal';
 
 interface QuickCaptureContextType {
   isOpen: boolean;
@@ -12,7 +12,7 @@ const QuickCaptureContext = createContext<QuickCaptureContextType | null>(null);
 export function useQuickCapture() {
   const context = useContext(QuickCaptureContext);
   if (!context) {
-    throw new Error("useQuickCapture must be used within QuickCaptureProvider");
+    throw new Error('useQuickCapture must be used within QuickCaptureProvider');
   }
   return context;
 }
@@ -31,14 +31,14 @@ export function QuickCaptureProvider({ children }: QuickCaptureProviderProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Check for Cmd+N (Mac) or Ctrl+N (Windows/Linux)
-      if ((e.metaKey || e.ctrlKey) && e.key === "n") {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
         e.preventDefault();
         open();
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [open]);
 
   return (

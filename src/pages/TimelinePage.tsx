@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import {
   Search,
   AlertCircle,
@@ -13,40 +13,47 @@ import {
   Package,
   List,
   LayoutGrid,
-} from "lucide-react";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useEntities } from "@/hooks/useEntities";
-import { useActiveTaxonomy } from "@/hooks/useTaxonomy";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Button } from "@/components/ui/button";
-import { formatDistanceToNow, isToday, isYesterday, isThisWeek, isThisMonth, format } from "date-fns";
-import { SwimLaneTimeline } from "@/components/timeline/SwimLaneTimeline";
-import type { Entity, EntityType } from "@/lib/types";
+} from 'lucide-react';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useEntities } from '@/hooks/useEntities';
+import { useActiveTaxonomy } from '@/hooks/useTaxonomy';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Button } from '@/components/ui/button';
+import {
+  formatDistanceToNow,
+  isToday,
+  isYesterday,
+  isThisWeek,
+  isThisMonth,
+  format,
+} from 'date-fns';
+import { SwimLaneTimeline } from '@/components/timeline/SwimLaneTimeline';
+import type { Entity, EntityType } from '@/lib/types';
 
-type ViewMode = "list" | "swimlane";
+type ViewMode = 'list' | 'swimlane';
 
 const TYPE_CONFIG: Record<EntityType, { icon: React.ElementType; label: string; color: string }> = {
-  problem: { icon: AlertCircle, label: "Problem", color: "text-red-500" },
-  hypothesis: { icon: Lightbulb, label: "Hypothesis", color: "text-yellow-500" },
-  experiment: { icon: FlaskConical, label: "Experiment", color: "text-blue-500" },
-  decision: { icon: CheckCircle, label: "Decision", color: "text-green-500" },
-  artifact: { icon: Paperclip, label: "Artifact", color: "text-purple-500" },
-  capture: { icon: Zap, label: "Capture", color: "text-orange-500" },
-  feedback: { icon: MessageSquare, label: "Feedback", color: "text-blue-400" },
-  feature_request: { icon: Sparkles, label: "Request", color: "text-purple-400" },
-  feature: { icon: Package, label: "Feature", color: "text-indigo-500" },
+  problem: { icon: AlertCircle, label: 'Problem', color: 'text-red-500' },
+  hypothesis: { icon: Lightbulb, label: 'Hypothesis', color: 'text-yellow-500' },
+  experiment: { icon: FlaskConical, label: 'Experiment', color: 'text-blue-500' },
+  decision: { icon: CheckCircle, label: 'Decision', color: 'text-green-500' },
+  artifact: { icon: Paperclip, label: 'Artifact', color: 'text-purple-500' },
+  capture: { icon: Zap, label: 'Capture', color: 'text-orange-500' },
+  feedback: { icon: MessageSquare, label: 'Feedback', color: 'text-blue-400' },
+  feature_request: { icon: Sparkles, label: 'Request', color: 'text-purple-400' },
+  feature: { icon: Package, label: 'Feature', color: 'text-indigo-500' },
 };
 
 // Helper to group items by date category
 function getDateGroup(date: Date): string {
-  if (isToday(date)) return "Today";
-  if (isYesterday(date)) return "Yesterday";
-  if (isThisWeek(date)) return "This Week";
-  if (isThisMonth(date)) return "This Month";
-  return format(date, "MMMM yyyy");
+  if (isToday(date)) return 'Today';
+  if (isYesterday(date)) return 'Yesterday';
+  if (isThisWeek(date)) return 'This Week';
+  if (isThisMonth(date)) return 'This Month';
+  return format(date, 'MMMM yyyy');
 }
 
 export default function TimelinePage() {
@@ -56,9 +63,9 @@ export default function TimelinePage() {
   const { data: entities, isLoading } = useEntities(productId);
   const { data: taxonomy } = useActiveTaxonomy(productId);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [typeFilters, setTypeFilters] = useState<EntityType[]>([]);
-  const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
 
   useEffect(() => {
     if (productId) setCurrentProduct(productId);
@@ -77,15 +84,15 @@ export default function TimelinePage() {
 
   const getEntityLink = (entity: Entity) => {
     const typeToPath: Record<EntityType, string> = {
-      problem: "problems",
-      hypothesis: "hypotheses",
-      experiment: "experiments",
-      decision: "decisions",
-      artifact: "artifacts",
-      capture: "captures",
-      feedback: "feedback",
-      feature_request: "feature-requests",
-      feature: "features",
+      problem: 'problems',
+      hypothesis: 'hypotheses',
+      experiment: 'experiments',
+      decision: 'decisions',
+      artifact: 'artifacts',
+      capture: 'captures',
+      feedback: 'feedback',
+      feature_request: 'feature-requests',
+      feature: 'features',
     };
     return `/product/${productId}/${typeToPath[entity.type]}/${entity.id}`;
   };
@@ -109,15 +116,19 @@ export default function TimelinePage() {
   }, [timelineItems]);
 
   // Prepare taxonomy data for swimlane component
-  const taxonomyForSwimlane = useMemo(() => ({
-    personas: taxonomy?.personas.map((p) => ({ id: p.id, name: p.name })) || [],
-    features: taxonomy?.features.map((f) => ({ id: f.id, name: f.name })) || [],
-    dimensions: taxonomy?.dimensions.map((d) => ({
-      id: d.id,
-      name: d.name,
-      values: d.values.map((v) => ({ id: v.id, name: v.name })),
-    })) || [],
-  }), [taxonomy]);
+  const taxonomyForSwimlane = useMemo(
+    () => ({
+      personas: taxonomy?.personas.map((p) => ({ id: p.id, name: p.name })) || [],
+      features: taxonomy?.features.map((f) => ({ id: f.id, name: f.name })) || [],
+      dimensions:
+        taxonomy?.dimensions.map((d) => ({
+          id: d.id,
+          name: d.name,
+          values: d.values.map((v) => ({ id: v.id, name: v.name })),
+        })) || [],
+    }),
+    [taxonomy]
+  );
 
   if (isLoading) {
     return (
@@ -144,25 +155,25 @@ export default function TimelinePage() {
         </div>
         <div className="flex items-center gap-1 rounded-lg border border-border p-1">
           <Button
-            variant={viewMode === "list" ? "secondary" : "ghost"}
+            variant={viewMode === 'list' ? 'secondary' : 'ghost'}
             size="sm"
             className="h-7 px-2"
-            onClick={() => setViewMode("list")}
+            onClick={() => setViewMode('list')}
           >
             <List className="h-4 w-4" />
           </Button>
           <Button
-            variant={viewMode === "swimlane" ? "secondary" : "ghost"}
+            variant={viewMode === 'swimlane' ? 'secondary' : 'ghost'}
             size="sm"
             className="h-7 px-2"
-            onClick={() => setViewMode("swimlane")}
+            onClick={() => setViewMode('swimlane')}
           >
             <LayoutGrid className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
-      {viewMode === "swimlane" ? (
+      {viewMode === 'swimlane' ? (
         <div className="flex-1 min-h-0">
           <SwimLaneTimeline
             productId={productId!}
@@ -206,8 +217,8 @@ export default function TimelinePage() {
             <div className="flex flex-1 flex-col items-center justify-center py-16 text-center">
               <p className="text-sm text-muted-foreground">
                 {search || typeFilters.length > 0
-                  ? "No items match your filters."
-                  : "No activity yet. Start capturing your product thinking."}
+                  ? 'No items match your filters.'
+                  : 'No activity yet. Start capturing your product thinking.'}
               </p>
             </div>
           ) : (
@@ -236,7 +247,10 @@ export default function TimelinePage() {
                               {config.label}
                             </Badge>
                             {item.status && (
-                              <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-medium capitalize">
+                              <Badge
+                                variant="secondary"
+                                className="h-5 px-1.5 text-[10px] font-medium capitalize"
+                              >
                                 {item.status}
                               </Badge>
                             )}

@@ -1,1 +1,1 @@
-export { SwimLaneTimeline } from "./SwimLaneTimeline";
+export { SwimLaneTimeline } from './SwimLaneTimeline';

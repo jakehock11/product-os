@@ -1,1 +1,1 @@
-export { LinkToModal, LinkedItems } from "./LinkToModal";
+export { LinkToModal, LinkedItems } from './LinkToModal';

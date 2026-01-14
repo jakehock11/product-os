@@ -1,20 +1,20 @@
-import { useEffect, useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { MessageSquare, ArrowLeft, Trash2, Link2, ExternalLink } from "lucide-react";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useEntity, useUpdateEntity, useDeleteEntity } from "@/hooks/useEntities";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useState, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { MessageSquare, ArrowLeft, Trash2, Link2, ExternalLink } from 'lucide-react';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useEntity, useUpdateEntity, useDeleteEntity } from '@/hooks/useEntities';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,34 +25,34 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { RichTextEditor } from "@/components/editor";
-import { ContextTagsPicker } from "@/components/taxonomy";
-import { LinkToModal, LinkedItems } from "@/components/linking";
-import { useToast } from "@/hooks/use-toast";
+} from '@/components/ui/alert-dialog';
+import { RichTextEditor } from '@/components/editor';
+import { ContextTagsPicker } from '@/components/taxonomy';
+import { LinkToModal, LinkedItems } from '@/components/linking';
+import { useToast } from '@/hooks/use-toast';
 
-import type { FeedbackType, FeedbackStatus } from "@/lib/types";
+import type { FeedbackType, FeedbackStatus } from '@/lib/types';
 
 const FEEDBACK_TYPES: { value: FeedbackType; label: string }[] = [
-  { value: "praise", label: "Praise" },
-  { value: "complaint", label: "Complaint" },
-  { value: "bug", label: "Bug" },
-  { value: "suggestion", label: "Suggestion" },
-  { value: "question", label: "Question" },
+  { value: 'praise', label: 'Praise' },
+  { value: 'complaint', label: 'Complaint' },
+  { value: 'bug', label: 'Bug' },
+  { value: 'suggestion', label: 'Suggestion' },
+  { value: 'question', label: 'Question' },
 ];
 
 const FEEDBACK_STATUSES: { value: FeedbackStatus; label: string }[] = [
-  { value: "new", label: "New" },
-  { value: "reviewed", label: "Reviewed" },
-  { value: "actioned", label: "Actioned" },
-  { value: "archived", label: "Archived" },
+  { value: 'new', label: 'New' },
+  { value: 'reviewed', label: 'Reviewed' },
+  { value: 'actioned', label: 'Actioned' },
+  { value: 'archived', label: 'Archived' },
 ];
 
 const STATUS_COLORS: Record<FeedbackStatus, string> = {
-  new: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  reviewed: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
-  actioned: "bg-green-500/10 text-green-600 border-green-500/20",
-  archived: "bg-gray-500/10 text-gray-500 border-gray-500/20",
+  new: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  reviewed: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
+  actioned: 'bg-green-500/10 text-green-600 border-green-500/20',
+  archived: 'bg-gray-500/10 text-gray-500 border-gray-500/20',
 };
 
 export default function FeedbackDetailPage() {
@@ -64,12 +64,12 @@ export default function FeedbackDetailPage() {
   const deleteEntity = useDeleteEntity();
   const { toast } = useToast();
 
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [status, setStatus] = useState<FeedbackStatus>("new");
-  const [feedbackType, setFeedbackType] = useState<FeedbackType>("suggestion");
-  const [source, setSource] = useState("");
-  const [sourceUrl, setSourceUrl] = useState("");
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [status, setStatus] = useState<FeedbackStatus>('new');
+  const [feedbackType, setFeedbackType] = useState<FeedbackType>('suggestion');
+  const [source, setSource] = useState('');
+  const [sourceUrl, setSourceUrl] = useState('');
   const [personaIds, setPersonaIds] = useState<string[]>([]);
   const [featureIds, setFeatureIds] = useState<string[]>([]);
   const [dimensionValueIds, setDimensionValueIds] = useState<string[]>([]);
@@ -81,12 +81,12 @@ export default function FeedbackDetailPage() {
 
   useEffect(() => {
     if (entity) {
-      setTitle(entity.title || "");
-      setBody(entity.body || "");
-      setStatus((entity.status as FeedbackStatus) || "new");
-      setFeedbackType((entity.metadata?.feedbackType as FeedbackType) || "suggestion");
-      setSource(entity.metadata?.source || "");
-      setSourceUrl(entity.metadata?.sourceUrl || "");
+      setTitle(entity.title || '');
+      setBody(entity.body || '');
+      setStatus((entity.status as FeedbackStatus) || 'new');
+      setFeedbackType((entity.metadata?.feedbackType as FeedbackType) || 'suggestion');
+      setSource(entity.metadata?.source || '');
+      setSourceUrl(entity.metadata?.sourceUrl || '');
       setPersonaIds(entity.personaIds || []);
       setFeatureIds(entity.featureIds || []);
       setDimensionValueIds(entity.dimensionValueIds || []);
@@ -94,7 +94,7 @@ export default function FeedbackDetailPage() {
   }, [entity]);
 
   const debouncedSave = useCallback(
-    (data: Parameters<typeof updateEntity.mutateAsync>[0]["data"]) => {
+    (data: Parameters<typeof updateEntity.mutateAsync>[0]['data']) => {
       if (!id) return;
       updateEntity.mutate({ id, data });
     },
@@ -135,10 +135,10 @@ export default function FeedbackDetailPage() {
     if (!id) return;
     try {
       await deleteEntity.mutateAsync(id);
-      toast({ title: "Deleted", description: "Feedback has been deleted." });
+      toast({ title: 'Deleted', description: 'Feedback has been deleted.' });
       navigate(`/product/${productId}/inbox`);
     } catch {
-      toast({ title: "Error", description: "Failed to delete feedback.", variant: "destructive" });
+      toast({ title: 'Error', description: 'Failed to delete feedback.', variant: 'destructive' });
     }
   };
 
@@ -157,10 +157,10 @@ export default function FeedbackDetailPage() {
           metadata: { feedbackType, source, sourceUrl },
         },
       });
-      toast({ title: "Saved", description: "Feedback has been saved." });
+      toast({ title: 'Saved', description: 'Feedback has been saved.' });
       navigate(`/product/${productId}/inbox`);
     } catch {
-      toast({ title: "Error", description: "Failed to save feedback.", variant: "destructive" });
+      toast({ title: 'Error', description: 'Failed to save feedback.', variant: 'destructive' });
     }
   };
 
@@ -205,20 +205,25 @@ export default function FeedbackDetailPage() {
         <div className="flex items-center gap-2">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete feedback?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone.
-                </AlertDialogDescription>
+                <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
                   Delete
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -295,7 +300,7 @@ export default function FeedbackDetailPage() {
                   variant="ghost"
                   size="icon"
                   className="h-9 w-9 shrink-0"
-                  onClick={() => window.open(sourceUrl, "_blank")}
+                  onClick={() => window.open(sourceUrl, '_blank')}
                 >
                   <ExternalLink className="h-4 w-4" />
                 </Button>
@@ -357,15 +362,15 @@ export default function FeedbackDetailPage() {
             entityId={id!}
             onOpenLink={(entityId, entityType) => {
               const routes: Record<string, string> = {
-                problem: "problems",
-                hypothesis: "hypotheses",
-                experiment: "experiments",
-                decision: "decisions",
-                artifact: "artifacts",
-                capture: "captures",
-                feedback: "feedback",
-                feature_request: "feature-requests",
-                feature: "features",
+                problem: 'problems',
+                hypothesis: 'hypotheses',
+                experiment: 'experiments',
+                decision: 'decisions',
+                artifact: 'artifacts',
+                capture: 'captures',
+                feedback: 'feedback',
+                feature_request: 'feature-requests',
+                feature: 'features',
               };
               navigate(`/product/${productId}/${routes[entityType]}/${entityId}`);
             }}

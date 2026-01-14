@@ -1,8 +1,8 @@
-import { Outlet } from "react-router-dom";
-import { ProductRail } from "./ProductRail";
-import { ProductSidebar } from "./ProductSidebar";
-import { useProductContext } from "@/contexts/ProductContext";
-import { isMockMode } from "@/lib/ipc";
+import { Outlet } from 'react-router-dom';
+import { ProductRail } from './ProductRail';
+import { ProductSidebar } from './ProductSidebar';
+import { useProductContext } from '@/contexts/ProductContext';
+import { isMockMode } from '@/lib/ipc';
 
 export function AppShell() {
   const { currentProductId } = useProductContext();
@@ -17,7 +17,7 @@ export function AppShell() {
           </span>
         </div>
       )}
-      
+
       <div className="flex flex-1 overflow-hidden">
         {/* Column 1: Product Switcher Rail */}
         <ProductRail />

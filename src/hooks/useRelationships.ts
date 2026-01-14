@@ -1,11 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { api } from '@/lib/ipc';
-import type {
-  Relationship,
-  RelationshipWithEntity,
-  CreateRelationshipData,
-} from '@/lib/types';
+import type { Relationship, RelationshipWithEntity, CreateRelationshipData } from '@/lib/types';
 
 const RELATIONSHIPS_KEY = ['relationships'];
 const ENTITIES_KEY = ['entities'];

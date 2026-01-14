@@ -2,12 +2,12 @@
 // Entity Types
 // ============================================
 
-export type EntityType = 
-  | 'capture' 
-  | 'problem' 
-  | 'hypothesis' 
-  | 'experiment' 
-  | 'decision' 
+export type EntityType =
+  | 'capture'
+  | 'problem'
+  | 'hypothesis'
+  | 'experiment'
+  | 'decision'
   | 'artifact'
   | 'feedback'
   | 'feature_request'
@@ -25,7 +25,13 @@ export type ExperimentOutcome = 'validated' | 'invalidated' | 'inconclusive';
 export type FeedbackType = 'praise' | 'complaint' | 'bug' | 'suggestion' | 'question';
 export type FeedbackSentiment = 'positive' | 'neutral' | 'negative';
 export type FeedbackStatus = 'new' | 'reviewed' | 'actioned' | 'archived';
-export type FeatureRequestStatus = 'new' | 'considering' | 'planned' | 'in_progress' | 'shipped' | 'declined';
+export type FeatureRequestStatus =
+  | 'new'
+  | 'considering'
+  | 'planned'
+  | 'in_progress'
+  | 'shipped'
+  | 'declined';
 export type FeatureRequestPriority = 'low' | 'medium' | 'high' | 'critical';
 export type FeatureStatus = 'building' | 'shipped' | 'monitoring' | 'stable' | 'deprecated';
 export type FeatureHealth = 'healthy' | 'needs_attention' | 'underperforming';

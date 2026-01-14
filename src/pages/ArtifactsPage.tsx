@@ -103,7 +103,9 @@ export default function ArtifactsPage() {
       <div className="page-header page-header-row">
         <div>
           <h1 className="text-page-title">Artifacts</h1>
-          <p className="mt-1 text-meta">Links, images, files, and notes that support your thinking</p>
+          <p className="mt-1 text-meta">
+            Links, images, files, and notes that support your thinking
+          </p>
         </div>
         <Button onClick={handleCreate} size="sm" className="gap-2 shadow-sm">
           <Plus className="h-4 w-4" />

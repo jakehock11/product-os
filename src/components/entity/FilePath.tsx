@@ -55,11 +55,7 @@ export function FilePath({ entityId }: FilePathProps) {
         onClick={handleCopy}
         title="Copy full path"
       >
-        {copied ? (
-          <Check className="h-3 w-3 text-primary" />
-        ) : (
-          <Copy className="h-3 w-3" />
-        )}
+        {copied ? <Check className="h-3 w-3 text-primary" /> : <Copy className="h-3 w-3" />}
       </Button>
       <Button
         variant="ghost"

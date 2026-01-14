@@ -204,7 +204,7 @@ export function unarchiveDimension(id: string): Dimension {
 export function createDimensionValue(dimensionId: string, name: string): DimensionValue {
   const dimIndex = taxonomy.dimensions.findIndex((d) => d.id === dimensionId);
   if (dimIndex === -1) throw new Error('Dimension not found');
-  
+
   const value: DimensionValue = {
     id: generateId('dv'),
     dimensionId,
@@ -255,7 +255,7 @@ export function unarchiveDimensionValue(id: string): DimensionValue {
 
 export function getEntities(productId: string, filters?: EntityFilters): Entity[] {
   let result = entities.filter((e) => e.productId === productId);
-  
+
   if (filters?.type) {
     result = result.filter((e) => e.type === filters.type);
   }
@@ -268,12 +268,10 @@ export function getEntities(productId: string, filters?: EntityFilters): Entity[
   if (filters?.search) {
     const search = filters.search.toLowerCase();
     result = result.filter(
-      (e) =>
-        e.title.toLowerCase().includes(search) ||
-        e.body.toLowerCase().includes(search)
+      (e) => e.title.toLowerCase().includes(search) || e.body.toLowerCase().includes(search)
     );
   }
-  
+
   return result;
 }
 
@@ -293,7 +291,7 @@ export function createEntity(data: CreateEntityData): Entity {
     feature_request: 'req',
     feature: 'feature',
   };
-  
+
   const entity: Entity = {
     id: generateId(prefixMap[data.type]),
     productId: data.productId,
@@ -316,7 +314,7 @@ export function createEntity(data: CreateEntityData): Entity {
 export function updateEntity(id: string, data: UpdateEntityData): Entity {
   const index = entities.findIndex((e) => e.id === id);
   if (index === -1) throw new Error('Entity not found');
-  
+
   entities[index] = {
     ...entities[index],
     ...(data.title !== undefined && { title: data.title }),
@@ -325,7 +323,9 @@ export function updateEntity(id: string, data: UpdateEntityData): Entity {
     ...(data.personaIds !== undefined && { personaIds: data.personaIds }),
     ...(data.featureIds !== undefined && { featureIds: data.featureIds }),
     ...(data.dimensionValueIds !== undefined && { dimensionValueIds: data.dimensionValueIds }),
-    ...(data.metadata !== undefined && { metadata: { ...entities[index].metadata, ...data.metadata } }),
+    ...(data.metadata !== undefined && {
+      metadata: { ...entities[index].metadata, ...data.metadata },
+    }),
     updatedAt: now(),
   };
   return entities[index];
@@ -339,7 +339,7 @@ export function deleteEntity(id: string): void {
 export function promoteEntity(captureId: string, targetType: EntityType): Entity {
   const capture = entities.find((e) => e.id === captureId);
   if (!capture) throw new Error('Capture not found');
-  
+
   const newEntity = createEntity({
     productId: capture.productId,
     type: targetType,
@@ -349,13 +349,13 @@ export function promoteEntity(captureId: string, targetType: EntityType): Entity
     featureIds: capture.featureIds,
     dimensionValueIds: capture.dimensionValueIds,
   });
-  
+
   // Update original capture
   const captureIndex = entities.findIndex((e) => e.id === captureId);
   if (captureIndex !== -1) {
     entities[captureIndex].promotedToId = newEntity.id;
   }
-  
+
   return newEntity;
 }
 
@@ -365,7 +365,7 @@ export function promoteEntity(captureId: string, targetType: EntityType): Entity
 
 export function getRelationshipsForEntity(entityId: string): RelationshipWithEntity[] {
   const result: RelationshipWithEntity[] = [];
-  
+
   for (const rel of relationships) {
     if (rel.sourceId === entityId) {
       const target = entities.find((e) => e.id === rel.targetId);
@@ -397,7 +397,7 @@ export function getRelationshipsForEntity(entityId: string): RelationshipWithEnt
       }
     }
   }
-  
+
   return result;
 }
 
@@ -432,21 +432,22 @@ export function deleteRelationship(id: string): void {
 // ============================================
 
 export function getExportPreview(options: ExportOptions): ExportPreview {
-  let exportEntities = options.productId === 'all'
-    ? entities
-    : entities.filter((e) => e.productId === options.productId);
-  
+  let exportEntities =
+    options.productId === 'all'
+      ? entities
+      : entities.filter((e) => e.productId === options.productId);
+
   if (options.mode === 'incremental' && options.startDate) {
     exportEntities = exportEntities.filter(
       (e) => new Date(e.updatedAt) >= new Date(options.startDate!)
     );
   }
-  
+
   const byType: Record<string, number> = {};
   for (const e of exportEntities) {
     byType[e.type] = (byType[e.type] || 0) + 1;
   }
-  
+
   return {
     counts: {
       total: exportEntities.length,
@@ -483,16 +484,16 @@ export function clearExportHistory(): void {
 export function copySnapshot(productId: string): string {
   const productEntities = entities.filter((e) => e.productId === productId);
   const product = products.find((p) => p.id === productId);
-  
+
   let markdown = `# ${product?.name || 'Product'} Snapshot\n\n`;
   markdown += `Generated: ${new Date().toLocaleString()}\n\n`;
   markdown += `## Entities (${productEntities.length})\n\n`;
-  
+
   for (const e of productEntities) {
     markdown += `### ${e.title || 'Untitled'} (${e.type})\n`;
     markdown += `${e.body}\n\n`;
   }
-  
+
   return markdown;
 }
 
@@ -505,11 +506,13 @@ export function getSettings(): Settings {
 }
 
 export function updateSettings(data: UpdateSettingsData): Settings {
-  settings = { 
-    ...settings, 
-    ...data, 
+  settings = {
+    ...settings,
+    ...data,
     updatedAt: now(),
-    defaultIncrementalRange: (data.defaultIncrementalRange as Settings['defaultIncrementalRange']) ?? settings.defaultIncrementalRange,
+    defaultIncrementalRange:
+      (data.defaultIncrementalRange as Settings['defaultIncrementalRange']) ??
+      settings.defaultIncrementalRange,
   };
   return settings;
 }
@@ -525,7 +528,7 @@ export const mockStore = {
   createProduct,
   updateProduct,
   deleteProduct,
-  
+
   // Taxonomy
   getTaxonomy,
   createPersona,
@@ -544,7 +547,7 @@ export const mockStore = {
   updateDimensionValue,
   archiveDimensionValue,
   unarchiveDimensionValue,
-  
+
   // Entities
   getEntities,
   getEntity,
@@ -552,21 +555,21 @@ export const mockStore = {
   updateEntity,
   deleteEntity,
   promoteEntity,
-  
+
   // Relationships
   getRelationshipsForEntity,
   getOutgoingRelationships,
   getIncomingRelationships,
   createRelationship,
   deleteRelationship,
-  
+
   // Exports
   getExportPreview,
   executeExport,
   getExportHistory,
   clearExportHistory,
   copySnapshot,
-  
+
   // Settings
   getSettings,
   updateSettings,

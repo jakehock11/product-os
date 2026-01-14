@@ -1,6 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Plus, Search, Zap, MoreHorizontal, AlertCircle, Lightbulb, FlaskConical, CheckCircle, Paperclip } from 'lucide-react';
+import {
+  Plus,
+  Search,
+  Zap,
+  MoreHorizontal,
+  AlertCircle,
+  Lightbulb,
+  FlaskConical,
+  CheckCircle,
+  Paperclip,
+} from 'lucide-react';
 import { useProductContext } from '@/contexts/ProductContext';
 import { useEntitiesByType, usePromoteCapture } from '@/hooks/useEntities';
 import { useQuickCapture } from '@/contexts/QuickCaptureContext';
@@ -13,17 +23,17 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 import type { Entity, EntityType } from '@/lib/types';
 
 const PROMOTE_OPTIONS: { type: EntityType; label: string; icon: React.ElementType }[] = [
-  { type: "problem", label: "Problem", icon: AlertCircle },
-  { type: "hypothesis", label: "Hypothesis", icon: Lightbulb },
-  { type: "experiment", label: "Experiment", icon: FlaskConical },
-  { type: "decision", label: "Decision", icon: CheckCircle },
-  { type: "artifact", label: "Artifact", icon: Paperclip },
+  { type: 'problem', label: 'Problem', icon: AlertCircle },
+  { type: 'hypothesis', label: 'Hypothesis', icon: Lightbulb },
+  { type: 'experiment', label: 'Experiment', icon: FlaskConical },
+  { type: 'decision', label: 'Decision', icon: CheckCircle },
+  { type: 'artifact', label: 'Artifact', icon: Paperclip },
 ];
 
 export default function CapturesPage() {
@@ -50,7 +60,12 @@ export default function CapturesPage() {
         // Filter by promoted status
         if (!showPromoted && c.promotedToId) return false;
         // Search filter
-        if (search && !c.title.toLowerCase().includes(search.toLowerCase()) && !c.body.toLowerCase().includes(search.toLowerCase())) return false;
+        if (
+          search &&
+          !c.title.toLowerCase().includes(search.toLowerCase()) &&
+          !c.body.toLowerCase().includes(search.toLowerCase())
+        )
+          return false;
         return true;
       })
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -60,26 +75,26 @@ export default function CapturesPage() {
     try {
       const newEntity = await promoteCapture.mutateAsync({ captureId, targetType });
       toast({
-        title: "Promoted!",
+        title: 'Promoted!',
         description: `Capture promoted to ${targetType}.`,
       });
       const pathMap: Record<EntityType, string> = {
-        problem: "problems",
-        hypothesis: "hypotheses",
-        experiment: "experiments",
-        decision: "decisions",
-        artifact: "artifacts",
-        capture: "captures",
-        feedback: "feedback",
-        feature_request: "feature-requests",
-        feature: "features",
+        problem: 'problems',
+        hypothesis: 'hypotheses',
+        experiment: 'experiments',
+        decision: 'decisions',
+        artifact: 'artifacts',
+        capture: 'captures',
+        feedback: 'feedback',
+        feature_request: 'feature-requests',
+        feature: 'features',
       };
       navigate(`/product/${productId}/${pathMap[targetType]}/${newEntity.id}`);
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to promote capture.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to promote capture.',
+        variant: 'destructive',
       });
     }
   };
@@ -123,12 +138,12 @@ export default function CapturesPage() {
           />
         </div>
         <Button
-          variant={showPromoted ? "secondary" : "outline"}
+          variant={showPromoted ? 'secondary' : 'outline'}
           size="sm"
           onClick={() => setShowPromoted(!showPromoted)}
           className="h-9 text-xs"
         >
-          {showPromoted ? "Showing Promoted" : "Show Promoted"}
+          {showPromoted ? 'Showing Promoted' : 'Show Promoted'}
         </Button>
       </div>
 
@@ -139,8 +154,8 @@ export default function CapturesPage() {
             {search
               ? 'No captures match your search.'
               : showPromoted
-              ? 'No promoted captures yet.'
-              : 'No captures yet. Use Quick Capture to jot down thoughts.'}
+                ? 'No promoted captures yet.'
+                : 'No captures yet. Use Quick Capture to jot down thoughts.'}
           </p>
           {!search && !showPromoted && (
             <Button onClick={openQuickCapture} variant="outline" size="sm">
@@ -175,10 +190,7 @@ interface CaptureRowProps {
 function CaptureRow({ capture, productId, onPromote, isPromoting }: CaptureRowProps) {
   return (
     <div className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3 transition-all duration-150 hover:bg-accent hover:shadow-sm group">
-      <Link
-        to={`/product/${productId}/captures/${capture.id}`}
-        className="flex-1 min-w-0"
-      >
+      <Link to={`/product/${productId}/captures/${capture.id}`} className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-secondary flex-shrink-0">
             <Zap className="h-4 w-4 text-muted-foreground" />

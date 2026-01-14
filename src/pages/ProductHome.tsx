@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   Zap,
   AlertCircle,
@@ -8,28 +8,28 @@ import {
   ChevronRight,
   Lightbulb,
   MoreHorizontal,
-} from "lucide-react";
-import { useProductContext } from "@/contexts/ProductContext";
-import { useEntities, filterEntitiesByType, usePromoteCapture } from "@/hooks/useEntities";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+} from 'lucide-react';
+import { useProductContext } from '@/contexts/ProductContext';
+import { useEntities, filterEntitiesByType, usePromoteCapture } from '@/hooks/useEntities';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useToast } from "@/hooks/use-toast";
-import { formatDistanceToNow } from "date-fns";
-import type { Entity, EntityType } from "@/lib/types";
+} from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
+import { formatDistanceToNow } from 'date-fns';
+import type { Entity, EntityType } from '@/lib/types';
 
 const PROMOTE_OPTIONS: { type: EntityType; label: string; icon: React.ElementType }[] = [
-  { type: "problem", label: "Problem", icon: AlertCircle },
-  { type: "hypothesis", label: "Hypothesis", icon: Lightbulb },
-  { type: "experiment", label: "Experiment", icon: FlaskConical },
-  { type: "decision", label: "Decision", icon: CheckCircle },
+  { type: 'problem', label: 'Problem', icon: AlertCircle },
+  { type: 'hypothesis', label: 'Hypothesis', icon: Lightbulb },
+  { type: 'experiment', label: 'Experiment', icon: FlaskConical },
+  { type: 'decision', label: 'Decision', icon: CheckCircle },
 ];
 
 export default function ProductHome() {
@@ -46,22 +46,22 @@ export default function ProductHome() {
     }
   }, [productId, setCurrentProduct]);
 
-  const captures = filterEntitiesByType<Entity>(entities, "capture")
+  const captures = filterEntitiesByType<Entity>(entities, 'capture')
     .filter((c) => !c.promotedToId) // Only show non-promoted captures
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5);
 
-  const activeProblems = filterEntitiesByType<Entity>(entities, "problem")
-    .filter((p) => p.status === "active" || p.status === "exploring")
+  const activeProblems = filterEntitiesByType<Entity>(entities, 'problem')
+    .filter((p) => p.status === 'active' || p.status === 'exploring')
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     .slice(0, 5);
 
-  const runningExperiments = filterEntitiesByType<Entity>(entities, "experiment")
-    .filter((e) => e.status === "running")
+  const runningExperiments = filterEntitiesByType<Entity>(entities, 'experiment')
+    .filter((e) => e.status === 'running')
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     .slice(0, 5);
 
-  const recentDecisions = filterEntitiesByType<Entity>(entities, "decision")
+  const recentDecisions = filterEntitiesByType<Entity>(entities, 'decision')
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5);
 
@@ -69,27 +69,27 @@ export default function ProductHome() {
     try {
       const newEntity = await promoteCapture.mutateAsync({ captureId, targetType });
       toast({
-        title: "Promoted!",
+        title: 'Promoted!',
         description: `Capture promoted to ${targetType}.`,
       });
       // Navigate to the new entity
       const pathMap: Record<string, string> = {
-        problem: "problems",
-        hypothesis: "hypotheses",
-        experiment: "experiments",
-        decision: "decisions",
-        artifact: "artifacts",
-        capture: "captures",
-        feedback: "feedback",
-        feature_request: "feature-requests",
-        feature: "features",
+        problem: 'problems',
+        hypothesis: 'hypotheses',
+        experiment: 'experiments',
+        decision: 'decisions',
+        artifact: 'artifacts',
+        capture: 'captures',
+        feedback: 'feedback',
+        feature_request: 'feature-requests',
+        feature: 'features',
       };
       navigate(`/product/${productId}/${pathMap[targetType]}/${newEntity.id}`);
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to promote capture.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to promote capture.',
+        variant: 'destructive',
       });
     }
   };
@@ -112,12 +112,8 @@ export default function ProductHome() {
     <div className="page-container">
       {/* Header */}
       <div className="page-header">
-        <h1 className="text-page-title">
-          {currentProduct?.name || "Product"} Home
-        </h1>
-        <p className="mt-1 text-meta">
-          Overview of your product thinking
-        </p>
+        <h1 className="text-page-title">{currentProduct?.name || 'Product'} Home</h1>
+        <p className="mt-1 text-meta">Overview of your product thinking</p>
       </div>
 
       {/* Dashboard Grid */}
@@ -225,10 +221,7 @@ interface CaptureRowProps {
 function CaptureRow({ capture, productId, onPromote, isPromoting }: CaptureRowProps) {
   return (
     <div className="flex items-center justify-between rounded-md px-2 py-1.5 transition-colors duration-100 hover:bg-accent group">
-      <Link
-        to={`/product/${productId}/captures/${capture.id}`}
-        className="flex-1 min-w-0"
-      >
+      <Link to={`/product/${productId}/captures/${capture.id}`} className="flex-1 min-w-0">
         <span className="truncate text-sm text-foreground block">{capture.title}</span>
       </Link>
       <div className="flex items-center gap-2">
@@ -303,9 +296,7 @@ function DashboardCard<T>({
         {items.length > 0 ? (
           <div className="space-y-0.5">{items.map(renderItem)}</div>
         ) : (
-          <p className="py-6 text-center text-xs text-muted-foreground">
-            {emptyMessage}
-          </p>
+          <p className="py-6 text-center text-xs text-muted-foreground">{emptyMessage}</p>
         )}
       </CardContent>
     </Card>
